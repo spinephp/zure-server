@@ -1,0 +1,329 @@
+<?xml version="1.0"?>
+<options>
+<dsn>mysql:host=127.0.0.1;dbname=test</dsn>
+<user>root</user>
+<pwd>lxm@tsl12</pwd>
+<control>
+    <view>main</view>
+    <view status="CMD_OK">main</view>
+    <view status="CMD_ERROR">error</view>
+
+	<command name="ShowHome">
+		<view>P_main</view>
+	</command>
+	
+    <command name="ShowHeader">
+        <view>ShowHeader</view>
+    </command>
+	
+    <command name="ShowNews">
+       <view>P_news</view>
+    </command>
+
+  <command name="ActiveAccount">
+    <view>ActiveAccount</view>
+  </command>
+
+  <command name="CheckLogin">
+    <view>Checklogin</view>
+  </command>
+
+  <command name="Logout">
+    <view>Logout</view>
+  </command>
+
+  <command name="Person">
+    <view>Person</view>
+  </command>
+
+  <command name="Qiye">
+    <view>Qiye</view>
+  </command>
+
+  <command name="Navigation">
+    <view>Navigation</view>
+  </command>
+
+  <command name="Department">
+    <view>Department</view>
+  </command>
+
+  <command name="Employee">
+    <view>Employee</view>
+  </command>
+
+  <command name="Company">
+    <view>Company</view>
+  </command>
+
+  <command name="Custom">
+    <view>Custom</view>
+  </command>
+
+  <command name="CustomGrade">
+    <view>CustomGrade</view>
+  </command>
+
+  <command name="CustomAccount">
+    <view>CustomAccount</view>
+  </command>
+
+  <command name="Grade">
+    <view>Grade</view>
+  </command>
+
+  <command name="ShowProducts">
+       <view>P_product</view>
+    </command>
+
+  <command name="ShowOrder">
+    <view>ShowOrder</view>
+  </command>
+
+  <command name="GoodsEval">
+    <view>GoodsEval</view>
+  </command>
+
+  <command name="ShowOrderInfo">
+    <view>ShowOrderInfo</view>
+  </command>
+
+  <command name="ShowOrderDetail">
+    <view>ShowOrderDetail</view>
+  </command>
+
+  <command name="ShowContactUs">
+       <view>ShowContactUs</view>
+    </command>
+	
+    <command name="ShowLeaveMessage">
+       <view>ShowLeaveMessage</view>
+    </command>
+
+  <command name="Cart">
+    <view>Cart</view>
+  </command>
+
+  <command name="Order">
+    <view>Order</view>
+  </command>
+
+  <command name="Contract">
+    <view>Contract</view>
+  </command>
+
+  <command name="OrderState">
+    <view>OrderState</view>
+  </command>
+
+  <command name="OrdersState">
+    <view>OrdersState</view>
+  </command>
+
+  <command name="OrderComplain">
+    <view>OrderComplain</view>
+  </command>
+
+  <command name="Complain">
+    <view>Complain</view>
+  </command>
+
+  <command name="Office">
+    <view>Office</view>
+  </command>
+
+  <command name="Member">
+    <view>P_member</view>
+  </command>
+
+  <command name="Consignee">
+    <view>Consignee</view>
+  </command>
+
+  <command name="Payment">
+    <view>Payment</view>
+  </command>
+
+  <command name="Transport">
+    <view>Transport</view>
+  </command>
+
+  <command name="Bill">
+    <view>Bill</view>
+  </command>
+
+  <command name="BillContent">
+    <view>BillContent</view>
+  </command>
+
+  <command name="BillFree">
+    <view>BillFree</view>
+  </command>
+
+  <command name="BillSale">
+    <view>BillSale</view>
+  </command>
+
+  <command name="CarriageClass">
+    <view>CarriageClass</view>
+  </command>
+
+  <command name="CarriageCharge">
+    <view>CarriageCharge</view>
+  </command>
+
+  <command name="Product">
+    <view>Product</view>
+  </command>
+
+  <command name="ProductClass">
+    <view>ProductClass</view>
+  </command>
+
+  <command name="ProductCare">
+    <view>ProductCare</view>
+  </command>
+
+  <command name="ProductConsult">
+    <view>ProductConsult</view>
+  </command>
+
+  <command name="ProductEval">
+    <view>ProductEval</view>
+  </command>
+
+  <command name="EvalReply">
+    <view>EvalReply</view>
+  </command>
+
+  <command name="ProductLabel">
+    <view>ProductLabel</view>
+  </command>
+
+  <command name="ProductSharp">
+    <view>ProductSharp</view>
+  </command>
+
+  <command name="ProductUse">
+    <view>ProductUse</view>
+  </command>
+
+  <command name="ProductsToJSON">
+    <view>ProductsToJSON</view>
+  </command>
+
+  <command name="UserHomeToJSON">
+       <view>UserHomeToJSON</view>
+    </command>
+	
+    <command name="ContactHomeToJSON">
+       <view>ContactHomeToJSON</view>
+    </command>
+
+  <command name="Link">
+    <view>Link</view>
+  </command>
+
+  <command name="News">
+    <view>News</view>
+  </command>
+
+  <command name="Country">
+    <view>Country</view>
+  </command>
+
+  <command name="Province">
+    <view>Province</view>
+  </command>
+
+  <command name="City">
+    <view>City</view>
+  </command>
+
+  <command name="District">
+    <view>District</view>
+  </command>
+
+  <command name="SendVerifyEmail">
+    <view>SendVerifyEmail</view>
+  </command>
+
+  <command name="EmailVerify">
+    <view>EmailVerify</view>
+  </command>
+
+  <command name="SystemNotice">
+    <view>SystemNotice</view>
+  </command>
+
+  <command name="UpdatePassword">
+    <view>UpdatePassword</view>
+  </command>
+
+  <command name="UserRegister">
+    <view>UserRegister</view>
+  </command>
+
+  <command name="Upload">
+    <view>Upload</view>
+  </command>
+
+  <command name="Currency">
+    <view>Currency</view>
+  </command>
+
+  <command name="Language">
+    <view>Language</view>
+  </command>
+
+  <command name="Right">
+    <view>Right</view>
+  </command>
+
+  <command name="Physicoindex">
+    <view>Physicoindex</view>
+  </command>
+
+  <command name="Chemicalindex">
+    <view>Chemicalindex</view>
+  </command>
+
+  <command name="VerifyStatus">
+    <view>VerifyStatus</view>
+  </command>
+
+  <command name="ProductsHomeToJSON">
+       <view>ProductsHomeToJSON</view>
+    </command>
+
+  <command name="ProductConsultJSON">
+    <view>ProductConsultJSON</view>
+  </command>
+
+  <command name="fmBuyFeel">
+    <view>fmBuyFeel</view>
+  </command>
+
+  <command name="ListVenues">
+        <view>listvenues</view>
+    </command>
+
+    <command name="QuickaddVenues">
+        <classroot name="AddVenue" />
+        <view>quickadd</view>
+    </command>
+
+    <command name="AddVenue">
+        <view>addvenue</view>
+        <status value="CMD_OK">
+            <forward>AddSpace</forward>
+        </status>
+    </command>
+
+    <command name="AddSpace">
+        <view>addspace</view>
+        <status value="CMD_OK">
+            <forward>ListVenues</forward>
+        </status>
+    </command>
+</control></options>
