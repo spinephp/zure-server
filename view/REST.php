@@ -573,6 +573,7 @@ class REST{
       foreach($targets as $target=>$condition){
         if(!is_array($condition))
 				  throw new \woo\base\AppException("Data format error!");
+      include_once("domain/".ucfirst($target).".php");
         $factory = \woo\mapper\PersistenceFactory::getFactory($target,$condition['fields']);
 			  $finder = new \woo\mapper\DomainObjectAssembler($factory);
         $key = $condition['fields'][0];

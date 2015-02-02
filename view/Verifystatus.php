@@ -13,12 +13,13 @@ require_once("base/SessionRegistry.php");
 class VerifyStatusController extends PageController{
   function process(){
     try{
-      $request = $this->getRequest();
+ 		$session = \woo\base\SessionRegistry::instance();
+     $request = $this->getRequest();
 			$cmdStatus = $request->getFeedbackString();
 			if($cmdStatus!="Command Ok!")
 				throw new \woo\base\AppException($cmdStatus);
       
-      echo json_encode(array("status"=>TRUE));
+      echo json_encode(array("status"=>TRUE,"logor"=>array('id'=>$session->get('userid'),'name'=>$session->get('usename'))));
     }catch(\woo\base\AppException $e){
         echo json_encode(array("status"=>FALSE,"error"=>$e->getMessage()));
     }

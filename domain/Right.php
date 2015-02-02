@@ -9,7 +9,7 @@ class Right extends DomainObject{
 	}
 
 	function setCode($code_s){
-		$this->objects["code"] = $code_s
+		$this->objects["code"] = $code_s;
 	}
 
 	function getCode(){

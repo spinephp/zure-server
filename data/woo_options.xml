@@ -24,6 +24,10 @@
     <view>ActiveAccount</view>
   </command>
 
+  <command name="GetLogId">
+    <view>Getlogid</view>
+  </command>
+
   <command name="CheckLogin">
     <view>Checklogin</view>
   </command>
@@ -81,11 +85,11 @@
   </command>
 
   <command name="GoodsEval">
-    <view>GoodsEval</view>
+    <view>P_goodseval</view>
   </command>
 
   <command name="ShowOrderInfo">
-    <view>ShowOrderInfo</view>
+    <view>P_orderinfo</view>
   </command>
 
   <command name="ShowOrderDetail">
@@ -129,7 +133,7 @@
   </command>
 
   <command name="Office">
-    <view>Office</view>
+    <view>P_office</view>
   </command>
 
   <command name="Member">
