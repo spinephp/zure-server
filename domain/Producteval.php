@@ -117,7 +117,7 @@ class ProductEval extends DomainObject{
 		$collection = $finder->find($idobj);
     $pro = $collection->current();
     if($pro){
-      require_once("domain/order.php");
+      require_once("domain/Order.php");
 		  $factory = \woo\mapper\PersistenceFactory::getFactory("order",Array('id','time'));
 		  $finder = new \woo\mapper\DomainObjectAssembler($factory);
 		  $idobj = $factory->getIdentityObject()->field('id')->eq($pro->getOrderid());

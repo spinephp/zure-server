@@ -10,22 +10,24 @@ namespace woo\controller;
 require_once("controller/PageController.php");
 require_once("base/SessionRegistry.php");
 
-class VerifyStatusController extends PageController{
-  function process(){
-    try{
- 		$session = \woo\base\SessionRegistry::instance();
-     $request = $this->getRequest();
+class GetLogIdController extends PageController{
+	function process(){
+		try{
+			$session = \woo\base\SessionRegistry::instance();
+			$request = $this->getRequest();
 			$cmdStatus = $request->getFeedbackString();
 			if($cmdStatus!="Command Ok!")
 				throw new \woo\base\AppException($cmdStatus);
-      
-      echo json_encode(array("status"=>TRUE,"logor"=>array('id'=>$session->get('userid'),'name'=>$session->get('usename'))));
-    }catch(\woo\base\AppException $e){
-        echo json_encode(array("status"=>FALSE,"error"=>$e->getMessage()));
-    }
-  }
+			userid=$session->get('userid');
+			if(empty(userid))
+				throw new \woo\base\AppException("Not logged");
+			echo json_encode(array('id'=>userid));
+		}catch(\woo\base\AppException $e){
+			echo json_encode(array("id"=>-1,"error"=>$e->getMessage()));
+		}
+	}
 }
 
-$controller = new VerifyStatusController();
+$controller = new GetLogIdController();
 $controller->process();
 ?>

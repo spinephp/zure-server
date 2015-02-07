@@ -18,7 +18,7 @@ namespace woo\command;
 require_once("command/command.php");
 require_once("controller/Request.php");
 require_once("base/SessionRegistry.php");
-//~ require_once("domain/Person.php");
+require_once("domain/Person.php");
 class Logout extends Command{
     function doExecute(\woo\controller\Request $request){
 	 /**
