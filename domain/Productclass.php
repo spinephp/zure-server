@@ -24,8 +24,8 @@ class ProductClass extends DomainObject{
 		$this->objects["name_en"] = htmlentities($name_s,ENT_QUOTES,'UTF-8');
 	}
 
-	function getName(){
-    return $this->objects["name"];
+	function getName($fmt='C'){
+    return $fmt=='C'? $this->objects["name"]:$this->objects["name_en"];
 	}
 
 	function getName_en(){

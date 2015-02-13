@@ -23,23 +23,23 @@ abstract class Command{
 	'Cart'=>array('userShell',null,null,null),
 	'Company'=>array('userShell',null,null,null),
 	'Complain'=>array('userShell',null,null,null),
-	'Consignee'=>array('userShell',null,null,null),
-	'Currency'=>array(null,'employeeShell','employeeShell','employeeShell'),
- 	'Custom'=>array('userShell','captchaShell userShell','captchaShell userShell','captchaShell userShell'),
+	'Consignee'=>array('userShell',array('fn'=>null,'autoParam'=>'userid'),null,null),
+	'Currency'=>array(null,array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
+ 	'Custom'=>array('userShell',array('fn'=>'captchaShell userShell','autoParam'=>null),'captchaShell userShell','captchaShell userShell'),
 	'CustomAccount'=>array('userShell',null,null,null),
-  	'Department'=>array('employeeShell','captchaShell employeeShell','captchaShell employeeShell','captchaShell employeeShell'),
+  	'Department'=>array('employeeShell',array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
 	'District '=>array('userShell',null,null,null),
- 	'Employee'=>array('userShell','captchaShell employeeShell','captchaShell employeeShell','captchaShell employeeShell'),
-	'Language'=>array(null,'employeeShell','employeeShell','employeeShell'),
-	'Navigation'=>array(null,'employeeShell','employeeShell','employeeShell'),
+ 	'Employee'=>array('userShell',array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
+	'Language'=>array(null,array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
+	'Navigation'=>array(null,array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
 	'Order'=>array('userShell',null,null,null),
 	'OrderComplain'=>array('userShell',null,null,null),
 	'OrdersState'=>array('userShell',null,null,null),
-  	'OrderState'=>array('userShell','captchaShell employeeShell','captchaShell employeeShell','captchaShell employeeShell'),
+  	'OrderState'=>array('userShell',array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
 	'Payment'=>array('userShell',null,null,null),
-  	'Product'=>array(null,'captchaShell employeeShell','captchaShell employeeShell','captchaShell employeeShell'),
-  	'ProductClass'=>array(null,'captchaShell employeeShell','captchaShell employeeShell','captchaShell employeeShell'),
-	'Right'=>array('employeeShell','employeeShell','employeeShell','employeeShell'),
+  	'Product'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
+  	'ProductClass'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
+	'Right'=>array('employeeShell',array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
 	'Transport'=>array('userShell',null,null,null)
      );
 
@@ -198,15 +198,17 @@ class RESTCommand extends Command{
 		}
 	}
 	
-	private function _restCreate(\woo\controller\Request $request){
+	private function _restCreate(\woo\controller\Request $request,array $param){
 		$item = $request->getProperty("item");
 		$status = 'CMD_OK';
 		if(isset($item) && (!isset($item["id"]) || substr($item["id"],0,2)=='c-')){
-			/*if(empty($item['userid'])){
-				$session = \woo\base\SessionRegistry::instance();
-				$item['userid'] = $session->get('userid');
+			if(!empty($param)){
+				foreach($param as $p){
+					if(empty($item[$p]))
+						$item[$p] = "?$p";
+				}
 				$request->setProperty("item",$item);
-			}*/
+			}
 			if(isset($item['action'])){
 				$cmd = $request->getProperty('cmd');
 				$s = lcFirst($cmd);
@@ -230,20 +232,27 @@ class RESTCommand extends Command{
 		$cmd = $request->getProperty('cmd');
 		$right = self::validates($cmd);
 		if(empty($right) || empty($right[1])){
-			return $this->userShell($request,function($request){
-				return $this->_restCreate($request);
+			return $this->userShell($request,function($request,$userid){
+				return $this->_restCreate($request,null);
 			});
 		}else{
-			$a = explode(' ',$right[1]);
-			return $this->$a[0]($request,function($request,$a) { 
-				if(count($a)==2){
-					return $this->$a[1]($request,function($request){ 
-						return $this->_restCreate($request);
-					});
-				}else{
-					return $this->_restCreate($request);
-				}
-			});
+			$b = explode(' ',$right[1]['autoParam']);
+			if(empty($right[1]['fn'])){
+				return $this->userShell($request,function($request,$userid) use($b){
+					return $this->_restCreate($request,$b);
+				});
+			}else{
+				$a = explode(' ',$right[1]['fn']);
+				return $this->$a[0]($request,function($request,$a) use($b) { 
+					if(count($a)==2){
+						return $this->$a[1]($request,function($request) use($b){ 
+							return $this->_restCreate($request,$b);
+						});
+					}else{
+						return $this->_restCreate($request,$b);
+					}
+				});
+			}
 		}
 	}
 	
