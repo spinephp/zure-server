@@ -28,6 +28,10 @@
     <view>Getlogid</view>
   </command>
 
+  <command name="IsLogin">
+    <view>Islogin</view>
+  </command>
+
   <command name="CheckLogin">
     <view>Checklogin</view>
   </command>

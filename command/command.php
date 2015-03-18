@@ -198,7 +198,7 @@ class RESTCommand extends Command{
 		}
 	}
 	
-	private function _restCreate(\woo\controller\Request $request,array $param){
+	private function _restCreate(\woo\controller\Request $request,$param){
 		$item = $request->getProperty("item");
 		$status = 'CMD_OK';
 		if(isset($item) && (!isset($item["id"]) || substr($item["id"],0,2)=='c-')){
