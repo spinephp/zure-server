@@ -243,7 +243,7 @@ class RESTCommand extends Command{
 				});
 			}else{
 				$a = explode(' ',$right[1]['fn']);
-				return $this->$a[0]($request,function($request,$a) use($b) { 
+				return $this->$a[0]($request,function($request) use($b,$a) { 
 					if(count($a)==2){
 						return $this->$a[1]($request,function($request) use($b){ 
 							return $this->_restCreate($request,$b);
@@ -258,8 +258,9 @@ class RESTCommand extends Command{
 	
 	private function _restUpdate(\woo\controller\Request $request){
 		$item = $request->getProperty("item");
+		$id = $request->getProperty("id");
 		$status = 'CMD_OK';
-		if(isset($item) && isset($item["id"])){
+		if(isset($item) && (isset($id) || isset($item["id"]))){
 			if(isset($item['action'])){
 				$cmd = $request->getProperty('cmd');
 				$s = lcFirst($cmd);
@@ -288,7 +289,7 @@ class RESTCommand extends Command{
 			});
 		}else{
 			$a = explode(' ',$right[2]);
-			return $this->$a[0]($request,function($request,$a) { 
+			return $this->$a[0]($request,function($request) use($a){ 
 				if(count($a)==2){
 					return $this->$a[1]($request,function($request){ 
 						return $this->_restUpdate($request);
@@ -333,7 +334,7 @@ class RESTCommand extends Command{
 			});
 		}else{
 			$a = explode(' ',$right[2]);
-			return $this->$a[0]($request,function($request,$a) { 
+			return $this->$a[0]($request,function($request) use($a) { 
 				if(count($a)==2){
 					return $this->$a[1]($request,function($request){ 
 						return $this->_restDelete($request);
@@ -349,7 +350,7 @@ class RESTCommand extends Command{
 class DefaultCommand extends Command{
     function doExecute(\woo\controller\Request $request){
         $request->addFeedback("Welcome to WOO");
-        include("view/main.php");
+        include("view/P_main.php");
     }
 }
 ?>
