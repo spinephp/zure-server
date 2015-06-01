@@ -1,0 +1,26 @@
+<?php
+namespace woo\domain;
+require_once("domain/domain.php");
+
+class Drymain extends DomainObject{
+	function __construct($array){
+		parent::__construct($array,array("starttime","lineno"));
+	}
+
+	function setStarttime($time_s){
+		$this->objects["starttime"] = htmlentities($time_s,ENT_QUOTES,'UTF-8');
+	}
+
+	function getStarttime(){
+		return $this->objects["starttime"];
+	}
+
+	function setLineno($no_s){
+		$this->objects["lineno"] = (int)$no_s;
+	}
+
+	function getStarttime(){
+		return $this->objects["lineno"];
+	}
+}
+?>

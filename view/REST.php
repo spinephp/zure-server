@@ -663,10 +663,12 @@ class REST{
             $target[$other['table']][] = array('fields'=>$other['data']);
             switch($other['method']){
               case 'post':
-                $result[$other['table']] = $this->changeRecords($target,null,true)[$other['table']][0];
+		$temp = $this->changeRecords($target,null,true);
+                $result[$other['table']] = $temp[$other['table']][0];
                 break;
               case 'put':
-                $result[$other['table']] = $this->changeRecords($target,null,false)[$other['table']][0];
+		$temp = $this->changeRecords($target,null,false);
+                $result[$other['table']] = $temp[$other['table']][0];
                 break;
             }
           }
@@ -687,10 +689,12 @@ class REST{
             $target[$system['table']][] = array('fields'=>$system['data']);
             switch($system['method']){
               case 'post':
-                $this->changeRecords($target,null,true)[$system['table']][0];
+		$temp = $this->changeRecords($target,null,true);
+                $result[$other['table']] = $temp[$system['table']][0];
                 break;
               case 'put':
-                $this->changeRecords($target,null,false)[$system['table']][0];
+		$temp = $this->changeRecords($target,null,false);
+                $result[$other['table']] = $temp[$system['table']][0];
                 break;
             }
           }
