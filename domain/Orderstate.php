@@ -7,7 +7,7 @@ require_once("mapper/DomainObjectAssembler.php");
 class Orderstate extends DomainObject{
 
 	function __construct($array){
-		parent::__construct($array,array("name","name_en","actor","note","yrrnote","state"));
+		parent::__construct($array,array("name","name_en","actor","note","note_en","yrrnote","state"));
 	}
   
   function getName(){
@@ -44,6 +44,18 @@ class Orderstate extends DomainObject{
   
   function setNote($note_s){
     $this->objects["note"] = htmlentities($note_s,ENT_QUOTES,'UTF-8');
+  }
+  
+  function getNote_en(){
+    return $this->objects["note_en"];
+  }
+  
+  function setNote_en($note_s){
+    $this->objects["note_en"] = htmlentities($note_s,ENT_QUOTES,'UTF-8');
+  }
+  
+  function getNotes(){
+    return array($this->objects["note_en"],$this->objects["note"]);
   }
   
   function getYrrnote(){

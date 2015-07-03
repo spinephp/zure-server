@@ -41,7 +41,7 @@ class CheckLogin extends Command{
 				  if(!$obj){ // 记录是否存在
 					  $request->addFeedback("Invalid user name!");
 				  }else{
- 			$request->log($obj->getId());
+ 			//$request->log($obj->getId());
             $sub = "";
             $fields = array('id','userid');
             if($action=="employee_login"){
@@ -55,7 +55,7 @@ class CheckLogin extends Command{
 				      $idobj = $factory->getIdentityObject()->field('userid')->eq($obj->getId());
 				      $collection = $finder->find($idobj);
               if($collection->count()==1){
-			$request->log($obj->getId());
+			//$request->log($obj->getId());
                 $sobj = $collection->current();
 					      $request->setObject('person',$obj);
 					      $request->setObject('personex',$sobj);
