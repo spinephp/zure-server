@@ -19,7 +19,7 @@ class Drymain extends DomainObject{
 		$this->objects["lineno"] = (int)$no_s;
 	}
 
-	function getStarttime(){
+	function getLineno(){
 		return $this->objects["lineno"];
 	}
 }
