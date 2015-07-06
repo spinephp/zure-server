@@ -316,6 +316,14 @@
     <view>fmBuyFeel</view>
   </command>
 
+  <command name="DryMain">
+    <view>DryMain</view>
+  </command>
+
+  <command name="DryData">
+    <view>DryData</view>
+  </command>
+
   <command name="ListVenues">
         <view>listvenues</view>
     </command>

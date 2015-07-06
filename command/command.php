@@ -40,7 +40,8 @@ abstract class Command{
   	'Product'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
   	'ProductClass'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
 	'Right'=>array('employeeShell',array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
-	'Transport'=>array('userShell',null,null,null)
+	'Transport'=>array('userShell',null,null,null),
+ 	'DryMain'=>array(null,null,null,null)
      );
 
     final function __construct(){}
