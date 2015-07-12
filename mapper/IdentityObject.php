@@ -70,6 +70,11 @@ class IdentityObject{
 	function eq($value){
 		return $this->operator("=",$value);
 	}
+	
+	//  不等于
+	function ne($value){
+		return $this->operator("!=",$value);
+	}
 
 	// 小于
 	function lt($value){
