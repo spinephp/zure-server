@@ -4,7 +4,7 @@ require_once("domain/domain.php");
 
 class Drymain extends DomainObject{
 	function __construct($array){
-		parent::__construct($array,array("starttime","lineno"));
+		parent::__construct($array,array("starttime","lineno","state"));
 	}
 
 	function setStarttime($time_s){
@@ -21,6 +21,14 @@ class Drymain extends DomainObject{
 
 	function getLineno(){
 		return $this->objects["lineno"];
+	}
+
+	function setState($no_s){
+		$this->objects["state"] = (int)$no_s;
+	}
+
+	function getState(){
+		return $this->objects["state"];
 	}
 }
 ?>
