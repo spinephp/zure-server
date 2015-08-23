@@ -18,13 +18,13 @@ class drymainREST extends REST{
 	
 	
 	function doDelete(){
-    $id = $this->request->getProperty("id");
-    $target = array(
-      "drymain"=>array('fields'=>array('id'),'value'=>$id),
-      "drydata"=>array('fields'=>array('mainid','id'),'value'=>$id)
-    );
-    $this->deleteRecords($target,function($domain,&$result){
-     });
+		$id = $this->request->getProperty("id");
+		$target = array(
+			"drymain"=>array('fields'=>array('id'),'value'=>$id),
+			"drydata"=>array('fields'=>array('mainid','id'),'value'=>$id)
+		);
+		$this->deleteRecords($target,function($domain,&$result){
+		});
 	}
 }
 

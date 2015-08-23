@@ -1,41 +1,23 @@
 <?php
-/**
- * 客户登录验证 (ajax 调用)
- * @package command
- * @author  Liu xingming
- * @copyright 2012 Azuresky safe group
- * @return 如验证通过，返回包含用户信息的对象，否则返回指明验证失败信息的字符串
- */
-namespace woo\controller;
-require_once("controller/PageController.php");
-require_once("base/SessionRegistry.php");
+	namespace woo\view;
+	require_once("mapper/PersistenceFactory.php");
+	require_once("mapper/DomainObjectAssembler.php");
+	
+	header('Content-Type: text/event-stream');
+	header('Cache-Control: no-cache');
 
-class DryMainController extends PageController{
-    function process(){
-      try{
-	      $session = \woo\base\SessionRegistry::instance();
-        $request = $this->getRequest();
-			  $starttime = $request->getProperty("starttime"); // 取要验证的客户数据
-			  $lineno = $request->getProperty("lineno"); // 取要验证的客户数据
-                // 把登录时间和登录次数写入 person 表
-			    $dry = new \woo\domain\Drymain(null);
-                $dry->setStarttime($starttime);
-                $dry->setLineno($lineno);
-			  $factory = \woo\mapper\PersistenceFactory::getFactory("drymain",array('id','starttime','lineno'));
-			  $finder = new \woo\mapper\DomainObjectAssembler($factory);
-			  $finder->insert($dry);
-			$result["id"] = $dry->getId();
-			$session->set('dryid',$result['id']);
- 			echo json_encode($result);
-               
-        }catch(\woo\base\AppException $e){
-          $result["id"] = -1;
-          $result["username"] = $e->getMessage();
-					echo json_encode($result);
-        }
-    }
-}
-
-$controller = new DryMainController();
-$controller->process();
+	$object = "woo\\domain\\drymain";
+	$factory = \woo\mapper\PersistenceFactory::getFactory($object);
+	$finder = new \woo\mapper\DomainObjectAssembler($factory);
+	$idobj = $factory->getIdentityObject()->field('state')->eq(0);
+	$collection = $finder->find($idobj);
+	$rec = $collection->current();
+	if(is_null($rec))
+		throw new \woo\base\AppException("Record ID is'n exist!");
+	$result["id"] = $rec->getId();
+	$result["starttime"] = $rec->getStarttime();
+	$result["lineno"] = $rec->Lineno();
+	$result["state"] = $rec->getState();
+	echo "data: ".json_encode($result);
+	flush();
 ?>
