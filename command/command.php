@@ -236,7 +236,7 @@ class RESTCommand extends Command{
 		$cmd = $request->getProperty('cmd');
 		$right = self::validates($cmd);
 		if(empty($right) || empty($right[1])){
-			return $this->userShell($request,function($request,$userid){
+			return $this->userShell($request,function($request,$userid) {
 				return $this->_restCreate($request,null);
 			});
 		}else{
