@@ -174,7 +174,7 @@ abstract class Command{
 
 class RESTCommand extends Command{
 	function doExecute(\woo\controller\Request $request){
-		switch($_SERVER["REQUEST_METHOD"]){
+		switch($request->getMethod()){
 			case "GET": $this->safeShell($request,'restGet');break;
 			case "POST": $this->safeShell($request,'restCreate');break;
 			case "PUT": $this->safeShell($request,'restUpdate');break;

@@ -33,7 +33,7 @@ class REST{
 			if($cmdStatus!="Command Ok!")
 				throw new \woo\base\AppException($cmdStatus);
 
-			switch($_SERVER["REQUEST_METHOD"]){
+			switch($this->request->getMethod()){
 				case "GET": $this->restGet();break;
 				case "POST": $this->restCreate();break;
 				case "PUT": $this->restUpdate();break;
