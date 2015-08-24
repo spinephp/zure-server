@@ -97,7 +97,7 @@
   </command>
 
   <command name="ShowOrderDetail">
-    <view>ShowOrderDetail</view>
+    <view>P_orderdetail</view>
   </command>
 
   <command name="ShowContactUs">
@@ -266,6 +266,10 @@
 
   <command name="UpdatePassword">
     <view>UpdatePassword</view>
+  </command>
+
+  <command name="ResetPassword">
+    <view>ResetPassword</view>
   </command>
 
   <command name="UserRegister">

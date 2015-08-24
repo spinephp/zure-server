@@ -5,7 +5,7 @@ require_once("domain/domain.php");
 class Billsale extends DomainObject{
 
 	function __construct($array){
-		parent::__construct($array,array("userid","name","address","duty","tel","bank","account"));
+		parent::__construct($array,array("userid","name","name_en","address","address_en","duty","tel","bank","account"));
 	}
 
 	function setUserid($userid_s){
@@ -24,12 +24,36 @@ class Billsale extends DomainObject{
 		return $this->objects["name"];
 	}
 
+	function setName_en($name_s){
+		$this->objects["name_en"] = htmlentities($name_s,ENT_QUOTES,'UTF-8');
+	}
+
+	function getName_en(){
+		return $this->objects["name_en"];
+	}
+
+	function getNames(){
+		return array($this->getName_en(),$this->getName());
+	}
+
 	function setAddress($address_s){
 		$this->objects["address"] = htmlentities($address_s,ENT_QUOTES,'UTF-8');
 	}
 
 	function getAddress(){
 		return $this->objects["address"];
+	}
+
+	function setAddress_en($address_s){
+		$this->objects["address_en"] = htmlentities($address_s,ENT_QUOTES,'UTF-8');
+	}
+
+	function getAddress_en(){
+		return $this->objects["address_en"];
+	}
+
+	function getAddresss(){
+		return array($this->getAddress_en(),$this->getAddress());
 	}
 
 	function setDuty($duty_s){

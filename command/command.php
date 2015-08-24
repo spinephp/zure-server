@@ -230,6 +230,9 @@ class RESTCommand extends Command{
 		return $status;
 	}
 	
+	/**
+	 * REST create 
+	 */
 	function restCreate(\woo\controller\Request $request){
 		$cmd = $request->getProperty('cmd');
 		$right = self::validates($cmd);

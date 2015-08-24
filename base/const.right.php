@@ -1,5 +1,5 @@
 <?php
-namespace woo\base;
+//namespace woo\base;
 
 		const RIGHT_WWW_SHOW = 0x80000000;		// 查看站点信息
 		const RIGHT_WWW_EDIT = 0x40000000;		// 编辑站点信息

@@ -19,43 +19,44 @@ class REST{
 
 	private $_method = "";		
 	private $_code = 200;
-  
-  protected $request;
-  protected $_target;
-  public function __construct($target=null){
-    try{
-      $this->_target = $target;
-		  $this->request = \woo\view\VH::getRequest();
-      $this->pdo = null;
-      
-		  $cmdStatus = $this->request->getFeedbackString();
-		  if($cmdStatus!="Command Ok!")
-			  throw new \woo\base\AppException($cmdStatus);
-        
-		  switch($_SERVER["REQUEST_METHOD"]){
-			  case "GET": $this->restGet();break;
-			  case "POST": $this->restCreate();break;
-			  case "PUT": $this->restUpdate();break;
-			  case "DELETE": $this->restDelete();break;
-		  }
+
+	protected $request;
+	protected $_target;
+	
+	public function __construct($target=null){
+		try{
+			$this->_target = $target;
+			$this->request = \woo\view\VH::getRequest();
+			$this->pdo = null;
+
+			$cmdStatus = $this->request->getFeedbackString();
+			if($cmdStatus!="Command Ok!")
+				throw new \woo\base\AppException($cmdStatus);
+
+			switch($_SERVER["REQUEST_METHOD"]){
+				case "GET": $this->restGet();break;
+				case "POST": $this->restCreate();break;
+				case "PUT": $this->restUpdate();break;
+				case "DELETE": $this->restDelete();break;
+			}
 		}catch(\woo\base\AppException $e){
-		  if(!empty($this->pdo)) $this->pdo->rollBack();               //回滚事务  
-      $result['id'] = -1;
-      $result['error'] = $e->getMessage();
-      $this->response(json_encode($result));
+			if(!empty($this->pdo)) $this->pdo->rollBack();               //回滚事务  
+			$result['id'] = -1;
+			$result['error'] = $e->getMessage();
+			$this->response(json_encode($result));
 		}
 	}
 
-  function verifyUpdate(\woo\controller\Request $request){
-			$cmdStatus = $request->getFeedbackString();
-			if($cmdStatus!="Command Ok!")
-				throw new \woo\base\AppException($cmdStatus);
-        
-      $item = $request->getProperty("item");
-			if(is_null($item))
-				throw new \woo\base\AppException($request->getFeedbackString());
-      return $item;
-  }
+	function verifyUpdate(\woo\controller\Request $request){
+		$cmdStatus = $request->getFeedbackString();
+		if($cmdStatus!="Command Ok!")
+			throw new \woo\base\AppException($cmdStatus);
+
+		$item = $request->getProperty("item");
+		if(is_null($item))
+			throw new \woo\base\AppException($request->getFeedbackString());
+		return $item;
+	}
   
 	public function get_referer(){
 		return $_SERVER['HTTP_REFERER'];
@@ -114,341 +115,343 @@ class REST{
 		return ($status[$this->_code])?$status[$this->_code]:$status[500];
 	}
 
-  private function set_headers($format,$datalen){
+	private function set_headers($format,$datalen){
 		header("HTTP/1.1 ".$this->_code." ".$this->get_status_message());
 		//header("Content-Type:".$this->_content_type);
-    $contenttype = "";
+		$contenttype = "";
 		if($format =='json')
 		{
-			  $contenttype = $this->json_content_type;
+			$contenttype = $this->json_content_type;
 		}
 		elseif($format =='xml')
 		{
-			  $contenttype = $this->xml_content_type;
+			$contenttype = $this->xml_content_type;
 		}
 		else
 		{
-				$contenttype = "text/plain";
+			$contenttype = "text/plain";
 		}
-    header("Content-Type:".$contenttype."; charset=utf-8");
-    $host  = $_SERVER['HTTP_HOST'];
-    //header("Location: ".$host); $this->request->log($host);
-    header("Content-Length: " . $datalen);
-    header("Connection: keep-alive");
+		header("Content-Type:".$contenttype."; charset=utf-8");
+		$host  = $_SERVER['HTTP_HOST'];
+		//header("Location: ".$host); $this->request->log($host);
+		header("Content-Length: " . $datalen);
+		header("Connection: keep-alive");
 	}
 	
-  /**
-   * 根据要求(由 $filter 指定的字段),把查寻到的数据库记录转换为 JSON 键值对
-   * @param $collection - Collection 类的实例，包含要查寻的数据集合
-   * @return JSON 键值对，包含查寻到的数据
-   */
-  protected function toJSON($collection){
-			$i = 0;
-			$result = array();
-			$filter = $this->request->getProperty("filter");
-			foreach($collection as $rec){
-				if(is_null($rec))
-					throw new \woo\base\AppException("The record is null!");
-				foreach($filter as $field){
-          if(!is_null($field)){
-					  $name = "get".ucfirst($field);
-					  if(method_exists($rec,$name)){
-              $params = $this->request->getProperty("params");
-              if(isset($params) && !is_null($params) && isset($params[$field]))
-                $result[$i][$field] = $rec->$name($params[$field]);
-               else
-                $result[$i][$field] = $rec->$name();
-					  }else
-						  throw new  \woo\base\AppException("Invalid field name!");
-          }
+	/**
+	 * 根据要求(由 $filter 指定的字段),把查寻到的数据库记录转换为 JSON 键值对
+	 * @param $collection - Collection 类的实例，包含要查寻的数据集合
+	 * @return JSON 键值对，包含查寻到的数据
+	 */
+	protected function toJSON($collection){
+		$i = 0;
+		$result = array();
+		$filter = $this->request->getProperty("filter");
+		foreach($collection as $rec){
+			if(is_null($rec))
+				throw new \woo\base\AppException("The record is null!");
+			foreach($filter as $field){
+				if(!is_null($field)){
+					$name = "get".ucfirst($field);
+					if(method_exists($rec,$name)){
+						$params = $this->request->getProperty("params");
+						if(isset($params) && !is_null($params) && isset($params[$field]))
+							$result[$i][$field] = $rec->$name($params[$field]);
+						else
+							$result[$i][$field] = $rec->$name();
+					}else
+					  throw new  \woo\base\AppException("Invalid field name!");
 				}
-				$i++;
 			}
-      // $this->request->log(json_encode($result));
-      return json_encode($result);
-  }
+			$i++;
+		}
+		// $this->request->log(json_encode($result));
+		return json_encode($result);
+	}
   
-  /**
-   * 当查询条件中的字段值为 ? 号时，在 sessionRegistry 中取出字段对应的值
-   * @param $field - string 类型，指定字段
-   * @return 返回字段对应的值
-   */
-  protected function autoValue($value){
+	/**
+	 * 当查询条件中的字段值为 ? 号时，在 sessionRegistry 中取出字段对应的值
+	 * @param $field - string 类型，指定字段
+	 * @return 返回字段对应的值
+	 */
+	protected function autoValue($value){
 		$session = \woo\base\SessionRegistry::instance();
-    switch($value){
-      case "?id":
-        if($this->request->getProperty("cmd")=="Person")
-          $value = $session->get("userid");
-        break;
-      case "?userid":
-        $value = $session->get('userid');
-        break;
-      case '?time':
-        $value = date("Y-m-d m:i:s");
-        break;
-    }
-    return $value;
-  }
+		switch($value){
+			case "?id":
+				if($this->request->getProperty("cmd")=="Person")
+					$value = $session->get("userid");
+				break;
+			case "?userid":
+				$value = $session->get('userid');
+				break;
+			case "?drymainid":
+				$value = $session->get('drymainid');
+				break;
+			case '?time':
+				$value = date("Y-m-d m:i:s");
+				break;
+		}
+		return $value;
+	}
   
-  /**
-   * 修改标识对象，把查询条件加入其中
-   * @param $idobj - IdentityObject 类的实例，加入查询条件之前的标识对象
-   * @return IdentityObject 类的实例，加入查询条件后的标识对象
-   */
-  protected function buildIdentityObject($idobj){
-      $cond = $this->request->getProperty("cond");
-      if(!empty($cond)){
-        foreach($cond as $item){
-          $fun = $item["operator"];
-         $value = $this->autoValue($item["value"]);
-          $idobj = $idobj->field($item["field"])->$fun($value);
-        }
-      }
-      return $idobj;
-  }
+	/**
+	 * 修改标识对象，把查询条件加入其中
+	 * @param $idobj - IdentityObject 类的实例，加入查询条件之前的标识对象
+	 * @return IdentityObject 类的实例，加入查询条件后的标识对象
+	 */
+	protected function buildIdentityObject($idobj){
+		$cond = $this->request->getProperty("cond");
+		if(!empty($cond)){
+			foreach($cond as $item){
+				$fun = $item["operator"];
+				$value = $this->autoValue($item["value"]);
+				$idobj = $idobj->field($item["field"])->$fun($value);
+			}
+		}
+		return $idobj;
+	}
   
-  /**
-   * 获取数据表 $table 的集合
-   * @param $table - string 类型，指定数据表名称
-   * @return Collection 类的实例，指定数据集合
-   */
-  protected function getCollection($table){
-    if(is_null($table))
+	/**
+	 * 获取数据表 $table 的集合
+	 * @param $table - string 类型，指定数据表名称
+	 * @return Collection 类的实例，指定数据集合
+	 */
+	protected function getCollection($table){
+		if(is_null($table))
 			throw new \woo\base\AppException("Table name is need!");
-    $target = ucfirst($table);
-	  $object = "woo\\domain\\".$target;
-    $fields = array();    
-    // 生成域名目标
-	if(file_exists("domain/$target.php"))
-		include_once("domain/$target.php");
+		$target = ucfirst($table);
+		$object = "woo\\domain\\".$target;
+		$fields = array();    
+		// 生成域名目标
+		if(file_exists("domain/$target.php"))
+			include_once("domain/$target.php");
 		$domain = new $object(null);
-    $keys = array_keys($domain->getObjects());
-    $keys[] = 'id';
-    $filter = $this->request->getProperty("filter");
-    foreach($filter as $field)
-      if(in_array($field,$keys)){
-          $fields[] = $field; 
-      }else{ // 处理伪字段
-        if($field=='names'){ //  names
-          if(!in_array('name',$fields)) $fields[] = 'name';
-          if(!in_array('name_en',$fields)) $fields[] = 'name_en';
-        }
-      }
-    $condition = $this->request->getProperty("cond");
-    if(!empty($condition)){
-      foreach($condition as $cond){
-        $field = $cond['field'];
-        if(in_array($field,$keys) && !in_array($field,$fields))
-          $fields[] = $field; 
-      }
-    }
-    $extend = $this->request->getProperty("extend");
-    if(!empty($extend)){
-      foreach($extend as $ext){
-        if(in_array($ext,$keys) && !in_array($ext,$fields))
-          $fields[] = $ext; 
-      }
-    }
-      
+		$keys = array_keys($domain->getObjects());
+		$keys[] = 'id';
+		$filter = $this->request->getProperty("filter");
+		foreach($filter as $field)
+		if(in_array($field,$keys)){
+			$fields[] = $field; 
+		}else{ // 处理伪字段
+			if($field=='names'){ //  names
+				if(!in_array('name',$fields)) $fields[] = 'name';
+				if(!in_array('name_en',$fields)) $fields[] = 'name_en';
+			}
+		}
+		$condition = $this->request->getProperty("cond");
+		if(!empty($condition)){
+			foreach($condition as $cond){
+				$field = $cond['field'];
+				if(in_array($field,$keys) && !in_array($field,$fields))
+					$fields[] = $field; 
+			}
+		}
+		$extend = $this->request->getProperty("extend");
+		if(!empty($extend)){
+			foreach($extend as $ext){
+				if(in_array($ext,$keys) && !in_array($ext,$fields))
+				$fields[] = $ext; 
+			}
+		}
+
 		$factory = \woo\mapper\PersistenceFactory::getFactory($table,$fields);
 		$finder = new \woo\mapper\DomainObjectAssembler($factory);
 		$idobj = $this->buildIdentityObject($factory->getIdentityObject());
 		return $finder->find($idobj);
-  }
+	}
 
-  /**
-   * 根据请求参数生成域名目标
-   * @param $domainobject - domain 类型，指定要生成的域名
-   * @return 无
-   */
-  protected function setDomain(&$domainobject){
-    $item = $this->request->getProperty("item");
+	/**
+	 * 根据请求参数生成域名目标
+	 * @param $domainobject - domain 类型，指定要生成的域名
+	 * @return 无
+	 */
+	protected function setDomain(&$domainobject){
+		$item = $this->request->getProperty("item");
 		if(is_null($item))
 			throw new \woo\base\AppException($this->request->getFeedbackString());
-    foreach($item as $key=>$val){
-      if($key!="id"){
-        $fun = "set".ucfirst($key);
+		foreach($item as $key=>$val){
+			if($key!="id"){
+				$fun = "set".ucfirst($key);
 				if(method_exists($domainobject,$fun) && !is_null($val))
-          $domainobject->$fun($val);
+					$domainobject->$fun($val);
 				else
 					throw new  \woo\base\AppException("Invalid field name or field value!");
-      }
-    }
-  }
+			}
+		}
+	}
   
-  /**
-   * 该方法实现简单的实现数据表记录的创建和更新，由子类中的 restCreate 或 restUpdate 方法调用
-   * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
-   * @param $target - string, 指定要操作的域名
-   * @var $item - 键值对数组，指定用户请求的数据
-   * @var $domain - domain 类型，系统生成的 domain 类实例
-   * @var finder - DomainObjectAssembler 类型，系统生成的 DomainObjectAssembler 类实例
-   */
-  function updateDomain($target){
+	/**
+	 * 该方法实现简单的实现数据表记录的创建和更新，由子类中的 restCreate 或 restUpdate 方法调用
+	 * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
+	 * @param $target - string, 指定要操作的域名
+	 * @var $item - 键值对数组，指定用户请求的数据
+	 * @var $domain - domain 类型，系统生成的 domain 类实例
+	 * @var finder - DomainObjectAssembler 类型，系统生成的 DomainObjectAssembler 类实例
+	*/
+	function updateDomain($target){
 		try{
 			$cmdStatus = $this->request->getFeedbackString();
 			if($cmdStatus!="Command Ok!")
 				throw new \woo\base\AppException($cmdStatus);
-        
-      $this->item = $this->request->getProperty("item");
+
+			$this->item = $this->request->getProperty("item");
 			if(is_null($this->item))
 				throw new \woo\base\AppException("Invalid paramters");
-        
-      $data = $this->item[$target];
+
+			$data = $this->item[$target];
 			if(empty($data))
 				throw new \woo\base\AppException("none $target data infomation");
-      
+
 			$object = "woo\\domain\\".ucfirst($target);
-      $factory = \woo\mapper\PersistenceFactory::getFactory($object);
-		  $this->finder = new \woo\mapper\DomainObjectAssembler($factory);
-        
-      // 生成域名目标
+			$factory = \woo\mapper\PersistenceFactory::getFactory($object);
+			$this->finder = new \woo\mapper\DomainObjectAssembler($factory);
+
+			// 生成域名目标
 			$this->domain = new $object(null);
-      foreach($data as $key=>$val){
-          $fun = "set".ucfirst($key);
-					if(!method_exists($this->domain,$fun))
-						throw new  \woo\base\AppException("Invalid field name $key or field value!");
-          if($val!="")
-            $this->domain->$fun($val);
-      }
-      if($_SERVER["REQUEST_METHOD"]=='PUT')
-        $this->domain->setId($this->request->getProperty('id'));
-        
-      // 把数据插入表 $target 中
+			foreach($data as $key=>$val){
+				$fun = "set".ucfirst($key);
+				if(!method_exists($this->domain,$fun))
+					throw new  \woo\base\AppException("Invalid field name $key or field value!");
+				if($val!="")
+					$this->domain->$fun($val);
+			}
+			if($_SERVER["REQUEST_METHOD"]=='PUT')
+				$this->domain->setId($this->request->getProperty('id'));
+
+			// 把数据插入表 $target 中
 			$this->finder->insert($this->domain);
-      
-      $this->item[$target]['id'] = $this->domain->getId();
+
+			$this->item[$target]['id'] = $this->domain->getId();
 			$this->response(json_encode($this->item[$target]));
 		}catch(\woo\base\AppException $e){
-      $result['id'] = -1;
-      $result['error'] = $e->getMessage();
-      $this->response(json_encode($result));
+			$result['id'] = -1;
+			$result['error'] = $e->getMessage();
+			$this->response(json_encode($result));
 		}
-  }
+	}
 	
   
-  /**
-   * 该方法根据客户给定的 id 实现简单的实现数据表记录的删除，由子类中的 restDelete 方法调用
-   * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
-   * @param $target - string, 指定要操作的域名
-   * @return 若操作成功返回被删除记录的 id 键值对，否则返回 id=-1,error=错误信息的键值对
-   */
+	/**
+	 * 该方法根据客户给定的 id 实现简单的实现数据表记录的删除，由子类中的 restDelete 方法调用
+	 * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
+	 * @param $target - string, 指定要操作的域名
+	 * @return 若操作成功返回被删除记录的 id 键值对，否则返回 id=-1,error=错误信息的键值对
+	 */
 	function deleteDomain($target){
 		try{
 			$cmdStatus = $this->request->getFeedbackString();
 			if($cmdStatus!="Command Ok!")
 				throw new \woo\base\AppException($cmdStatus);
-        
+
 			$id = $this->request->getProperty("id");
 			$object = "woo\\domain\\".ucfirst($target);
-      $factory = \woo\mapper\PersistenceFactory::getFactory($object);
+			$factory = \woo\mapper\PersistenceFactory::getFactory($object);
 			$finder = new \woo\mapper\DomainObjectAssembler($factory);
 			$idobj = $factory->getIdentityObject()->field('id')->eq($id);
 			$collection = $finder->find($idobj);
-      $rec = $collection->current();
+			$rec = $collection->current();
 			if(is_null($rec))
 				throw new \woo\base\AppException("Record ID is'n exist!");
-      
+
 			$finder->delete($idobj);
-      
-      $this->response(json_encode(array("id"=>$id)));
+
+			$this->response(json_encode(array("id"=>$id)));
 		}catch(\woo\base\AppException $e){
-      $this->response(json_encode(array("id"=>-1,"error"=>$e->getMessage())));
+			$this->response(json_encode(array("id"=>-1,"error"=>$e->getMessage())));
 		}
 	}
-  
-  /**
-   * 该方法更新由 $targets 数组内容指定的数据表中的指定记录，由子类中的 doUpdate 方法调用
-   * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
-   * @param $target - array, 指定要删除的对象,数组以键值对方式组织，结构为：table=>value,其中：
-   *                    table - string, 指定要删除的数据表，同时指定域名目标
-   *                    value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
-   *                    
-   *                    value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
-   *                              field0 - string, 指定要查找的字段名
-   *                              index - $target 数组的索引值，指定查找字段名的域名目标
-   *                              field1 - string, 指定查找字段名的域名目标的字段名
-   * @return 若操作成功返回各被删除数据表及其被删除记录的 id 键值对，否则返回 id=-1,error=错误信息的键值对
-   */
+
+	/**
+	 * 该方法更新由 $targets 数组内容指定的数据表中的指定记录，由子类中的 doUpdate 方法调用
+	 * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
+	 * @param $target - array, 指定要删除的对象,数组以键值对方式组织，结构为：table=>value,其中：
+	 *     table - string, 指定要删除的数据表，同时指定域名目标
+	 *     value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中:
+	 *                    
+	 *         value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
+	 *         field0 - string, 指定要查找的字段名
+	 *         index - $target 数组的索引值，指定查找字段名的域名目标
+	 *         field1 - string, 指定查找字段名的域名目标的字段名
+	 * @return 若操作成功返回各被删除数据表及其被删除记录的 id 键值对，否则返回 id=-1,error=错误信息的键值对
+	 */
 	function getRecords($targets){
-      echo  $this->toJSON($this->getCollection($targets));
-  }
+		echo  $this->toJSON($this->getCollection($targets));
+	}
   
-  /**
-   * 该方法更新由 $targets 数组内容指定的数据表中的指定记录，由子类中的 doUpdate 方法调用
-   * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
-   * @param $target - array, 指定要删除的对象,数组以键值对方式组织，结构为：table=>value,其中：
-   *                    table - string, 指定要删除的数据表，同时指定域名目标
-   *                    value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
-   *                    
-   *                    value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
-   *                              field0 - string, 指定要查找的字段名
-   *                              index - $target 数组的索引值，指定查找字段名的域名目标
-   *                              field1 - string, 指定查找字段名的域名目标的字段名
-   * @param $sucess - function, 指定数据库成功创建后的回调方法，该方法有两个参数如下：
-   *                    $domain - 类 DomainObject 的实例数组，根据 $target 中领域模型的顺序组织
-   *                    $result = 数组，返回内容
-   * @return 若操作成功返回各数据表名及其被创建记录的字段名键值对，否则返回 id=-1,error=错误信息的键值对
-   */
+	/**
+	 * 该方法更新由 $targets 数组内容指定的数据表中的指定记录，由子类中的 doUpdate 方法调用
+	 * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
+	 * @param $target - array, 指定要删除的对象,数组以键值对方式组织，结构为：table=>value,其中：
+	 *     table - string, 指定要删除的数据表，同时指定域名目标
+	 *     value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
+	 *         value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
+	 *             field0 - string, 指定要查找的字段名
+	 *             index - $target 数组的索引值，指定查找字段名的域名目标
+	 *             field1 - string, 指定查找字段名的域名目标的字段名
+	 * @param $sucess - function, 指定数据库成功创建后的回调方法，该方法有两个参数如下：
+	 *     $domain - 类 DomainObject 的实例数组，根据 $target 中领域模型的顺序组织
+	 *     $result = 数组，返回内容
+	 * @return 若操作成功返回各数据表名及其被创建记录的字段名键值对，否则返回 id=-1,error=错误信息的键值对
+	 */
 	function createRecords($targets,$sucess){
-    $result = $this->changeRecords($targets,$sucess,true);
+		$result = $this->changeRecords($targets,$sucess,true);
 		$this->response(json_encode($result),201);
-  }
+	}
   
-  /**
-   * 该方法向数据表 $target 写入数据。
-   * @param $target - string, 指定要写入的数据表名称
-   * @param $datas - array, 键值对的数组，包含要写入的数据及其关系
-   * @param $domain - array, 领域对象数组
-   * @param $index - int, 当前的领域对象数组索引值
-   * @param $isinsert - bool, $isinsert=true 时执行插入操作，$isinsert=false 时执行更新操作
-   * @return 若操作成功返回由写入数据(字段名与字段值键值对)组成的数组,否则抛出错误信息，无返回
-   */
-  private function saveRecords($target,$datas,&$domain,$index,$isinsert=true){
-    $result = array();
-    $fields = array();
-    $main = null;
-    $condition = null;
-    $finder = null;
-    foreach ($datas as $data){
-      if(!empty($data['condition'])){
-        $condition = $data['condition'];
-        $fields = array_merge($fields,$this->conditionFields($condition,$domain,$index));
-      }
-      
-      if(!empty($data['fields'])){
-        $main = $data['fields'];
-        if($isinsert && isset($main["id"]))
-          unset($main["id"]);
-        $fields = array_merge($fields,$this->mainFields($main,$domain[$index]));
-      }
-        
-      if(is_null($finder)){
-        if(!empty($data['need']) && is_array($data['need']))
-          $fields = array_merge($fields,$data['need']);
-		    $finder = \woo\mapper\PersistenceFactory::getFinder($target,array_unique($fields));
-        if(is_null($this->pdo)){
-		      $this->pdo = \woo\mapper\DomainObjectAssembler::getPDO();
-		      $this->pdo->beginTransaction();       //开始事务  
-        }
-      }
-      
-      if(!empty($main) || !empty($condition)){
-        // 把数据插入表 $target 中
-		    $finder->insert($domain[$index]);
-        if(!empty($main)){
-          if($isinsert)
-            $main['id'] = $domain[$index]->getId();
-          $result[] = $main;
-        }
-        
-        if(!empty($data['sucess'])){
-          $data['sucess']($domain[$index],$finder,$result[$target]);
-        }
-      }
-    }
-    return $result;
-  }
+	/**
+	 * 该方法向数据表 $target 写入数据。
+	 * @param $target - string, 指定要写入的数据表名称
+	 * @param $datas - array, 键值对的数组，包含要写入的数据及其关系
+	 * @param $domain - array, 领域对象数组
+	 * @param $index - int, 当前的领域对象数组索引值
+	 * @param $isinsert - bool, $isinsert=true 时执行插入操作，$isinsert=false 时执行更新操作
+	 * @return 若操作成功返回由写入数据(字段名与字段值键值对)组成的数组,否则抛出错误信息，无返回
+	 */
+	private function saveRecords($target,$datas,&$domain,$index,$isinsert=true){
+		$result = array();
+		$fields = array();
+		$main = null;
+		$condition = null;
+		$finder = null;
+		foreach ($datas as $data){
+			if(!empty($data['condition'])){
+				$condition = $data['condition'];
+				$fields = array_merge($fields,$this->conditionFields($condition,$domain,$index));
+			}
+
+			if(!empty($data['fields'])){
+				$main = $data['fields'];
+				if($isinsert && isset($main["id"]))
+					unset($main["id"]);
+				$fields = array_merge($fields,$this->mainFields($main,$domain[$index]));
+			}
+
+			if(is_null($finder)){
+				if(!empty($data['need']) && is_array($data['need']))
+					$fields = array_merge($fields,$data['need']);
+				$finder = \woo\mapper\PersistenceFactory::getFinder($target,array_unique($fields));
+				if(is_null($this->pdo)){
+					$this->pdo = \woo\mapper\DomainObjectAssembler::getPDO();
+					$this->pdo->beginTransaction();       //开始事务  
+				}
+			}
+
+			if(!empty($main) || !empty($condition)){
+				// 把数据插入表 $target 中
+				$finder->insert($domain[$index]);
+				if(!empty($main)){
+					if($isinsert)
+						$main['id'] = $domain[$index]->getId();
+					$result[] = $main;
+				}
+
+				if(!empty($data['sucess'])){
+					$data['sucess']($domain[$index],$finder,$result[$target]);
+				}
+			}
+		}
+		return $result;
+	}
   
   /**
    * 该方法根据 $condition 数组内容设置领域对象 $domain[$index] 的内容。

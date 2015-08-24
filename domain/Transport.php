@@ -18,6 +18,18 @@ class Transport extends DomainObject{
 		return $this->objects["name"];
 	}
 
+	function setName_en($name_s){
+		$this->objects["name_en"] = htmlentities($name_s,ENT_QUOTES,'UTF-8');
+	}
+
+	function getName_en(){
+		return $this->objects["name_en"];
+	}
+
+	function getNames(){
+		return array($this->getName_en(),$this->getName());
+	}
+
 	function setNote($note_s){
 		$this->objects["note"] = htmlentities($note_s,ENT_QUOTES,'UTF-8');
 	}

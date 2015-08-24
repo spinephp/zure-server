@@ -18,10 +18,10 @@ class GetLogIdController extends PageController{
 			$cmdStatus = $request->getFeedbackString();
 			if($cmdStatus!="Command Ok!")
 				throw new \woo\base\AppException($cmdStatus);
-			userid=$session->get('userid');
-			if(empty(userid))
+			$userid=$session->get('userid');
+			if(empty($userid))
 				throw new \woo\base\AppException("Not logged");
-			echo json_encode(array('id'=>userid));
+			echo json_encode(array('id'=>$userid));
 		}catch(\woo\base\AppException $e){
 			echo json_encode(array("id"=>-1,"error"=>$e->getMessage()));
 		}
