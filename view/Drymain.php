@@ -16,15 +16,28 @@ class drymainREST extends REST{
 		parent::__construct("drymain");
 	}
 	
+	function doCreate($item){
+		if(empty($item)){
+			$drymain['starttime'] = $this->request->getProperty("starttime"); // 取要验证的客户数据
+			$drymain['lineno'] = $this->request->getProperty("lineno"); // 取要验证的客户数据
+			$drymain['state'] = $this->request->getProperty("state"); // 取要验证的客户数据
+			$target["drymain"] = array('fields'=>$drymain);
+			$this->createRecords($target,function($domain,&$result) {
+				$session = \woo\base\SessionRegistry::instance();
+				$result['id'] = $result['drymain']['id'];
+				$session->set('dryid',$result['id']);
+ 			});
+		}	
+ 	}
 	
 	function doDelete(){
-    $id = $this->request->getProperty("id");
-    $target = array(
-      "drymain"=>array('fields'=>array('id'),'value'=>$id),
-      "drydata"=>array('fields'=>array('mainid','id'),'value'=>$id)
-    );
-    $this->deleteRecords($target,function($domain,&$result){
-     });
+		$id = $this->request->getProperty("id");
+		$target = array(
+			"drymain"=>array('fields'=>array('id'),'value'=>$id),
+			"drydata"=>array('fields'=>array('mainid','id'),'value'=>$id)
+		);
+		$this->deleteRecords($target,function($domain,&$result){
+		});
 	}
 }
 

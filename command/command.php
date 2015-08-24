@@ -41,6 +41,7 @@ abstract class Command{
   	'ProductClass'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
 	'Right'=>array('employeeShell',array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
 	'Transport'=>array('userShell',null,null,null),
+ 	'DryData'=>array(null,null,null,null),
  	'DryMain'=>array(null,null,null,null)
      );
 

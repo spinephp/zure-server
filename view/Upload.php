@@ -52,10 +52,11 @@ class UploadController extends PageController{
               break;
           }
           $temp = "images/temp/";
-          $ext = substr($value['name'],strrpos($value['name'],'.'));
+         $ext = substr($value['name'],strrpos($value['name'],'.'));
           $headshot = $imgName.$ext;
-          move_uploaded_file($value["tmp_name"], $temp.$headshot);
-          
+          if(!move_uploaded_file($value["tmp_name"], $temp.$headshot))
+          	throw new \woo\base\AppException("File moving failure!");
+         
           $resizeObj = new \resize($temp.$headshot);
  
           // *** 2) Resize image (options: exact, portrait, landscape, auto, crop)
@@ -69,9 +70,12 @@ class UploadController extends PageController{
     }
     catch(Exception $e)
     {
-      echo json_encode(array("msg"=>"上传失败"));
+      echo json_encode(array("msg"=>$e));
     }    
-  }
+    catch(\woo\base\AppException $e){
+      echo json_encode(array("msg"=>$e));
+    }    
+}
 
   function my_image_resize($src_file, $dst_file, $dst_width=32, $dst_height=32) { 
       if($dst_width <1 || $dst_height <1) { 
