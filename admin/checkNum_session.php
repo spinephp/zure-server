@@ -1,4 +1,7 @@
 <?php
+//namespace woo\admin;
+//require_once("base/SessionRegistry.php");
+//$session = \woo\base\SessionRegistry::instance();
 @session_start();
 // 建立一幅 100X30 的图像
 $im = imagecreate(50, 16);
@@ -17,6 +20,7 @@ for($i=0;$i<4;$i++)
  $vcodes.= $text;
 }
 
+//$session->set('saftcode',$vcodes);
 $_SESSION['saftcode'] = $vcodes;
 
 for($i=0;$i<100;$i++) //加入干扰象素

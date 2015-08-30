@@ -22,11 +22,12 @@ class drymainREST extends REST{
 			$drymain['lineno'] = $this->request->getProperty("lineno"); // 取要验证的客户数据
 			$drymain['state'] = $this->request->getProperty("state"); // 取要验证的客户数据
 			$target["drymain"] = array('fields'=>$drymain);
-			$this->createRecords($target,function($domain,&$result) {
+			$result = $this->changeRecords($target,function($domain,&$result) {
 				$session = \woo\base\SessionRegistry::instance();
 				$result['id'] = $result['drymain']['id'];
 				$session->set('dryid',$result['id']);
- 			});
+ 			},true);
+			$this->response(json_encode($result),201);
 		}	
  	}
 	

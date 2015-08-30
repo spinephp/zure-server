@@ -72,9 +72,10 @@ class productclassREST extends REST{
         $result['picture'] = $headshot;
       }
     });
-    
-    $this->createRecords($target,function($domain,&$result){
-    });
+   
+    $result = $this->changeRecords($target,function($domain,&$result){
+    },true);
+			$this->response(json_encode($result),201);
 	}
 	
 	function doUpdate($item){

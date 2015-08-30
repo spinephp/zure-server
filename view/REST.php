@@ -181,13 +181,13 @@ class REST{
 				if($this->request->getProperty("cmd")=="Person")
 					$value = $session->get("userid");
 				break;
-			case "?userid":
+			case "?userid": // 当前登录用户的 id
 				$value = $session->get('userid');
 				break;
 			case "?drymainid":
 				$value = $session->get('drymainid');
 				break;
-			case '?time':
+			case '?time': // 当前系统时间
 				$value = date("Y-m-d m:i:s");
 				break;
 		}
@@ -315,7 +315,7 @@ class REST{
 				if($val!="")
 					$this->domain->$fun($val);
 			}
-			if($_SERVER["REQUEST_METHOD"]=='PUT')
+			if($this->request->getMethod()=='PUT')
 				$this->domain->setId($this->request->getProperty('id'));
 
 			// 把数据插入表 $target 中
@@ -379,26 +379,6 @@ class REST{
 	}
   
 	/**
-	 * 该方法更新由 $targets 数组内容指定的数据表中的指定记录，由子类中的 doUpdate 方法调用
-	 * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
-	 * @param $target - array, 指定要删除的对象,数组以键值对方式组织，结构为：table=>value,其中：
-	 *     table - string, 指定要删除的数据表，同时指定域名目标
-	 *     value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
-	 *         value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
-	 *             field0 - string, 指定要查找的字段名
-	 *             index - $target 数组的索引值，指定查找字段名的域名目标
-	 *             field1 - string, 指定查找字段名的域名目标的字段名
-	 * @param $sucess - function, 指定数据库成功创建后的回调方法，该方法有两个参数如下：
-	 *     $domain - 类 DomainObject 的实例数组，根据 $target 中领域模型的顺序组织
-	 *     $result = 数组，返回内容
-	 * @return 若操作成功返回各数据表名及其被创建记录的字段名键值对，否则返回 id=-1,error=错误信息的键值对
-	 */
-	function createRecords($targets,$sucess){
-		$result = $this->changeRecords($targets,$sucess,true);
-		$this->response(json_encode($result),201);
-	}
-  
-	/**
 	 * 该方法向数据表 $target 写入数据。
 	 * @param $target - string, 指定要写入的数据表名称
 	 * @param $datas - array, 键值对的数组，包含要写入的数据及其关系
@@ -453,294 +433,262 @@ class REST{
 		return $result;
 	}
   
-  /**
-   * 该方法根据 $condition 数组内容设置领域对象 $domain[$index] 的内容。
-   * @param $condition - array, 指定要设置领域对象的数据,数组以键值对方式组织，结构为：
-   *           1. fieldname=>fieldvalue,其中：
-   *                    fieldname - string, 指定字段名
-   *                    fieldvalue - string,指定字段值
-   *           2. fieldname=>array('index'=>fieldname1)
-   *                    fieldname - string, 指定字段名
-   *                    index - int,指定数据表索引
-   *                    fieldname2 - string, 由 index 指定的数据表中的字段名
-   * @return 若操作成功返回 $condition 键数组,否则抛出错误信息，无返回
-   */
-  private function conditionFields($condition,&$domain,$index){
-    $fields = array();
-    $domaini = $domain[$index];
-    if(is_array($condition)){
-      foreach($condition as $field=>$value){
-        $fields[] = $field;
-        if(is_array($value)){
-          $domaink = $domain[key($value)];
-          $fun = "get".ucfirst(current($value));
-				  if(!method_exists($domaink,$fun))
-					  throw new  \woo\base\AppException("Invalid field name or field value!");
-          $val = $domaink->$fun();
-        }else
-          $val = $value;
-        $fun = "set".ucfirst($field);
+	/**
+	 * 该方法根据 $condition 数组内容设置领域对象 $domain[$index] 的内容。
+	 * @param $condition - array, 指定要设置领域对象的数据,数组以键值对方式组织，结构为：
+	 *           1. fieldname=>fieldvalue,其中：
+	 *                    fieldname - string, 指定字段名
+	 *                    fieldvalue - string,指定字段值
+	 *           2. fieldname=>array('index'=>fieldname1)
+	 *                    fieldname - string, 指定字段名
+	 *                    index - int,指定数据表索引
+	 *                    fieldname2 - string, 由 index 指定的数据表中的字段名
+	 * @return 若操作成功返回 $condition 键数组,否则抛出错误信息，无返回
+	 */
+	private function conditionFields($condition,&$domain,$index){
+		$fields = array();
+		$domaini = $domain[$index];
+		if(is_array($condition)){
+			foreach($condition as $field=>$value){
+				$fields[] = $field;
+				if(is_array($value)){
+					$domaink = $domain[key($value)];
+					$fun = "get".ucfirst(current($value));
+					if(!method_exists($domaink,$fun))
+						throw new  \woo\base\AppException("Invalid field name or field value!");
+					$val = $domaink->$fun();
+				}else
+					$val = $value;
+				$fun = "set".ucfirst($field);
 				if(!method_exists($domaini,$fun))
 					throw new  \woo\base\AppException("Invalid field name or field value!");
-        $domaini->$fun($val);
-      }
-    }else{
-      $domaini->setId($condition);
-      $fields[] = 'id';
-    }
-    return $fields;
-  }
-  
-  /**
-   * 该方法根据 $main 数组内容设置领域对象 $domaini 的内容。并返回 $main 键数组。
-   * @param $main - array, 指定要设置领域对象的数据,数组以键值对方式组织，
-   *                结构为：fieldname=>fieldvalue,其中：
-   *                    fieldname - string, 指定字段名
-   *                    fieldvalue - string,指定字段值
-   * @return 若操作成功返回 $main 键数组,否则抛出错误信息，无返回
-   */
-  private function mainFields(&$main,&$domaini){
-    $fields = array();
-    foreach($main as $key=>$value){
-        $fields[] = $key;
-        $fun = "set".ucfirst($key);
-				if(!method_exists($domaini,$fun))
-					throw new  \woo\base\AppException("Invalid field name $key or field value!");
-        $value = $this->autoValue($value);
-        $main[$key] = $value;
-        if($value!=="")
-          $domaini->$fun($value);
-    }
-    return $fields;
-  }
-  
-  /**
-   * 该方法更新由 $targets 数组内容指定的数据表中的指定记录，由子类中的 doUpdate 方法调用
-   * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
-   * @param $target - array, 指定要删除的对象,数组以键值对方式组织，结构为：table=>value,其中：
-   *                    table - string, 指定要删除的数据表，同时指定域名目标
-   *                    value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
-   *                    
-   *                    value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
-   *                              field0 - string, 指定要查找的字段名
-   *                              index - $target 数组的索引值，指定查找字段名的域名目标
-   *                              field1 - string, 指定查找字段名的域名目标的字段名
-   * @return 若操作成功返回主表更新记录的 id 字段与其值的键值对及各被更新数据表及其被更新记录的字段名和字段值键值对的数组，
-   *         否则返回 id=-1,error=错误信息的键值对
-   */
-	function changeRecords($targets,$sucess,$is_new){
-    $domain = array();
-    $result = array();
-    $this->pdo = null;
-    $index = 0;
-    $len = count($targets)-1;
-    foreach($targets as $target=>$datas){
-      include_once("domain/".ucfirst($target).".php");
-      $object = "woo\\domain\\".ucfirst($target);
-      $domain[$index] = new $object(null);  // 生成域名目标
-      $result[$target] = $this->saveRecords($target,$datas,$domain,$index,$is_new);
-      if($len==$index){
-		    if(!is_null($this->pdo))
-          $this->pdo->commit();                 //提交事务  
-        if(!empty($sucess))
-          $sucess($domain,$result);
-        $result["id"] = $domain[0]->getId();
-      }
-      $index++;
-    }
-		return $result;
-  }
-  
-	function updateRecords($targets,$sucess){
-    $result = $this->changeRecords($targets,$sucess,false);
-		$this->response(json_encode($result));
-  }
-  
-  /**
-   * 该方法删除由 $targets 数组内容指定的数据表中的指定记录，由子类中的 doDelete 方法调用
-   * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的领域模型
-   * @param $target - array, 指定要删除的对象,数组以键值对方式组织，结构为：table=>value,其中：
-   *                    table - string, 指定要删除的数据表，同时指定领域模型
-   *                    value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
-   *                    
-   *                    value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
-   *                              field0 - string, 指定要查找的字段名
-   *                              index - $target 数组的索引值，指定查找字段名的领域模型
-   *                              field1 - string, 指定查找字段名的领域模型的字段名
-   * @return 若操作成功返回各被删除数据表及其被删除记录的 id 键值对，否则返回 id=-1,error=错误信息的键值对
-   */
-	function deleteRecords($targets,$sucess){
-      $rec=array();
-      $index = 0;
-       
-      foreach($targets as $target=>$condition){
-        if(!is_array($condition))
-				  throw new \woo\base\AppException("Data format error!");
-      include_once("domain/".ucfirst($target).".php");
-        $factory = \woo\mapper\PersistenceFactory::getFactory($target,$condition['fields']);
-			  $finder = new \woo\mapper\DomainObjectAssembler($factory);
-        $key = $condition['fields'][0];
-        $value = $condition['value'];
-        if(is_array($value)){
-          $fun = "get".ucfirst(current($value));
-          $val = $rec[key($value)]->$fun();
-        }else
-          $val = $value;
-			  $idobj = $factory->getIdentityObject()->field($key)->eq($val);
-			  $collection = $finder->find($idobj);
-        $rec[$index] = $collection->current();
-        if($index==0){
-			    $this->pdo = \woo\mapper\DomainObjectAssembler::getPDO();
-			    $this->pdo->beginTransaction();       //开始事务  
-        }
-        $recc = $rec[$index++];
-			  if(!is_null($recc)){
-			    $finder->delete($idobj);
-          $result[$target] = array("id"=>$recc->getId());
-        
-          if(!empty($condition['sucess'])){
-            $condition['sucess']($recc,$result[$target]);
-          }
-			  }else if(is_array($condition))
-              continue;
-				else throw new \woo\base\AppException("Record ID is'n exist!");
-      
-      }
-      
-			$this->pdo->commit();                 //提交事务  
-      if(!empty($sucess))
-        $sucess($rec,$result);
-      
-      $this->response(json_encode($result));
+				$domaini->$fun($val);
+			}
+		}else{
+			$domaini->setId($condition);
+			$fields[] = 'id';
+		}
+		return $fields;
 	}
   
-  function restGet(){
-    $this->doGet();
-  }
+	/**
+	 * 该方法根据 $main 数组内容设置领域对象 $domaini 的内容。并返回 $main 键数组。
+	 * @param $main - array, 指定要设置领域对象的数据,数组以键值对方式组织，
+	 *                结构为：fieldname=>fieldvalue,其中：
+	 *                    fieldname - string, 指定字段名
+	 *                    fieldvalue - string,指定字段值
+	 * @return 若操作成功返回 $main 键数组,否则抛出错误信息，无返回
+	 */
+	private function mainFields(&$main,&$domaini){
+		$fields = array();
+		foreach($main as $key=>$value){
+			$fields[] = $key;
+			$fun = "set".ucfirst($key);
+			if(!method_exists($domaini,$fun))
+				throw new  \woo\base\AppException("Invalid field name $key or field value!");
+			$value = $this->autoValue($value);
+			$main[$key] = $value;
+			if($value!=="")
+				$domaini->$fun($value);
+		}
+		return $fields;
+	}
   
-  function restCreate(){
-    $this->doCreate($this->request->getProperty("item"));
-  }
+	/**
+	 * 该方法更新由 $targets 数组内容指定的数据表中的指定记录，由子类中的 doUpdate 方法调用
+	 * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
+	 * @param $target - array, 指定要删除的对象,数组以键值对方式组织，结构为：table=>value,其中：
+	 *                    table - string, 指定要删除的数据表，同时指定域名目标
+	 *                    value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
+	 *                    
+	 *                    value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
+	 *                              field0 - string, 指定要查找的字段名
+	 *                              index - $target 数组的索引值，指定查找字段名的域名目标
+	 *                              field1 - string, 指定查找字段名的域名目标的字段名
+	 * @return 若操作成功返回主表更新记录的 id 字段与其值的键值对及各被更新数据表及其被更新记录的字段名和字段值键值对的数组，
+	 *         否则返回 id=-1,error=错误信息的键值对
+	 */
+	function changeRecords($targets,$sucess,$is_new){
+		$domain = array();
+		$result = array();
+		$this->pdo = null;
+		$index = 0;
+		$len = count($targets)-1;
+		foreach($targets as $target=>$datas){
+			include_once("domain/".ucfirst($target).".php");
+			$object = "woo\\domain\\".ucfirst($target);
+			$domain[$index] = new $object(null);  // 生成域名目标
+			$result[$target] = $this->saveRecords($target,$datas,$domain,$index,$is_new);
+			if($len==$index){
+				if(!is_null($this->pdo))
+					$this->pdo->commit();                 //提交事务  
+				if(!empty($sucess))
+					$sucess($domain,$result);
+				$result["id"] = $domain[0]->getId();
+			}
+			$index++;
+		}
+		return $result;
+	}
   
-  function restUpdate(){
-    $this->doUpdate($this->request->getProperty("item"));
-  }
-  
-  function restDelete(){
-    $this->doDelete();
-  }
-  
-  function doGet(){
-    $this->getRecords($this->_target);
-  }
+	/**
+	 * 该方法删除由 $targets 数组内容指定的数据表中的指定记录，由子类中的 doDelete 方法调用
+	 * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的领域模型
+	 * @param $target - array, 指定要删除的对象,数组以键值对方式组织，结构为：table=>value,其中：
+	 *                    table - string, 指定要删除的数据表，同时指定领域模型
+	 *                    value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
+	 *                    
+	 *                    value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
+	 *                              field0 - string, 指定要查找的字段名
+	 *                              index - $target 数组的索引值，指定查找字段名的领域模型
+	 *                              field1 - string, 指定查找字段名的领域模型的字段名
+	 * @return 若操作成功返回各被删除数据表及其被删除记录的 id 键值对，否则返回 id=-1,error=错误信息的键值对
+	 */
+	function deleteRecords($targets,$sucess){
+		$rec=array();
+		$index = 0;
 
-  function doCreate($item){
-	  $target = array();
-    $owner = empty($item[$this->_target]);
-    $tem = isset($item[$this->_target])? $item[$this->_target]:$item;
-    $target[$this->_target][] = array('fields'=>$tem);
-    $this->createRecords($target,function($domain,&$result) use($owner,$item){
-      
-      $s = $result[$this->_target][0];
-      unset($result[$this->_target]);
-      if($owner){
-        unset($result['id']);
-        $result = $s;
-      }else{
-        $result[$this->_target] = $s;
-      }
-      
-      /**
-       * 用户指定的其它表操作
-       */
-      if(isset($item['other'])){
-        $is = "?{$this->_target}:";
-        $islen = strlen($is);
-        foreach($item['other'] as $index=>$other){
-          if(isset($other['data'])){
-            foreach($other['data'] as $key=>$val){
-              if(strlen($val)>$islen && strpos($val,$is)==0){
-                $other['data'][$key] = $s[substr($val,$islen)];
-              }
-            }
-            $target[$other['table']][] = array('fields'=>$other['data']);
-            switch($other['method']){
-              case 'post':
-		$temp = $this->changeRecords($target,null,true);
-                $result[$other['table']] = $temp[$other['table']][0];
-                break;
-              case 'put':
-		$temp = $this->changeRecords($target,null,false);
-                $result[$other['table']] = $temp[$other['table']][0];
-                break;
-            }
-          }
-        }
-      }
-      
-      /**
-       * 系统指定的其它表操作
-       */
-      if(isset($item['system'])){
-        foreach($item['system'] as $system){
-          if(isset($system['data'])){
-            foreach($system['data'] as $key=>$val){
-              if(strlen($val)>$islen && strpos($val,$is)==0){
-                $system['data'][$key] = $s[substr($val,$islen)];
-              }
-            }
-            $target[$system['table']][] = array('fields'=>$system['data']);
-            switch($system['method']){
-              case 'post':
-		$temp = $this->changeRecords($target,null,true);
-                $result[$other['table']] = $temp[$system['table']][0];
-                break;
-              case 'put':
-		$temp = $this->changeRecords($target,null,false);
-                $result[$other['table']] = $temp[$system['table']][0];
-                break;
-            }
-          }
-        }
-      }
-      $this->afterCreate($domain,$result,$item);
-    });
-  }
+		foreach($targets as $target=>$condition){
+			if(!is_array($condition))
+				throw new \woo\base\AppException("Data format error!");
+			include_once("domain/".ucfirst($target).".php");
+			$factory = \woo\mapper\PersistenceFactory::getFactory($target,$condition['fields']);
+			$finder = new \woo\mapper\DomainObjectAssembler($factory);
+			$key = $condition['fields'][0];
+			$value = $condition['value'];
+			if(is_array($value)){
+				$fun = "get".ucfirst(current($value));
+				$val = $rec[key($value)]->$fun();
+			}else
+				$val = $value;
+			$idobj = $factory->getIdentityObject()->field($key)->eq($val);
+			$collection = $finder->find($idobj);
+			$rec[$index] = $collection->current();
+			if($index==0){
+				$this->pdo = \woo\mapper\DomainObjectAssembler::getPDO();
+				$this->pdo->beginTransaction();       //开始事务  
+			}
+			$recc = $rec[$index++];
+			if(!is_null($recc)){
+				$finder->delete($idobj);
+				$result[$target] = array("id"=>$recc->getId());
+
+				if(!empty($condition['sucess'])){
+					$condition['sucess']($recc,$result[$target]);
+				}
+			}else if(is_array($condition))
+				continue;
+			else throw new \woo\base\AppException("Record ID is'n exist!");
+
+		}
+
+		$this->pdo->commit();                 //提交事务  
+		if(!empty($sucess))
+			$sucess($rec,$result);
+
+		$this->response(json_encode($result));
+	}
   
-  function afterCreate($domain,&$result,$item){}
-  
-  /**
-   * 更新数据表记录
-   * @param $item - array, 键值对数组，支持两种数据格式
-   *          1. table:{field0:value0[,..]} 
-   *          2. {field0:value0[,..]} 
-   * @param $result - array, 键值对数组，与 $item 相对应产生两种数据格式
-   *          1. {'id':id,table:{field0:value0[,..]}} 
-   *          2. {field0:value0[,..]} 
-   *          如程序无其它错误，该数据返回到客户端
-   */
-  function doUpdate($item){
-	  $target = array();
-    $owner = empty($item[$this->_target]);
-    $tem = isset($item[$this->_target])? $item[$this->_target]:$item;
-    $target[$this->_target][] = array('fields'=>$tem,'condition'=>$this->request->getProperty("id"));
-    $this->updateRecords($target,function($domain,&$result) use($owner){
-      $s = $result[$this->_target][0];
-      unset($result[$this->_target]);
-      if($owner){
-        unset($result['id']);
-        $result = $s;
-      }else{
-        $result[$this->_target] = $s;
-      }
-    });
-  }
-  
-  function doDelete(){
-    $target[$this->_target] = array('fields'=>array('id'),'value'=>$this->request->getProperty("id"));
-    $this->deleteRecords($target,function($domain,&$result)  use($target){
-      $result = $result[key($target)];
-    });
-  }
+	function restGet(){
+		$this->doGet();
+	}
+
+	function restCreate(){
+		$this->doCreate($this->request->getProperty("item"));
+	}
+
+	function restUpdate(){
+		$this->doUpdate($this->request->getProperty("item"));
+	}
+
+	function restDelete(){
+		$this->doDelete();
+	}
+
+	function doGet(){
+		$this->getRecords($this->_target);
+	}
+
+	function doCreate($item){
+		$target = array();
+		$_target = $this->_target;
+		$owner = empty($item[$_target]);
+		$tem = isset($item[$_target])? $item[$_target]:$item;
+		$target[$_target][] = array('fields'=>$tem);
+		$result = $this->changeRecords($target,function($domain,&$result) use($owner,$item,$_target){
+
+			$s = $result[$_target][0];
+			unset($result[$_target]);
+			if($owner){
+				unset($result['id']);
+				$result = $s;
+			}else{
+				$result[$_target] = $s;
+			}
+		},true);
+		
+		/**
+		* 用户和系统指定的其它表操作
+		*/
+		$is = "?{$_target}:";
+		$islen = strlen($is);
+		
+		foreach(array('other','system') as $opt)
+			if(isset($item[$opt])){
+				foreach($item[$opt] as $index=>$other){
+					if(isset($other['data'])){
+						foreach($other['data'] as $key=>$val){
+							if(strlen($val)>$islen && strpos($val,$is)==0){
+								$other['data'][$key] = $s[substr($val,$islen)];
+							}
+						}
+						$target[$other['table']][] = array('fields'=>$other['data']);
+						$opse = $other['method']=='post'? true:false;
+						$temp = $this->changeRecords($target,null,true);
+						$result[$other['table']] = $temp[$other['table']][0];
+					}
+				}
+			}
+		$this->afterCreate($domain,$result,$item);
+		$this->response(json_encode($result),201);
+	}
+
+	function afterCreate($domain,&$result,$item){}
+
+	/**
+	 * 更新数据表记录
+	 * @param $item - array, 键值对数组，支持两种数据格式
+	 *          1. table:{field0:value0[,..]} 
+	 *          2. {field0:value0[,..]} 
+	 * @param $result - array, 键值对数组，与 $item 相对应产生两种数据格式
+	 *          1. {'id':id,table:{field0:value0[,..]}} 
+	 *          2. {field0:value0[,..]} 
+	 *          如程序无其它错误，该数据返回到客户端
+	 */
+	function doUpdate($item){
+		$target = array();
+		$_target = $this->_target;
+		$owner = empty($item[$_target]);
+		$tem = isset($item[$_target])? $item[$_target]:$item;
+		$target[$_target][] = array('fields'=>$tem,'condition'=>$this->request->getProperty("id"));
+		$result = $this->changeRecords($target,function($domain,&$result) use($owner,$_target){
+			$s = $result[$_target][0];
+			unset($result[$_target]);
+			if($owner){
+				unset($result['id']);
+				$result = $s;
+			}else{
+				$result[$_target] = $s;
+			}
+		},false);
+		$this->response(json_encode($result));
+	}
+
+	function doDelete(){
+		$target[$this->_target] = array('fields'=>array('id'),'value'=>$this->request->getProperty("id"));
+		$this->deleteRecords($target,function($domain,&$result)  use($target){
+			$result = $result[key($target)];
+		});
+	}
 }
 ?>

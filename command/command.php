@@ -80,12 +80,14 @@ abstract class Command{
 	 * @param {object} $fun - 函数
 	 * @return command status word
 	 */
-	protected function userShell(\woo\controller\Request $request,$fun){
+	protected function userShell(\woo\controller\Request $request,$fun=null){
 		$session = \woo\base\SessionRegistry::instance();
 		$userid = $session->get("userid");
 		$result = 'CMD_INSUFFICIENT_DATA';
 		if(isset($userid)){
-			$result = $fun($request,$userid);
+			$result = 'CMD_OK';
+			if(!empty($fun))
+				$result = $fun($request,$userid);
 		}else{
 			$request->addFeedback("Not logged!");
 		}
@@ -98,7 +100,7 @@ abstract class Command{
 	 * @param {object} $fun - 函数
 	 * @return command status word
 	 */
-	protected function employeeShell(\woo\controller\Request $request,$fun){
+	protected function employeeShell(\woo\controller\Request $request,$fun=null){
 		$session = \woo\base\SessionRegistry::instance();
 		$userid = $session->get("userid");
 		$result = 'CMD_INSUFFICIENT_DATA';
@@ -111,7 +113,9 @@ abstract class Command{
         $obj = $collection->current();
         if($obj){
           if($obj->getUserid()==$userid){
-			      $result = $fun($request,$userid);
+			$result = 'CMD_OK';
+			if(!empty($fun))
+				$result = $fun($request,$userid);
           }
         }
       }else
@@ -128,7 +132,7 @@ abstract class Command{
 	 * @param {object} $fun - 函数
 	 * @return command status word
 	 */
-	protected function captchaShell(\woo\controller\Request $request,$fun){
+	protected function captchaShell(\woo\controller\Request $request,$fun=null){
 		$session = \woo\base\SessionRegistry::instance();
 		$vcodes = $session->get('saftcode');
 		$session->set('saftcode',rand(1000,9999));
@@ -140,9 +144,10 @@ abstract class Command{
     }
     if(isset($code)){
 		  $result = 'CMD_OK';
-		  if($vcodes==$code) // 校验码是否正确
+		  if($vcodes==$code){ // 校验码是否正确
+			if(!empty($fun))
 			  $result = $fun($request);
-		  else{
+		  }else{
 			  $request->addFeedback("Validate Code Error!");
 			  $result = 'CMD_INSUFFICIENT_DATA';
 		  }
@@ -213,7 +218,7 @@ class RESTCommand extends Command{
 			}
 			if(isset($item['action'])){
 				$cmd = $request->getProperty('cmd');
-				$s = lcFirst($cmd);
+				$s = strtolower($cmd);
 				if($item['action']=="{$s}_create"){
 					$request->addFeedback("Command Ok!");
 				}else{
@@ -237,28 +242,29 @@ class RESTCommand extends Command{
 		$cmd = $request->getProperty('cmd');
 		$right = self::validates($cmd);
 		if(empty($right) || empty($right[1])){
-			return $this->userShell($request,function($request,$userid) {
-				return $this->_restCreate($request,null);
-			});
+			if(1==$this->userShell($request)){
+				$status = $this->_restCreate($request,null);
+			}
 		}else{
 			$b = explode(' ',$right[1]['autoParam']);
 			if(empty($right[1]['fn'])){
-				return $this->userShell($request,function($request,$userid) use($b){
-					return $this->_restCreate($request,$b);
-				});
+				if(1==$this->userShell($request)){
+					$status = $this->_restCreate($request,$b);
+				}
 			}else{
 				$a = explode(' ',$right[1]['fn']);
-				return $this->$a[0]($request,function($request) use($b,$a) { 
+				if(1==$this->$a[0]($request,null)){ // 调用第一个验证函数
 					if(count($a)==2){
-						return $this->$a[1]($request,function($request) use($b){ 
-							return $this->_restCreate($request,$b);
-						});
+						if(1==$this->$a[1]($request,null)){  // 调用第二个验证函数
+							$status = $this->_restCreate($request,$b);
+						}
 					}else{
-						return $this->_restCreate($request,$b);
+						$status = $this->_restCreate($request,$b);
 					}
-				});
+				}
 			}
 		}
+		return $status;
 	}
 	
 	private function _restUpdate(\woo\controller\Request $request){
@@ -268,7 +274,7 @@ class RESTCommand extends Command{
 		if(isset($item) && (isset($id) || isset($item["id"]))){
 			if(isset($item['action'])){
 				$cmd = $request->getProperty('cmd');
-				$s = lcFirst($cmd);
+				$s = strtolower($cmd);
 				if($item['action']=="{$s}_update"){
 					$request->addFeedback("Command Ok!");
 				}else{
@@ -280,30 +286,13 @@ class RESTCommand extends Command{
 			}
 		}else{
 			$request->addFeedback("ID is needed!");
-			$result = 'CMD_INSUFFICIENT_DATA';
+			$status = 'CMD_INSUFFICIENT_DATA';
 		}
 		return $status;
 	}
 
 	function restUpdate(\woo\controller\Request $request){
-		$cmd = $request->getProperty('cmd');
-		$right = self::validates($cmd);
-		if(empty($right) || empty($right[2])){
-			return $this->userShell($request,function($request){
-				return $this->_restUpdate($request);
-			});
-		}else{
-			$a = explode(' ',$right[2]);
-			return $this->$a[0]($request,function($request) use($a){ 
-				if(count($a)==2){
-					return $this->$a[1]($request,function($request){ 
-						return $this->_restUpdate($request);
-					});
-				}else{
-					return $this->_restUpdate($request);
-				}
-			});
-		}
+		return $this->restOption($request,2);
 	}
 	
 	private function _restDelete(\woo\controller\Request $request){
@@ -313,7 +302,7 @@ class RESTCommand extends Command{
 		if(isset($id) && is_numeric($id)){
 			if(isset($action)){
 				$cmd = $request->getProperty('cmd');
-				$s = lcFirst($cmd);
+				$s = strtolower($cmd);
 				if($action=="{$s}_delete"){
 					$request->addFeedback("Command Ok!");
 				}else{
@@ -331,24 +320,31 @@ class RESTCommand extends Command{
 	}
 
 	function restDelete(\woo\controller\Request $request){
+		return $this->restOption($request,3);
+	}
+	
+	function restOption(\woo\controller\Request $request,$index){
+		$fun = array('_restGet','_restCreate','_restUpdate','_restDelete');
 		$cmd = $request->getProperty('cmd');
 		$right = self::validates($cmd);
-		if(empty($right) || empty($right[2])){
-			return $this->userShell($request,function($request){
-				return $this->_restDelete($request);
-			});
+		$status = 'CMD_INSUFFICIENT_DATA';
+		if(empty($right) || empty($right[$index])){
+			if(1==$this->userShell($request)){
+				$status = $this->$fun[$index]($request);
+			}
 		}else{
-			$a = explode(' ',$right[2]);
-			return $this->$a[0]($request,function($request) use($a) { 
+			$a = explode(' ',$right[$index]);
+			if(1==$this->$a[0]($request,NULL)){ // 调用第一个验证函数
 				if(count($a)==2){
-					return $this->$a[1]($request,function($request){ 
-						return $this->_restDelete($request);
-					});
+					if(1==$this->$a[1]($request,null)){  // 调用第二个验证函数
+						$status = $this->$fun[$index]($request);
+					}
 				}else{
-					return $this->_restDelete($request);
+					$status = $this->$fun[$index]($request);
 				}
-			});
+			}
 		}
+		return $status;
 	}
 }
 
