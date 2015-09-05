@@ -23,13 +23,14 @@
  * @author Nicola Asuni
  * @since 2008-09-15
  */
+namespace woo\view;
 
 // Include the main TCPDF library (search for installation path).
-require_once('view\contract.edit.include.php');
-require_once('domain\Order.php');
-require_once('domain\Product.php');
-require_once('domain\Bill.php');
-require_once('domain\Transport.php');
+require_once('contract.edit.include.php');
+require_once('domain/Order.php');
+require_once('domain/Product.php');
+require_once('domain/Bill.php');
+require_once('domain/Transport.php');
 
 // extend TCPF with custom functions
 class MYPDF extends TCPDF {
@@ -429,3 +430,4 @@ $pdf->Output($pdfname, 'I');
 //============================================================+
 // END OF FILE
 //============================================================+
+?>

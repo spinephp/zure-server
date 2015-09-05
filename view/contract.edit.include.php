@@ -22,6 +22,7 @@
  * @author Nicola Asuni
  * @since 2013-05-14
  */
+namespace woo\view;
 
 // always load alternative config file for examples
 require_once('../tcpdf/examples/config/tcpdf_config_alt.php');

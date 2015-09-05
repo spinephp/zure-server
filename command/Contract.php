@@ -9,7 +9,7 @@
 
 namespace woo\command;
 
-require_once("command/Command.php");
+require_once("command/command.php");
 require_once("controller/Request.php");
 require_once("base/SessionRegistry.php");
 require_once("base/const.right.php");
@@ -40,9 +40,9 @@ class Contract extends Command{
             $sub = "";
             $fields[] = 'userid';
             if($obj->isCustom())
-              $sub = "Custom";
+              $sub = "custom";
             else{
-              $sub = "Employee";
+              $sub = "employee";
               $fields[] = 'myright';
             }
 				    $factory = \woo\mapper\PersistenceFactory::getFactory($sub,$fields);
@@ -51,7 +51,7 @@ class Contract extends Command{
 				    $collection = $finder->find($idobj);
             if($collection->count()==1){
               $sobj = $collection->current();
-              if($sub=="Custom"){ // 客户查看合同
+              if($sub=="custom"){ // 客户查看合同
 				        $factory = \woo\mapper\PersistenceFactory::getFactory("order",array('id','userid'));
 				        $finder = new \woo\mapper\DomainObjectAssembler($factory);
 				        $idobj = $factory->getIdentityObject()->field('id')->eq($orderid)->field('userid')->eq($userid);
