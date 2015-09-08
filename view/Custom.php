@@ -9,7 +9,7 @@ namespace woo\view;
 
 require_once("view/REST.php");
 require_once("domain/Person.php");
-require_once("domain/SystemNotice.php");
+require_once("domain/Systemnotice.php");
 
 class customREST extends REST{
 	function __construct(){
@@ -25,7 +25,7 @@ class customREST extends REST{
     $now = date('Y-m-d H:i:s');
     $extend['registertime'] = $now;
     $extend['lasttime'] = $now;
-    $extend['hash'] = md5($itemPerson['UserName'].$itemPerson['pwd'].$now);
+    $extend['hash'] = md5($itemPerson['username'].$itemPerson['pwd'].$now);
     $target["person"] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>function($person,$finder,&$result){
       $pic = $person->getPicture();
       if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
@@ -58,17 +58,19 @@ class customREST extends REST{
     $extNotice['time'] = $now;
     $target["systemnotice"] = array('condition'=>$extNotice);
     
-    $this->createRecords($target,function($domain,&$result){
-      // 发送激活邮件
-      $this->activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
-      
+    //$this->createRecords($target,function($domain,&$result){
+     $result = $this->changeRecords($target,function($domain,&$result){
+    // 发送激活邮件
+      //$this->activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
+      call_user_func_array(array('customREST','activeEmail'),array($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash()));
       $result['id'] = $result['custom']['id'];
       $result['custom']['userid'] = $result['person']['id'];
       $result["register"] = "账号注册成功！";
       $result["email"] = "账号激活邮件已发送到你的邮箱中。激活邮件48小时内有效。请尽快登录您的邮箱点击激活链接完成账号激活。";
       unset($result['person']['pwd']);
-    });
-	}
+     },true);
+			$this->response(json_encode($result),201);
+ 	}
 	
 	function doUpdate($item){
     $target = array();
@@ -123,7 +125,7 @@ class customREST extends REST{
 		// 从 sys_notice 表中删除记录
 	}
   
-  function activeEmail($username,$email,$token){
+  static function activeEmail($username,$email,$token){
     require_once('phpmailer/class.phpmailer.php');
     
     $url = "http://".$_SERVER["HTTP_HOST"];

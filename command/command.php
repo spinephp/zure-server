@@ -25,7 +25,7 @@ abstract class Command{
 	'Complain'=>array('userShell',null,null,null),
 	'Consignee'=>array('userShell',array('fn'=>null,'autoParam'=>'userid'),null,null),
 	'Currency'=>array(null,array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
- 	'Custom'=>array('userShell',array('fn'=>'captchaShell userShell','autoParam'=>null),'captchaShell userShell','captchaShell userShell'),
+ 	'Custom'=>array('userShell',array('fn'=>'captchaShell','autoParam'=>null),'captchaShell userShell','captchaShell userShell'),
 	'CustomAccount'=>array('userShell',null,null,null),
   	'Department'=>array('employeeShell',array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
 	'District '=>array('userShell',null,null,null),
@@ -241,6 +241,7 @@ class RESTCommand extends Command{
 	function restCreate(\woo\controller\Request $request){
 		$cmd = $request->getProperty('cmd');
 		$right = self::validates($cmd);
+		$status = 'CMD_OK';
 		if(empty($right) || empty($right[1])){
 			if(1==$this->userShell($request)){
 				$status = $this->_restCreate($request,null);
