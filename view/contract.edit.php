@@ -23,7 +23,7 @@
  * @author Nicola Asuni
  * @since 2008-09-15
  */
-namespace woo\view;
+//namespace woo\view;
 
 // Include the main TCPDF library (search for installation path).
 require_once('contract.edit.include.php');
