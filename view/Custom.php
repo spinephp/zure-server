@@ -38,7 +38,7 @@ class customREST extends REST{
     $extend['registertime'] = $now;
     $extend['lasttime'] = $now;
     $extend['hash'] = md5($itemPerson['username'].$itemPerson['pwd'].$now);
-    $target["person"] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>null);
+    $target["person"] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>"sucessPerson");
 
     $itemCustom = $item["custom"];
 		if(is_null($itemCustom))
@@ -67,7 +67,7 @@ class customREST extends REST{
      $result = $this->changeRecords($target,function($domain,&$result){
     // 发送激活邮件
       //$this->activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
-      //customREST::activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
+      customREST::activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
       //call_user_func_array(array('customREST','activeEmail'),array($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash()));
       $result['id'] = $result['custom']['id'];
       $result['custom']['userid'] = $result['person']['id'];
@@ -143,11 +143,11 @@ class customREST extends REST{
     $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
     $mail->SMTPAuth = true; // authentication enabled
     $mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
-    $mail->Host = "smtp.gmail.com";
+    $mail->Host = "smtp.qq.com";//"smtp.gmail.com";
     $mail->Port = 465; // or 587
     $mail->IsHTML(true);
-    $mail->Username = "yrrlyg@gmail.com";  //你的邮箱
-    $mail->Password = "yrr@tsl12";  //你的密码
+    $mail->Username = "gstools@qq.com";  //你的邮箱
+    $mail->Password = "lxm@tsl12";  //你的密码
     $mail->SetFrom("yrrlyg@gmail.com");
     $mail->Subject = "云瑞用户新帐号激活"; //邮件标题
     $mail->AddAddress($email);
