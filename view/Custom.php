@@ -16,6 +16,18 @@ class customREST extends REST{
 		parent::__construct("custom");
 	}
 	
+	function sucessPerson($person,$finder,&$result){
+      $pic = $person->getPicture();
+      if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
+        $imgName = sprintf("u%08d",$person->getId());
+        $headshot = $imgName.".png";
+        rename("images/user/$pic", "images/user/$headshot");
+        $person->setPicture($headshot);
+			  $finder->insert($person);
+        $result['picture'] = $headshot;
+      }
+	}
+	
 	function doCreate($item){
     $itemPerson = $item["person"];
 		if(is_null($itemPerson))
@@ -26,17 +38,7 @@ class customREST extends REST{
     $extend['registertime'] = $now;
     $extend['lasttime'] = $now;
     $extend['hash'] = md5($itemPerson['username'].$itemPerson['pwd'].$now);
-    $target["person"] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>function($person,$finder,&$result){
-      $pic = $person->getPicture();
-      if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
-        $imgName = sprintf("u%08d",$person->getId());
-        $headshot = $imgName.".png";
-        rename("images/user/$pic", "images/user/$headshot");
-        $person->setPicture($headshot);
-			  $finder->insert($person);
-        $result['picture'] = $headshot;
-      }
-    });
+    $target["person"] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>null);
 
     $itemCustom = $item["custom"];
 		if(is_null($itemCustom))
@@ -55,14 +57,18 @@ class customREST extends REST{
     
     $extNotice['userid'] = array('0'=>'id');
     $extNotice['type'] = 'G';
+    $extNotice['content'] = '恭喜你注册成功，你目前是云瑞注册会员，&lt;a href=#&gt;查看会员的权利及优惠&lt;/a&gt;';
     $extNotice['time'] = $now;
     $target["systemnotice"] = array('condition'=>$extNotice);
-    
+    					
+	$this->request->log(json_encode($target));
+
     //$this->createRecords($target,function($domain,&$result){
      $result = $this->changeRecords($target,function($domain,&$result){
     // 发送激活邮件
       //$this->activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
-      call_user_func_array(array('customREST','activeEmail'),array($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash()));
+      //customREST::activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
+      //call_user_func_array(array('customREST','activeEmail'),array($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash()));
       $result['id'] = $result['custom']['id'];
       $result['custom']['userid'] = $result['person']['id'];
       $result["register"] = "账号注册成功！";
