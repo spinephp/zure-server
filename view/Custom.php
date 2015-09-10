@@ -146,9 +146,9 @@ class customREST extends REST{
     $mail->Host = "smtp.qq.com";//"smtp.gmail.com";
     $mail->Port = 465; // or 587
     $mail->IsHTML(true);
-    $mail->Username = "gstools@qq.com";  //你的邮箱
-    $mail->Password = "lxm@tsl12";  //你的密码
-    $mail->SetFrom("yrrlyg@gmail.com");
+    $mail->Username = "1619584123";  //你的邮箱
+    $mail->Password = "lxm@tsl121314";  //你的密码
+    $mail->SetFrom("admin@yrr8.com");
     $mail->Subject = "云瑞用户新帐号激活"; //邮件标题
     $mail->AddAddress($email);
     
