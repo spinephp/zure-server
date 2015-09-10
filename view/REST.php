@@ -430,7 +430,7 @@ class REST{
 				}
 			}
 		//}
-		return $result;
+		return $main;//$result;
 	}
   
 	/**
@@ -518,7 +518,9 @@ class REST{
 			include_once("domain/".ucfirst($target).".php");
 			$object = "woo\\domain\\".ucfirst($target);
 			$domain[$index] = new $object(null);  // 生成域名目标
-			$result[$target] = $this->saveRecords($target,$datas,$domain,$index,$is_new);
+			$_result = $this->saveRecords($target,$datas,$domain,$index,$is_new);
+			if(!empty($_result))
+				$result[$target] = $_result;
 			if($len==$index){
 				if(!is_null($this->pdo))
 					$this->pdo->commit();                 //提交事务  

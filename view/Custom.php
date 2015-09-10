@@ -70,7 +70,7 @@ class customREST extends REST{
       customREST::activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
       //call_user_func_array(array('customREST','activeEmail'),array($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash()));
       $result['id'] = $result['custom']['id'];
-      $result['custom']['userid'] = $result['person']['id'];
+      $result['custom']['userid'] = $domain[0]->getId();
       $result["register"] = "账号注册成功！";
       $result["email"] = "账号激活邮件已发送到你的邮箱中。激活邮件48小时内有效。请尽快登录您的邮箱点击激活链接完成账号激活。";
       unset($result['person']['pwd']);
@@ -146,6 +146,7 @@ class customREST extends REST{
     $mail->Host = "smtp.qq.com";//"smtp.gmail.com";
     $mail->Port = 465; // or 587
     $mail->IsHTML(true);
+    $mail->Hostname = 'yrr8.com';
     $mail->Username = "1619584123";  //你的邮箱
     $mail->Password = "lxm@tsl121314";  //你的密码
     $mail->SetFrom("admin@yrr8.com");
@@ -169,7 +170,7 @@ class customREST extends REST{
     '_blank'>{$url}</a><br/> 
         如果以上链接无法点击，请将它复制到你的浏览器地址栏中进入访问，该链接48小时内有效。<br/><br />  您登陆本站( http://www.yrr8.com )后,即可享受本站提供的各项服务了。<br />
     联系电话：0518-82340137<br />
-    如果您有任何问题请发信到 yrrlyg@gmail.com，欢迎随时与我们联系！<br />
+    如果您有任何问题请发信到 admin@yrr8.com，欢迎随时与我们联系！<br />
     祝您生意兴隆，财源广进<br /><br />
 连云港云瑞耐火材料有限公司<br />{$now}<img alt='helloweba' src='cid:my-attach'>"; //邮件主体内容
 
