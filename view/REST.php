@@ -155,7 +155,7 @@ class REST{
 					$name = "get".ucfirst($field);
 					if(method_exists($rec,$name)){
 						$params = $this->request->getProperty("params");
-						if(isset($params) && !is_null($params) && isset($params[$field]))
+						if(isset($params) && isset($params[$field]))
 							$result[$i][$field] = $rec->$name($params[$field]);
 						else
 							$result[$i][$field] = $rec->$name();
@@ -212,6 +212,42 @@ class REST{
 	}
   
 	/**
+	* 处理语言伪字段(非数据库字段，由数据库表中相关中文字段名加后缀 s 组成。伪字段只能读出，不能写入)
+	* 把与伪字段相关的字段列出，以键名为 extend 保存到 Request 类管理的白板中.
+	* 
+	*/
+	protected function pseudoLanguageFields($extends){
+		$need = $this->request->getProperty("extend");
+		$filter = $this->request->getProperty("filter");
+
+		foreach($extends as $ext){
+			if(in_array("{$ext}s",$filter)){
+				$need["{$ext}s"] = array($ext,"{$ext}_en");
+			}
+		}
+		if(!is_null($need))
+			$this->request->setProperty('extend',$need);  
+	}
+  
+	/**
+	* 处理伪字段(非数据库字段，通常由数据库表中相关字段和特定字符按一定顺序组合而成的复合数据),伪字段只能读出，不能写入。
+	* 把与伪字段相关的字段列出，以键名为 extend 保存到 Request 类管理的白板中.
+	*
+	*/
+	protected function pseudoFields($extends){
+		$need = $this->request->getProperty("extend");
+		$filter = $this->request->getProperty("filter");
+
+		foreach($extends as $pse=>$ext){
+			if(in_array($pse,$filter)){
+				$need[$pse] = $ext;
+			}
+		}
+		if(!is_null($need))
+			$this->request->setProperty('extend',$need);  
+	}
+	
+	/**
 	 * 获取数据表 $table 的集合
 	 * @param $table - string 类型，指定数据表名称
 	 * @return Collection 类的实例，指定数据集合
@@ -229,6 +265,7 @@ class REST{
 		$keys = array_keys($domain->getObjects());
 		$keys[] = 'id';
 		$filter = $this->request->getProperty("filter");
+		$extend = $this->request->getProperty("extend");
 		foreach($filter as $field)
 		if(in_array($field,$keys)){
 			$fields[] = $field; 
@@ -236,6 +273,11 @@ class REST{
 			if($field=='names'){ //  names
 				if(!in_array('name',$fields)) $fields[] = 'name';
 				if(!in_array('name_en',$fields)) $fields[] = 'name_en';
+			}else if(isset($extend[$field])){
+				foreach($extend[$field] as $ext){
+					if(in_array($ext,$keys) && !in_array($ext,$fields))
+						$fields[] = $ext; 
+				}
 			}
 		}
 		$condition = $this->request->getProperty("cond");
@@ -244,13 +286,6 @@ class REST{
 				$field = $cond['field'];
 				if(in_array($field,$keys) && !in_array($field,$fields))
 					$fields[] = $field; 
-			}
-		}
-		$extend = $this->request->getProperty("extend");
-		if(!empty($extend)){
-			foreach($extend as $ext){
-				if(in_array($ext,$keys) && !in_array($ext,$fields))
-				$fields[] = $ext; 
 			}
 		}
 
@@ -436,13 +471,13 @@ class REST{
 	/**
 	 * 该方法根据 $condition 数组内容设置领域对象 $domain[$index] 的内容。
 	 * @param $condition - array, 指定要设置领域对象的数据,数组以键值对方式组织，结构为：
-	 *           1. fieldname=>fieldvalue,其中：
-	 *                    fieldname - string, 指定字段名
-	 *                    fieldvalue - string,指定字段值
-	 *           2. fieldname=>array('index'=>fieldname1)
-	 *                    fieldname - string, 指定字段名
-	 *                    index - int,指定数据表索引
-	 *                    fieldname2 - string, 由 index 指定的数据表中的字段名
+	 *     1. fieldname=>fieldvalue,其中：
+	 *          fieldname - string, 指定字段名
+	 *          fieldvalue - string,指定字段值
+	 *     2. fieldname=>array('index'=>fieldname1)
+	 *          fieldname - string, 指定字段名
+	 *          index - int,指定数据表索引
+	 *          fieldname2 - string, 由 index 指定的数据表中的字段名
 	 * @return 若操作成功返回 $condition 键数组,否则抛出错误信息，无返回
 	 */
 	private function conditionFields($condition,&$domain,$index){
@@ -474,9 +509,9 @@ class REST{
 	/**
 	 * 该方法根据 $main 数组内容设置领域对象 $domaini 的内容。并返回 $main 键数组。
 	 * @param $main - array, 指定要设置领域对象的数据,数组以键值对方式组织，
-	 *                结构为：fieldname=>fieldvalue,其中：
-	 *                    fieldname - string, 指定字段名
-	 *                    fieldvalue - string,指定字段值
+	 *      结构为：fieldname=>fieldvalue,其中：
+	 *          fieldname - string, 指定字段名
+	 *          fieldvalue - string,指定字段值
 	 * @return 若操作成功返回 $main 键数组,否则抛出错误信息，无返回
 	 */
 	private function mainFields(&$main,&$domaini){
@@ -498,13 +533,13 @@ class REST{
 	 * 该方法更新由 $targets 数组内容指定的数据表中的指定记录，由子类中的 doUpdate 方法调用
 	 * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的域名
 	 * @param $target - array, 指定要删除的对象,数组以键值对方式组织，结构为：table=>value,其中：
-	 *                    table - string, 指定要删除的数据表，同时指定域名目标
-	 *                    value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
+	 *      table - string, 指定要删除的数据表，同时指定域名目标
+	 *      value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
 	 *                    
-	 *                    value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
-	 *                              field0 - string, 指定要查找的字段名
-	 *                              index - $target 数组的索引值，指定查找字段名的域名目标
-	 *                              field1 - string, 指定查找字段名的域名目标的字段名
+	 *      value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
+	 *          field0 - string, 指定要查找的字段名
+	 *          index - $target 数组的索引值，指定查找字段名的域名目标
+	 *          field1 - string, 指定查找字段名的域名目标的字段名
 	 * @return 若操作成功返回主表更新记录的 id 字段与其值的键值对及各被更新数据表及其被更新记录的字段名和字段值键值对的数组，
 	 *         否则返回 id=-1,error=错误信息的键值对
 	 */
@@ -537,13 +572,13 @@ class REST{
 	 * 该方法删除由 $targets 数组内容指定的数据表中的指定记录，由子类中的 doDelete 方法调用
 	 * 根据保存在 request 类中的请求参数，生成由参数 $target 指定的领域模型
 	 * @param $target - array, 指定要删除的对象,数组以键值对方式组织，结构为：table=>value,其中：
-	 *                    table - string, 指定要删除的数据表，同时指定领域模型
-	 *                    value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
+	 *     table - string, 指定要删除的数据表，同时指定领域模型
+	 *     value - array, 指定字段名集合及查寻条件，结构为：'fields'=>array(field[，field...]),'value'=>fieldvalue | array 其中：
 	 *                    
-	 *                    value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
-	 *                              field0 - string, 指定要查找的字段名
-	 *                              index - $target 数组的索引值，指定查找字段名的领域模型
-	 *                              field1 - string, 指定查找字段名的领域模型的字段名
+	 *     value - array, 指定查找字段名和其值的产生方法，结构为 'key'=>field0,'value'=>array('index'=>field1,其中：
+	 *         field0 - string, 指定要查找的字段名
+	 *         index - $target 数组的索引值，指定查找字段名的领域模型
+	 *         field1 - string, 指定查找字段名的领域模型的字段名
 	 * @return 若操作成功返回各被删除数据表及其被删除记录的 id 键值对，否则返回 id=-1,error=错误信息的键值对
 	 */
 	function deleteRecords($targets,$sucess){

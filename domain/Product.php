@@ -88,6 +88,10 @@ class Product extends DomainObject{
     return $this->get_ClassName(2,"C");
 	}
 	
+	function getName_en(){
+    return $this->get_ClassName(2,"E");
+	}
+	
 	function getNames(){
     return array($this->get_ClassName(2,"E"),$this->get_ClassName(2,"C"));
 	}

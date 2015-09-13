@@ -18,40 +18,15 @@ class productclassREST extends REST{
 	}
 	
 	function doGet(){
-    /**
-     * 处理伪字段(非数据库字段，通常由数据库表中相关字段和特定字符按一定顺序组合而成的复合数据),伪字段只能读出，不能写入。
-     * 把与伪字段相关的字段列出，以键名为 extend 保存到 Request 类管理的白板中.
-     *
-     */
-    $filter = $this->request->getProperty("filter");
-    $need = null;
-    
-    // 处理伪字段 classname
-    if(in_array('classname',$filter)){
-      if(!in_array('classname',$filter)) $need[] = 'name';
-    }
-    
-    // 处理伪字段 classname_en
-    if(in_array('classname_en',$filter)){
-      if(!in_array('classname_en',$filter)) $need[] = 'name_en';
-    }
-    
-    // 处理伪字段 names,classnames
-    if(in_array('names',$filter) || in_array('classnames',$filter)){
-      if(!in_array('name',$filter)) $need[] = 'name';
-      if(!in_array('name_en',$filter)) $need[] = 'name_en';
-    }
-      
-    // 处理伪字段 introductions
-    if(in_array('introductions',$filter)){
-      if(!in_array('introduction',$filter)) $need[] = 'introduction';
-      if(!in_array('introduction_en',$filter)) $need[] = 'introduction_en';
-    }
-      
-    if(!is_null($need))
-      $this->request->setProperty('extend',$need);  
-      
-    parent::doGet();
+		/**
+		* 处理伪字段(非数据库字段，通常由数据库表中相关字段和特定字符按一定顺序组合而成的复合数据),伪字段只能读出，不能写入。
+		* 把与伪字段相关的字段列出，以键名为 extend 保存到 Request 类管理的白板中.
+		*
+		*/
+		$this->pseudoLanguageFields(array("introduction"));
+		$this->pseudoFields(array('classname'=>array('name'),'classname_en'=> array('name_en'),'classnames'=> array('name','name_en')));
+
+		parent::doGet();
 	}
 	
 	function doCreate($item){
