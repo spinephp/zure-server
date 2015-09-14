@@ -147,8 +147,8 @@ class customREST extends REST{
     $mail->Port = 465; // or 587
     $mail->IsHTML(true);
     $mail->Hostname = 'yrr8.com';
-    $mail->Username = "1619584123";  //你的邮箱
-    $mail->Password = "lxm@tsl121314";  //你的密码
+    $mail->Username = "1619584123";  //你的邮箱或 QQ 号
+    $mail->Password = "lxm@tsl121314";  //你的贸易独立密码
     $mail->SetFrom("admin@yrr8.com");
     $mail->Subject = "云瑞用户新帐号激活"; //邮件标题
     $mail->AddAddress($email);
