@@ -12,6 +12,7 @@ require_once("domain/Person.php");
 require_once("domain/Systemnotice.php");
 
 class customREST extends REST{
+	static $language = 0;
 	function __construct(){
 		parent::__construct("custom");
 	}
@@ -29,6 +30,9 @@ class customREST extends REST{
 	}
 	
 	function doCreate($item){
+		$lang = $item["language"];
+		if(isset($lang))
+			self::$language = $lang;
     $itemPerson = $item["person"];
 		if(is_null($itemPerson))
 			throw new \woo\base\AppException("Person data is null!");
@@ -60,19 +64,21 @@ class customREST extends REST{
     $extNotice['content'] = '恭喜你注册成功，你目前是云瑞注册会员，&lt;a href=#&gt;查看会员的权利及优惠&lt;/a&gt;';
     $extNotice['time'] = $now;
     $target["systemnotice"] = array('condition'=>$extNotice);
-    					
-	$this->request->log(json_encode($target));
-
+ 
     //$this->createRecords($target,function($domain,&$result){
      $result = $this->changeRecords($target,function($domain,&$result){
+	$register = array("Account registration success!","账号注册成功！");
+	$email = array( 
+		"Account activation email has been sent to your mailbox. Activate your message within 48 hours. 
+		Please log in as soon as possible to activate the link to complete the account activation.",
+		"账号激活邮件已发送到你的邮箱中。激活邮件48小时内有效。请尽快登录您的邮箱点击激活链接完成账号激活。"
+	);
     // 发送激活邮件
-      //$this->activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
-      customREST::activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
-      //call_user_func_array(array('customREST','activeEmail'),array($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash()));
+     customREST::activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
       $result['id'] = $result['custom']['id'];
       $result['custom']['userid'] = $domain[0]->getId();
-      $result["register"] = "账号注册成功！";
-      $result["email"] = "账号激活邮件已发送到你的邮箱中。激活邮件48小时内有效。请尽快登录您的邮箱点击激活链接完成账号激活。";
+      $result["register"] = $register[customREST::$language];
+      $result["email"] = $email[customREST::$language];
       unset($result['person']['pwd']);
      },true);
 			$this->response(json_encode($result),201);
@@ -133,11 +139,30 @@ class customREST extends REST{
   
   static function activeEmail($username,$email,$token){
     require_once('phpmailer/class.phpmailer.php');
-    
+    $subject = array("Yunrui user account activation","云瑞用户帐号激活");
     $url = "http://".$_SERVER["HTTP_HOST"];
     $url .= "/woo/index.php? cmd=ActiveAccount&verify=$token";
     $now = date("Y-m-d");
-
+    $body = array(
+	"Dear {$username} hello:<br/>
+	Thank you for registering yrr8.com.<br/><br/>
+	Please click the following link to activate your account:<br/>
+	<a href='{$url}' target='_blank'>{$url}</a><br/>
+	If the above link is not available, please copy it into your browser's address bar to access, which is valid for 48 hours.<br/><br />
+	After you log on to the site (http://www.yrr8.com), you can enjoy the services provided by this site.<br/>
+	Contact phone: +86 518 82340137<br/>
+	If you have any questions please send email to admin@yrr8.com, welcome to contact us at any time!<br/>
+	Wish you a blooming business and flourishing source of wealth.<br/>
+	Lianyungang Yun Rui refractory Co., Ltd.<br/>{$now}<img alt='helloweba' src='cid:my-attach'>",
+	
+	"尊敬的 {$username} 您好：<br/>感谢您注册云瑞(yrr8.com)。<br/><br/>请点击以下链接激活您的帐号：<br/> 
+	<a href='{$url}' target='_blank'>{$url}</a><br/> 
+	如果以上链接无法点击，请将它复制到你的浏览器地址栏中进入访问，该链接48小时内有效。<br/><br />  您登陆本站( http://www.yrr8.com )后,即可享受本站提供的各项服务了。<br />
+	联系电话：+86 518 82340137<br />
+	如果您有任何问题请发信到 admin@yrr8.com，欢迎随时与我们联系！<br />
+	祝您生意兴隆，财源广进<br /><br />
+	连云港云瑞耐火材料有限公司<br />{$now}<img alt='helloweba' src='cid:my-attach'>"
+    );
     $mail = new \PHPMailer(); // create a new object
     $mail->IsSMTP(); // enable SMTP
     $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
@@ -150,7 +175,7 @@ class customREST extends REST{
     $mail->Username = "1619584123";  //你的邮箱或 QQ 号
     $mail->Password = "lxm@tsl121314";  //你的贸易独立密码
     $mail->SetFrom("admin@yrr8.com");
-    $mail->Subject = "云瑞用户新帐号激活"; //邮件标题
+    $mail->Subject = $subject[self::$language]; //邮件标题
     $mail->AddAddress($email);
     
     $mail->CharSet  = "UTF-8"; //字符集
@@ -165,18 +190,11 @@ class customREST extends REST{
 
     //$mail->AddAttachment('xx.xls','我的附件.xls'); // 添加附件,并指定名称
     //$mail->AddEmbeddedImage("logo.jpg", "my-attach", "logo.jpg"); //设置邮件中的图片
-    $mail->Body = "尊敬的 {$username} 您好：<br/>感谢您注册云瑞(yrr8.com)。<br/><br/>请点击以下链接激活您的帐号：<br/> 
-        <a href='{$url}' target= 
-    '_blank'>{$url}</a><br/> 
-        如果以上链接无法点击，请将它复制到你的浏览器地址栏中进入访问，该链接48小时内有效。<br/><br />  您登陆本站( http://www.yrr8.com )后,即可享受本站提供的各项服务了。<br />
-    联系电话：0518-82340137<br />
-    如果您有任何问题请发信到 admin@yrr8.com，欢迎随时与我们联系！<br />
-    祝您生意兴隆，财源广进<br /><br />
-连云港云瑞耐火材料有限公司<br />{$now}<img alt='helloweba' src='cid:my-attach'>"; //邮件主体内容
+    $mail->Body = $body[self::$language]; //邮件主体内容
 
     //发送
     if(!$mail->Send())
-      throw new \woo\base\AppException("发送失败: " . $mail->ErrorInfo);
+      throw new \woo\base\AppException("帐号激活邮件发送失败: " . $mail->ErrorInfo);
   }
 }
 
