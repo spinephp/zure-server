@@ -42,7 +42,7 @@ class customREST extends REST{
     $extend['registertime'] = $now;
     $extend['lasttime'] = $now;
     $extend['hash'] = md5($itemPerson['username'].$itemPerson['pwd'].$now);
-    $target["person"] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>"sucessPerson");
+    $target["person"][] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>"sucessPerson");
 
     $itemCustom = $item["custom"];
 		if(is_null($itemCustom))
@@ -52,18 +52,18 @@ class customREST extends REST{
       $extCustom['type'] = 'P';
     if(empty($itemCustom['ip']))
       $extCustom['ip'] = $_SERVER["REMOTE_ADDR"];
-    $target["custom"] = array('fields'=>$itemCustom,'condition'=>$extCustom);
+    $target["custom"][] = array('fields'=>$itemCustom,'condition'=>$extCustom);
     
     $extCustomgrade['userid'] = array('0'=>'id');
     $extCustomgrade['gradeid'] = 1;
     $extCustomgrade['date'] = $now;
-    $target["customgrade"] = array('condition'=>$extCustomgrade);
+    $target["customgrade"][] = array('condition'=>$extCustomgrade);
     
     $extNotice['userid'] = array('0'=>'id');
     $extNotice['type'] = 'G';
     $extNotice['content'] = '恭喜你注册成功，你目前是云瑞注册会员，&lt;a href=#&gt;查看会员的权利及优惠&lt;/a&gt;';
     $extNotice['time'] = $now;
-    $target["systemnotice"] = array('condition'=>$extNotice);
+    $target["systemnotice"][] = array('condition'=>$extNotice);
  
     //$this->createRecords($target,function($domain,&$result){
      $result = $this->changeRecords($target,function($domain,&$result){

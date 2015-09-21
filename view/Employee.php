@@ -27,7 +27,7 @@ class EmployeeREST extends REST{
     $now = date('Y-m-d H:i:s');
     $extend['lasttime'] = $now;
     $extend['hash'] = md5($itemPerson['UserName'].$itemPerson['pwd'].$now);
-    $target["person"] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>function($person,$finder,&$result){
+    $target["person"][] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>function($person,$finder,&$result){
       $pic = $person->getPicture();
       if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
         $imgName = sprintf("u%08d",$person->getId());
@@ -43,7 +43,7 @@ class EmployeeREST extends REST{
 		if(is_null($itemEmployee))
 			throw new \woo\base\AppException("Employee data is null!");
     $extEmployee['userid'] = array('0'=>'id');
-    $target["employee"] = array('fields'=>$itemEmployee,'condition'=>$extEmployee);
+    $target["employee"][] = array('fields'=>$itemEmployee,'condition'=>$extEmployee);
     $result = $this->changeRecords($target,function($domain,&$result){
       
       $result['id'] = $result['employee']['id'];
@@ -53,6 +53,17 @@ class EmployeeREST extends REST{
 			$this->response(json_encode($result),201);
 	}
 	
+	function updateSuccess($person,$finder,&$result){
+        $pic = $person->getPicture();
+        if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
+          $imgName = sprintf("u%08d",$person->getId());
+          $headshot = $imgName.".png";
+          rename("images/user/$pic", "images/user/$headshot");
+          $person->setPicture($headshot);
+			    $finder->insert($person);
+          $result['picture'] = $headshot;
+		}
+	}
 	/**
 	 * 根据 $item 数据，更新 employee 和 person 数据库，并生成回传数据
 	 * @param $item - array，键值对数组，包含要更新的数据
@@ -69,17 +80,7 @@ class EmployeeREST extends REST{
 		if($itemPerson && count($itemPerson)>0){
         
       $extPerson['id'] = array('0'=>'userid');
-      $target["person"][] = array('fields'=>$itemPerson,'condition'=>$extPerson,'sucess'=>function($person,$finder,&$result){
-        $pic = $person->getPicture();
-        if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
-          $imgName = sprintf("u%08d",$person->getId());
-          $headshot = $imgName.".png";
-          rename("images/user/$pic", "images/user/$headshot");
-          $person->setPicture($headshot);
-			    $finder->insert($person);
-          $result['picture'] = $headshot;
-        }
-      });
+      $target["person"][] = array('fields'=>$itemPerson,'condition'=>$extPerson,'sucess'=>"updateSuccess");
     }
     $result = $this->changeRecords($target,function($domain,&$result){
     },false);

@@ -428,22 +428,22 @@ class REST{
 		$main = null;
 		$condition = null;
 		$finder = null;
-		//foreach ($datas as $data){
-			if(!empty($datas['condition'])){
-				$condition = $datas['condition'];
+		foreach ($datas as $data){
+			if(!empty($data['condition'])){
+				$condition = $data['condition'];
 				$fields = array_merge($fields,$this->conditionFields($condition,$domain,$index));
 			}
 
-			if(!empty($datas['fields'])){
-				$main = $datas['fields'];
+			if(!empty($data['fields'])){
+				$main = $data['fields'];
 				if($isinsert && isset($main["id"]))
 					unset($main["id"]);
 				$fields = array_merge($fields,$this->mainFields($main,$domain[$index]));
 			}
 
 			if(is_null($finder)){
-				if(!empty($datas['need']) && is_array($datas['need']))
-					$fields = array_merge($fields,$datas['need']);
+				if(!empty($data['need']) && is_array($data['need']))
+					$fields = array_merge($fields,$data['need']);
 				$finder = \woo\mapper\PersistenceFactory::getFinder($target,array_unique($fields));
 				if(is_null($this->pdo)){
 					$this->pdo = \woo\mapper\DomainObjectAssembler::getPDO();
@@ -460,12 +460,12 @@ class REST{
 					$result[] = $main;
 				}
 
-				if(!empty($datas['sucess'])){
-					$this->$datas['sucess']($domain[$index],$finder,$result[$target]);
+				if(!empty($data['sucess'])){
+					$this->$data['sucess']($domain[$index],$finder,$result[$target]);
 				}
 			}
-		//}
-		return $main;//$result;
+		}
+		return $result;
 	}
   
 	/**
@@ -708,6 +708,7 @@ class REST{
 		$owner = empty($item[$_target]);
 		$tem = isset($item[$_target])? $item[$_target]:$item;
 		$target[$_target][] = array('fields'=>$tem,'condition'=>$this->request->getProperty("id"));
+		$this->request->log(json_encode($target));
 		$result = $this->changeRecords($target,function($domain,&$result) use($owner,$_target){
 			$s = $result[$_target][0];
 			unset($result[$_target]);
