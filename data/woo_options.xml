@@ -101,7 +101,7 @@
   </command>
 
   <command name="ShowContactUs">
-       <view>ShowContactUs</view>
+       <view>P_contact</view>
     </command>
 	
     <command name="ShowLeaveMessage">

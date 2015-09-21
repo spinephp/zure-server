@@ -18,16 +18,7 @@ class EmployeeREST extends REST{
 		parent::__construct("employee");
 	}
 	
-	function doCreate($item){
-    $itemPerson = $item["person"];
-		if(empty($itemPerson))
-			throw new \woo\base\AppException("none person infomation");
-      
-    date_default_timezone_set("PRC");
-    $now = date('Y-m-d H:i:s');
-    $extend['lasttime'] = $now;
-    $extend['hash'] = md5($itemPerson['UserName'].$itemPerson['pwd'].$now);
-    $target["person"][] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>function($person,$finder,&$result){
+	function personSuccess($person,$finder,&$result){
       $pic = $person->getPicture();
       if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
         $imgName = sprintf("u%08d",$person->getId());
@@ -37,7 +28,18 @@ class EmployeeREST extends REST{
 			  $finder->insert($person);
         $result['picture'] = $headshot;
       }
-    });
+	}
+	
+	function doCreate($item){
+    $itemPerson = $item["person"];
+		if(empty($itemPerson))
+			throw new \woo\base\AppException("none person infomation");
+      
+    date_default_timezone_set("PRC");
+    $now = date('Y-m-d H:i:s');
+    $extend['lasttime'] = $now;
+    $extend['hash'] = md5($itemPerson['UserName'].$itemPerson['pwd'].$now);
+    $target["person"][] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>"personSuccess");
         
     $itemEmployee = $item["employee"];
 		if(is_null($itemEmployee))
