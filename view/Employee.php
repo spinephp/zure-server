@@ -31,28 +31,27 @@ class EmployeeREST extends REST{
 	}
 	
 	function doCreate($item){
-    $itemPerson = $item["person"];
-		if(empty($itemPerson))
-			throw new \woo\base\AppException("none person infomation");
-      
-    date_default_timezone_set("PRC");
-    $now = date('Y-m-d H:i:s');
-    $extend['lasttime'] = $now;
-    $extend['hash'] = md5($itemPerson['UserName'].$itemPerson['pwd'].$now);
-    $target["person"][] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>"personSuccess");
-        
-    $itemEmployee = $item["employee"];
+		$itemPerson = $item["person"];
+			if(empty($itemPerson))
+				throw new \woo\base\AppException("none person infomation");
+		  
+		date_default_timezone_set("PRC");
+		$now = date('Y-m-d H:i:s');
+		$extend['lasttime'] = $now;
+		$extend['hash'] = md5($itemPerson['UserName'].$itemPerson['pwd'].$now);
+		$target["person"][] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>"personSuccess");
+			
+		$itemEmployee = $item["employee"];
 		if(is_null($itemEmployee))
 			throw new \woo\base\AppException("Employee data is null!");
-    $extEmployee['userid'] = array('0'=>'id');
-    $target["employee"][] = array('fields'=>$itemEmployee,'condition'=>$extEmployee);
-    $result = $this->changeRecords($target,function($domain,&$result){
-      
-      $result['id'] = $result['employee']['id'];
-      $result['employee']['userid'] = $result['person']['id'];
-      unset($result['person']['pwd']);
-    },true);
-			$this->response(json_encode($result),201);
+		$extEmployee['userid'] = array('0'=>'id');
+		$target["employee"][] = array('fields'=>$itemEmployee,'condition'=>$extEmployee);
+		$result = $this->changeRecords($target,function($domain,&$result){
+		  $result['id'] = $result['employee']['id'];
+		  $result['employee']['userid'] = $result['person']['id'];
+		  unset($result['person']['pwd']);
+		},true);
+		$this->response(json_encode($result),201);
 	}
 	
 	function updateSuccess($person,$finder,&$result){
