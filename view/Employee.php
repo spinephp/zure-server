@@ -19,21 +19,21 @@ class EmployeeREST extends REST{
 	}
 	
 	function personSuccess($person,$finder,&$result){
-      $pic = $person->getPicture();
-      if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
-        $imgName = sprintf("u%08d",$person->getId());
-        $headshot = $imgName.".png";
-        rename("images/user/$pic", "images/user/$headshot");
-        $person->setPicture($headshot);
-			  $finder->insert($person);
-        $result['picture'] = $headshot;
-      }
+		$pic = $person->getPicture();
+		if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
+			$imgName = sprintf("u%08d",$person->getId());
+			$headshot = $imgName.".png";
+			rename("images/user/$pic", "images/user/$headshot");
+			$person->setPicture($headshot);
+			$finder->insert($person);
+			$result['picture'] = $headshot;
+		}
 	}
 	
 	function doCreate($item){
 		$itemPerson = $item["person"];
-			if(empty($itemPerson))
-				throw new \woo\base\AppException("none person infomation");
+		if(empty($itemPerson))
+			throw new \woo\base\AppException("none person infomation");
 		  
 		date_default_timezone_set("PRC");
 		$now = date('Y-m-d H:i:s');
@@ -47,22 +47,22 @@ class EmployeeREST extends REST{
 		$extEmployee['userid'] = array('0'=>'id');
 		$target["employee"][] = array('fields'=>$itemEmployee,'condition'=>$extEmployee);
 		$result = $this->changeRecords($target,function($domain,&$result){
-		  $result['id'] = $result['employee']['id'];
-		  $result['employee']['userid'] = $result['person']['id'];
-		  unset($result['person']['pwd']);
+			$result['id'] = $result['employee'][0]['id'];
+			$result['employee'][0]['userid'] = $result['person'][0]['id'];
+			unset($result['person'][0]['pwd']);
 		},true);
 		$this->response(json_encode($result),201);
 	}
 	
 	function updateSuccess($person,$finder,&$result){
-        $pic = $person->getPicture();
-        if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
-          $imgName = sprintf("u%08d",$person->getId());
-          $headshot = $imgName.".png";
-          rename("images/user/$pic", "images/user/$headshot");
-          $person->setPicture($headshot);
-			    $finder->insert($person);
-          $result['picture'] = $headshot;
+		$pic = $person->getPicture();
+		if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
+			$imgName = sprintf("u%08d",$person->getId());
+			$headshot = $imgName.".png";
+			rename("images/user/$pic", "images/user/$headshot");
+			$person->setPicture($headshot);
+			$finder->insert($person);
+			$result['picture'] = $headshot;
 		}
 	}
 	/**
@@ -71,33 +71,33 @@ class EmployeeREST extends REST{
 	 * @return void
 	 */
 	function doUpdate($item){
-    $itemEmployee = $item["employee"];
+		$itemEmployee = $item["employee"];
 		if(is_null($itemEmployee))
 			throw new \woo\base\AppException("Employee data is null!");
-        
-    $target["employee"][] = array('fields'=>$itemEmployee,'condition'=>$this->request->getProperty("id"));
-    
-    $itemPerson = $item["person"];
+
+		$target["employee"][] = array('fields'=>$itemEmployee,'condition'=>$this->request->getProperty("id"));
+
+		$itemPerson = $item["person"];
 		if($itemPerson && count($itemPerson)>0){
-        
-      $extPerson['id'] = array('0'=>'userid');
-      $target["person"][] = array('fields'=>$itemPerson,'condition'=>$extPerson,'sucess'=>"updateSuccess");
-    }
-    $result = $this->changeRecords($target,function($domain,&$result){
-    },false);
-			$this->response(json_encode($result),201);
+
+			$extPerson['id'] = array('0'=>'userid');
+			$target["person"][] = array('fields'=>$itemPerson,'condition'=>$extPerson,'sucess'=>"updateSuccess");
+		}
+		$result = $this->changeRecords($target,function($domain,&$result){
+		},false);
+		$this->response(json_encode($result),201);
 	}
 	
 	function doDelete(){
-    $target["employee"] = array('fields'=>array('id','userid'),'value'=>$this->request->getProperty("id"));
-    $target["person"] = array('fields'=>array('id','picture'),'value'=>array('0'=>'userid'));
+		$target["employee"] = array('fields'=>array('id','userid'),'value'=>$this->request->getProperty("id"));
+		$target["person"] = array('fields'=>array('id','picture'),'value'=>array('0'=>'userid'));
 
-    $this->deleteRecords($target,function($domain,&$result){
-      $pic = $domain[1]->getPicture();
-      if(!empty($pic) && $pic!='noimg.png' && file_exists("images/user/$pic"))
-        unlink("images/user/$pic");
-    });
-  }
+		$this->deleteRecords($target,function($domain,&$result){
+			$pic = $domain[1]->getPicture();
+			if(!empty($pic) && $pic!='noimg.png' && file_exists("images/user/$pic"))
+				unlink("images/user/$pic");
+		});
+	}
 }
 
 new EmployeeREST();

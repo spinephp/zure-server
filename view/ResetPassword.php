@@ -11,7 +11,7 @@ require_once("controller/PageController.php");
 require_once("base/SessionRegistry.php");
 
 class ResetPasswordController extends PageController{
-    function process(){
+	function process(){
 		try{
 			$session = \woo\base\SessionRegistry::instance();
 			$request = $this->getRequest();
@@ -83,22 +83,23 @@ LIANYUNGANG YUNRUI REFRACTORY CO,.LTD<br /><img alt='helloweba' src='cid:my-atta
   function sendEmail($email,$subject,$body){
     require_once('phpmailer/class.phpmailer.php');
 
-    $mail = new \PHPMailer(); // create a new object
-    $mail->IsSMTP(); // enable SMTP
-    $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-    $mail->SMTPAuth = true; // authentication enabled
-    $mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
-    $mail->Host = "smtp.gmail.com";
-    $mail->Port = 465; // or 587
-    $mail->IsHTML(true);
-    $mail->Username = "yrrlyg@gmail.com";  //你的邮箱
-    $mail->Password = "yrr@tsl12";  //你的密码
-    $mail->SetFrom("yrrlyg@gmail.com");
-    $mail->Subject = $subject;
-    $mail->AddAddress($email);
-    
-    $mail->CharSet  = "UTF-8"; //字符集
-    $mail->Encoding = "base64"; //编码方式
+		$mail = new \PHPMailer(); // create a new object
+		$mail->IsSMTP(); // enable SMTP
+		$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+		$mail->SMTPAuth = true; // authentication enabled
+		$mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
+		$mail->Host = "smtp.qq.com";//"smtp.gmail.com";
+		$mail->Port = 465; // or 587
+		$mail->IsHTML(true);
+		$mail->Hostname = 'yrr8.com';
+		$mail->Username = "1619584123";  //????? QQ ?
+		$mail->Password = "lxm@tsl121314";  //????????
+		$mail->SetFrom("admin@yrr8.com");
+		$mail->Subject = $subject; //????
+		$mail->AddAddress($email);
+
+		$mail->CharSet  = "UTF-8"; //???
+		$mail->Encoding = "base64"; //????
 
 
     //$mail->From = "yrrlyg@gmail.comm";  //发件人地址（也就是你的邮箱）

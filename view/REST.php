@@ -188,7 +188,7 @@ class REST{
 				$value = $session->get('drymainid');
 				break;
 			case '?time': // 当前系统时间
-				$value = date("Y-m-d m:i:s");
+				$value = date("Y-m-d H:i:s",time());
 				break;
 		}
 		return $value;
@@ -559,9 +559,9 @@ class REST{
 			if($len==$index){
 				if(!is_null($this->pdo))
 					$this->pdo->commit();                 //提交事务  
+				$result["id"] = $domain[0]->getId();
 				if(!empty($sucess))
 					$sucess($domain,$result);
-				$result["id"] = $domain[0]->getId();
 			}
 			$index++;
 		}
