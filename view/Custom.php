@@ -132,9 +132,10 @@ class customREST extends REST{
 			"order"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id'))
 		);
 		$this->deleteRecords($target,function($domain,&$result){
-		$pic = $domain[1]->getPicture();
-		if(!empty($pic) && $pic!='noimg.png' && file_exists("images/user/$pic"))
-			unlink("images/user/$pic");
+			$pic = $domain[1]->getPicture();
+			if(!empty($pic) && $pic!='noimg.png' && file_exists("images/user/$pic"))
+				unlink("images/user/$pic");
+			$result['id'] = $result['custom']['id'];
 		});
 	}
   

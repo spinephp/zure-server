@@ -96,6 +96,7 @@ class EmployeeREST extends REST{
 			$pic = $domain[1]->getPicture();
 			if(!empty($pic) && $pic!='noimg.png' && file_exists("images/user/$pic"))
 				unlink("images/user/$pic");
+			$result['id'] = $result['employee']['id'];
 		});
 	}
 }
