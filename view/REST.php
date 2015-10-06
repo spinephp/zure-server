@@ -160,7 +160,7 @@ class REST{
 						else
 							$result[$i][$field] = $rec->$name();
 					}else
-					  throw new  \woo\base\AppException("Invalid field name!");
+						throw new  \woo\base\AppException("Invalid field name!");
 				}
 			}
 			$i++;
@@ -681,16 +681,16 @@ class REST{
 						}
 						$target[$other['table']][] = array('fields'=>$other['data']);
 						$opse = $other['method']=='post'? true:false;
-						$temp = $this->changeRecords($target,null,true);
+						$temp = $this->changeRecords($target,null,$opse);
 						$result[$other['table']] = $temp[$other['table']][0];
 					}
 				}
 			}
-		$this->afterCreate($domain,$result,$item);
+		$this->afterCreate($result,$item);
 		$this->response(json_encode($result),201);
 	}
 
-	function afterCreate($domain,&$result,$item){}
+	function afterCreate(&$result,$item){}
 
 	/**
 	 * 更新数据表记录

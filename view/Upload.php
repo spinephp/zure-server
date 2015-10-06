@@ -51,8 +51,12 @@ class UploadController extends PageController{
               $option = 'crop';
               break;
           }
-          $temp = "images/temp/";
+          $temp = "images/temp/".session_id()."/";
+	  if(!is_dir($temp)) mkdir($temp ,0777);
+	  $path .= session_id()."/";
+	  if(!is_dir($path)) mkdir($path,0777);
          $ext = substr($value['name'],strrpos($value['name'],'.'));
+	 
           $headshot = $imgName.$ext;
           if(!move_uploaded_file($value["tmp_name"], $temp.$headshot))
           	throw new \woo\base\AppException("File moving failure!");
@@ -63,8 +67,12 @@ class UploadController extends PageController{
           $resizeObj -> resizeImage($width,$height, $option);
           //my_image_resize($value["tmp_name"],$resizeImg, $width,$height);
           //$headshot = $imgName.".png";
-          $resizeObj -> saveImage($path.$imgName.".png", 100);
+ 	  while(file_exists($path.$imgName.".png")){
+		$imgName = sprintf("%d",1+(int)$imgName);
+	}
+         $resizeObj -> saveImage($path.$imgName.".png", 100);
           unlink($temp.$headshot);
+	  rmdir($temp);
       }
       echo json_encode(array("image"=>$imgName.".png","msg"=>"上传成功"));
     }

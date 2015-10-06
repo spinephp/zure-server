@@ -19,13 +19,16 @@ class customREST extends REST{
 	
 	function sucessPerson($person,$finder,&$result){
 		$pic = $person->getPicture();
-		if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
+		$s_dir = "images/user/".session_id();
+		$s_file = $s_dir."/".$pic;
+		if(!empty($pic) && $pic!="noimg.png" && file_exists($s_file)){
 			$imgName = sprintf("u%08d",$person->getId());
 			$headshot = $imgName.".png";
-			rename("images/user/$pic", "images/user/$headshot");
+			rename($s_file, "images/user/$headshot");
 			$person->setPicture($headshot);
 			$finder->insert($person);
 			$result['picture'] = $headshot;
+			rmdir($s_dir);
 		}
 	}
 	

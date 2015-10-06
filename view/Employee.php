@@ -20,13 +20,16 @@ class EmployeeREST extends REST{
 	
 	function personSuccess($person,$finder,&$result){
 		$pic = $person->getPicture();
-		if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
+		$s_dir = "images/user/".session_id();
+		$s_file = $s_dir."/".$pic;
+		if(!empty($pic) && $pic!="noimg.png" && file_exists($s_file)){
 			$imgName = sprintf("u%08d",$person->getId());
 			$headshot = $imgName.".png";
-			rename("images/user/$pic", "images/user/$headshot");
+			rename($s_file, "images/user/$headshot");
 			$person->setPicture($headshot);
 			$finder->insert($person);
 			$result['picture'] = $headshot;
+			rmdir($s_dir);
 		}
 	}
 	
@@ -53,18 +56,6 @@ class EmployeeREST extends REST{
 		},true);
 		$this->response(json_encode($result),201);
 	}
-	
-	function updateSuccess($person,$finder,&$result){
-		$pic = $person->getPicture();
-		if(!empty($pic) && $pic!="noimg.png" && file_exists("images/user/$pic")){
-			$imgName = sprintf("u%08d",$person->getId());
-			$headshot = $imgName.".png";
-			rename("images/user/$pic", "images/user/$headshot");
-			$person->setPicture($headshot);
-			$finder->insert($person);
-			$result['picture'] = $headshot;
-		}
-	}
 	/**
 	 * 根据 $item 数据，更新 employee 和 person 数据库，并生成回传数据
 	 * @param $item - array，键值对数组，包含要更新的数据
@@ -81,7 +72,7 @@ class EmployeeREST extends REST{
 		if($itemPerson && count($itemPerson)>0){
 
 			$extPerson['id'] = array('0'=>'userid');
-			$target["person"][] = array('fields'=>$itemPerson,'condition'=>$extPerson,'sucess'=>"updateSuccess");
+			$target["person"][] = array('fields'=>$itemPerson,'condition'=>$extPerson,'sucess'=>"personSuccess");
 		}
 		$result = $this->changeRecords($target,function($domain,&$result){
 		},false);
