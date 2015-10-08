@@ -81,6 +81,20 @@ class ProductEval extends DomainObject{
 	function getStatus(){
 		return $this->objects["status"];
 	}
+	
+	function getImages(){
+		$oproid = $this->getId()."_";
+		$result = array();
+		$directory = "images/good/feel/";
+		$mydir = dir($directory);
+		while($file = $mydir->read())
+		{
+			if(strpos($file,$oproid)==0)
+				$result[] = $file;
+		}
+		$mydir->close();
+		return $result;
+	}
   
   /**
    * 该方法通过访问表 orderproduct 来得到 feelid

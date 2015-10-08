@@ -9,47 +9,98 @@
 namespace woo\view;
 
 require_once("view/REST.php");
-require_once("view/WaterMask.php");
+require_once("base/SessionRegistry.php");
+require_once("domain/Orderproduct.php");
+require_once("domain/Order.php");
+require_once("domain/Customgrade.php");
+require_once("domain/Custom.php");
+require_once("domain/Grade.php");
 
-class productclassREST extends REST{
+class productevalREST extends REST{
   
 	function __construct(){
-		parent::__construct("productclass");
+		parent::__construct("producteval");
 	}
 	
-	function doGet(){
-		/**
-		* 处理伪字段(非数据库字段，通常由数据库表中相关字段和特定字符按一定顺序组合而成的复合数据),伪字段只能读出，不能写入。
-		* 把与伪字段相关的字段列出，以键名为 extend 保存到 Request 类管理的白板中.
-		*
-		*/
-		//$this->pseudoLanguageFields(array("introduction"));
-		//$this->pseudoFields(array('classname'=>array('name'),'classname_en'=> array('name_en'),'classnames'=> array('name','name_en')));
+	function beforeCreate(&$item){
+		$id = $item["orderproductid"];
+		$factory = \woo\mapper\PersistenceFactory::getFactory("orderproduct",array("id","orderid"));
+		$finder = new \woo\mapper\DomainObjectAssembler($factory);
+		$idobj = $factory->getIdentityObject()->field('id')->eq($id);
+		$collection = $finder->find($idobj);
+		$rec = $collection->current();
+		if(is_null($rec))
+			throw new \woo\base\AppException("Record orderproduct:ID=$id is'n exist!");
+		$orderid = $rec->getOrderid();
+		
+		$factory = \woo\mapper\PersistenceFactory::getFactory("order",array("id","time"));
+		$finder = new \woo\mapper\DomainObjectAssembler($factory);
+		$idobj = $factory->getIdentityObject()->field('id')->eq($orderid);
+		$collection = $finder->find($idobj);
+		$rec = $collection->current();
+		if(is_null($rec))
+			throw new \woo\base\AppException("Record order:ID=$orderid is'n exist!");
+		$time = $rec->getTime();
 
-		parent::doGet();
-	}
-	
-	function afterCreate(&$result,$item){
-		$pic = $Productclass->getPicture();
-		if(!empty($pic) && $pic!="noimg.png" && file_exists("images/good/$pic")){
-			$headshot = sprintf("%d_%d.png",$Productclass->getParentid(),$Productclass->getId());
-			rename("images/good/$pic", "images/good/$headshot");
-			$Productclass->setPicture($headshot);
-			$finder->insert($Productclass);
-			$result['picture'] = $headshot;
+		date_default_timezone_set("PRC");
+		$now = date('Y-m-d H:i:s');
+		
+		$d1 = strtotime($time);
+		$d2 = strtotime($now);
+		if(round($d2-$d1)/3600/24 < 180){
+			$session = \woo\base\SessionRegistry::instance();
+			$userid = $session->get('userid');
+			$factory = \woo\mapper\PersistenceFactory::getFactory("customgrade",array("id","userid","gradeid"));
+			$finder = new \woo\mapper\DomainObjectAssembler($factory);
+			$idobj = $factory->getIdentityObject()->field('userid')->eq($userid);
+			$collection = $finder->find($idobj);
+			$rec = $collection->current();
+			if(is_null($rec))
+				throw new \woo\base\AppException("Record customgrade:userid=$userid is'n exist!");
+			$gradeid = $rec->getGradeid();
+			$factory = \woo\mapper\PersistenceFactory::getFactory("grade",array("id","evalintegral"));
+			$finder = new \woo\mapper\DomainObjectAssembler($factory);
+			$idobj = $factory->getIdentityObject()->field('id')->eq($gradeid);
+			$collection = $finder->find($idobj);
+			$rec = $collection->current();
+			if(is_null($rec))
+				throw new \woo\base\AppException("Record grade:ID=$gradeid is'n exist!");
+			$integral = $rec->getEvalintegral();
+			$item["producteval"]["integral"] = $integral;
+			
+			$factory = \woo\mapper\PersistenceFactory::getFactory("custom",array("id","userid","integral"));
+			$finder = new \woo\mapper\DomainObjectAssembler($factory);
+			$idobj = $factory->getIdentityObject()->field('userid')->eq($userid);
+			$collection = $finder->find($idobj);
+			$rec = $collection->current();
+			if(is_null($rec))
+				throw new \woo\base\AppException("Record custom:userid=$userid is'n exist!");
+			$integral += $rec->getIntegral();
+			$item["other"][] = array("table"=>"custom","method"=>"put","data"=>array("id"=>$rec->getId(),"integral"=>$integral));
 		}
 	}
 	
-	function doUpdate($item){
-		// 处理图片水印
-		$this->processWatermask($item) ;   
-		parent::doUpdate($item);
+	function afterCreate(&$result,$item){
+		// 把 images/good/feel/session_id() 目录下的图形文件移动到 images/good/feel 目录下
+		// 并删除  images/good/feel/session_id() 目录
+		$oproid = $result["orderproduct"]["id"];
+		$feeldir = "images/good/feel/";
+		$directory = $feeldir.session_id();
+		$mydir = dir($directory);
+		while($file = $mydir->read())
+		{
+			if((is_dir("$directory/$file")) || ($file==".") || ($file==".."))
+				continue; 
+			rename("$directory/$file", "$feeldir{$oproid}_{$file}");
+		}
+		$mydir->close();
+		rmdir($directory);
 	}
 	
 	function doDelete(){
 		$id = $this->request->getProperty("id");
 		$target = array(
-			"productclass"=>array('fields'=>array('id','picture'),'value'=>$id)
+			"producteval"=>array('fields'=>array('id','picture'),'value'=>$id)
 		);
 		$this->deleteRecords($target,function($domain,&$result) use($target){
 			$pic = $domain[0]->getPicture();
@@ -60,6 +111,6 @@ class productclassREST extends REST{
 	}
  }
 
-new productclassREST();
+new productevalREST();
 
 ?>

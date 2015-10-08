@@ -5,7 +5,7 @@ require_once("domain/domain.php");
 class Grade extends DomainObject{
 
 	function __construct($array){
-		parent::__construct($array,array("name","name_en","cost","image","right","right_en"));
+		parent::__construct($array,array("name","name_en","cost","image","right","right_en","evalintegral"));
 	}
 
 	function setName($name_s){
@@ -64,6 +64,14 @@ class Grade extends DomainObject{
 
 	function getRights(){
 		return array($this->objects["right"],$this->objects["right_en"]);
+	}
+
+	function getEvalintegral(){
+		return $this->objects["evalintegral"];
+	}
+
+	function setEvalintegral($integral_s){
+		$this->objects["evalintegral"] = (int)$integral_s;
 	}
 }
 ?>

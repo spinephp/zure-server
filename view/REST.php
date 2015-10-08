@@ -424,11 +424,11 @@ class REST{
 	 */
 	private function saveRecords($target,$datas,&$domain,$index,$isinsert=true){
 		$result = array();
-		$fields = array();
-		$main = null;
-		$condition = null;
 		$finder = null;
 		foreach ($datas as $data){
+			$fields = array();
+			$main = null;
+			$condition = null;
 			if(!empty($data['condition'])){
 				$condition = $data['condition'];
 				$fields = array_merge($fields,$this->conditionFields($condition,$domain,$index));
@@ -647,6 +647,7 @@ class REST{
 	}
 
 	function doCreate($item){
+		$this->beforeCreate($item);
 		$target = array();
 		$_target = $this->_target;
 		$owner = empty($item[$_target]);
@@ -669,11 +670,13 @@ class REST{
 		*/
 		$is = "?{$_target}:";
 		$islen = strlen($is);
+		$s = $result[$_target];
 		
 		foreach(array('other','system') as $opt)
 			if(isset($item[$opt])){
 				foreach($item[$opt] as $index=>$other){
 					if(isset($other['data'])){
+						$target = array();
 						foreach($other['data'] as $key=>$val){
 							if(strlen($val)>$islen && strpos($val,$is)==0){
 								$other['data'][$key] = $s[substr($val,$islen)];
@@ -691,6 +694,8 @@ class REST{
 	}
 
 	function afterCreate(&$result,$item){}
+
+	function beforeCreate(&$item){}
 
 	/**
 	 * 更新数据表记录
