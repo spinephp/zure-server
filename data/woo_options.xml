@@ -280,6 +280,11 @@
     <view>Upload</view>
   </command>
 
+  <command name="DeleteUpload">
+    <classroot name="Upload" />
+    <view>DeleteUpload</view>
+  </command>
+
   <command name="Currency">
     <view>Currency</view>
   </command>
