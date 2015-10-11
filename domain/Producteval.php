@@ -89,7 +89,7 @@ class ProductEval extends DomainObject{
 		$mydir = dir($directory);
 		while($file = $mydir->read())
 		{
-			if(strpos($file,$oproid)==0)
+			if($file!="." && $file!=".." && strpos($file,$oproid)==0)
 				$result[] = $file;
 		}
 		$mydir->close();
