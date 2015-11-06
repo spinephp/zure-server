@@ -6,6 +6,9 @@ require_once("base/SessionRegistry.php");
 require_once("mapper/DomainObjectAssembler.php");
 require_once("mapper/PersistenceFactory.php");
 require_once("domain/Employee.php");
+
+const COMMAND_OK = "Command Ok!";
+
 abstract class Command{
     private static $STATUS_STRINGS = array(
         'CMD_DEFAULT'=>0,
@@ -66,7 +69,7 @@ abstract class Command{
       $item = $request->getProperty("item");
       $token = $item['token'];
     }
-		if($token==$session->get("token") || $token==session_id()){
+		if(isset($token) && ($token==$session->get("token") || $token==session_id())){
 				$result = $this->$fun($request);
 			}else{
 				$request->addFeedback("Access Denied");
@@ -194,12 +197,12 @@ class RESTCommand extends Command{
 		$cmd = $request->getProperty('cmd');
 		$right = self::validates($cmd);
 		if(empty($right) || empty($right[0])){
-			$request->addFeedback("Command Ok!");
+			$request->addFeedback(COMMAND_OK);
 			return 'CMD_OK';
 		}else{
 			$a = explode(' ',$right[0]);
 			return $this->$a[0]($request,function($request){ 
-				$request->addFeedback("Command Ok!");
+				$request->addFeedback(COMMAND_OK);
 				return 'CMD_OK';
 			});
 		}
@@ -220,13 +223,13 @@ class RESTCommand extends Command{
 				$cmd = $request->getProperty('cmd');
 				$s = strtolower($cmd);
 				if($item['action']=="{$s}_create"){
-					$request->addFeedback("Command Ok!");
+					$request->addFeedback(COMMAND_OK);
 				}else{
 					      $request->addFeedback("Request error!");
 					      $status = 'CMD_INSUFFICIENT_DATA';
 				}
 			}else{
-				$request->addFeedback("Command Ok!");
+				$request->addFeedback(COMMAND_OK);
 			}
 		}else{
 			$request->addFeedback("ID is needed!");
@@ -243,9 +246,9 @@ class RESTCommand extends Command{
 		$right = self::validates($cmd);
 		$status = 'CMD_OK';
 		if(empty($right) || empty($right[1])){
-			if(1==$this->userShell($request)){
-				$status = $this->_restCreate($request,null);
-			}
+			//if(1==$this->userShell($request)){
+				//$status = $this->_restCreate($request,null);
+			//}
 		}else{
 			$b = explode(' ',$right[1]['autoParam']);
 			if(empty($right[1]['fn'])){
@@ -277,13 +280,13 @@ class RESTCommand extends Command{
 				$cmd = $request->getProperty('cmd');
 				$s = strtolower($cmd);
 				if($item['action']=="{$s}_update"){
-					$request->addFeedback("Command Ok!");
+					$request->addFeedback(COMMAND_OK);
 				}else{
 					      $request->addFeedback("Request error!");
 					      $status = 'CMD_INSUFFICIENT_DATA';
 				}
 			}else{
-				$request->addFeedback("Command Ok!");
+				$request->addFeedback(COMMAND_OK);
 			}
 		}else{
 			$request->addFeedback("ID is needed!");
@@ -305,13 +308,13 @@ class RESTCommand extends Command{
 				$cmd = $request->getProperty('cmd');
 				$s = strtolower($cmd);
 				if($action=="{$s}_delete"){
-					$request->addFeedback("Command Ok!");
+					$request->addFeedback(COMMAND_OK);
 				}else{
 					      $request->addFeedback("Request error!");
 					      $status = 'CMD_INSUFFICIENT_DATA';
 				}
 			}else{
-				$request->addFeedback("Command Ok!");
+				$request->addFeedback(COMMAND_OK);
 			}
 		}else{
 			$request->addFeedback("ID is needed!");

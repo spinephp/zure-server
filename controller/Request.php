@@ -40,9 +40,19 @@ class Request{
 
     function init(){
         if(isset( $_SERVER['REQUEST_METHOD'])){
-            $data = json_decode(file_get_contents('php://input'),true); // 支持 AJAX 的 PUT DELETE 请求
-             $this->log(json_encode($data)); // 把本次请求与入日志文件
-            $data = is_null($data)? $_REQUEST:array_merge($_REQUEST, array("item"=>$data));
+           $data = json_decode(stripslashes(file_get_contents('php://input')),true); // 支持 AJAX 的 PUT DELETE 请求
+			foreach($_REQUEST as $key=>$val){
+				if($val!="")
+					$data1[$key] = $val;
+				else{
+					$jskey = json_decode(stripslashes($key),true);
+					$data1["item"] = isset($jskey["item"])? $jskey["item"]:$jskey;
+				}
+			}
+			if(!is_null($data))
+				$data1["item"] = isset($data["item"])? $data["item"]:$data;
+			$data = $data1;
+            //$data = is_null($data)? $_REQUEST:array_merge($_REQUEST, array("item"=>$data));
 		$method = $this->findMethod($data);
            if($method=="PUT" || $method=="DELETE"){
 		unset($data[$this->methodParam]);

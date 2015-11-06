@@ -16,22 +16,6 @@ class drydataREST extends REST{
 		parent::__construct("drydata");
 	}
 	
-	function doCreate($item){
-		if(empty($item)){
-			$session = \woo\base\SessionRegistry::instance();
-			$drydata['time'] = $this->request->getProperty("time"); // 取要验证的客户数据
-			$drydata['temperature'] = $this->request->getProperty("temperature"); // 取要验证的客户数据
-			$drydata['settingtemperature'] = $this->request->getProperty("settingtemperature"); // 取要验证的客户数据
-			$drydata['mode'] = $this->request->getProperty("mode"); // 取要验证的客户数据
-			$drydata['mainid'] =$session->get("dryid");
-			$target["drydata"] = array('fields'=>$drydata);
-			$result = $this->changeRecords($target,function($domain,&$result) {
-				$result['id'] = $result['drydata']['id'];
- 			},true);
-			$this->response(json_encode($result),201);
-		}	
- 	}
-	
 	function doDelete(){
 		$id = $this->request->getProperty("id");
 		$target = array(

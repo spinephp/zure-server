@@ -16,21 +16,6 @@ class drymainREST extends REST{
 		parent::__construct("drymain");
 	}
 	
-	function doCreate($item){
-		if(empty($item)){
-			$drymain['starttime'] = $this->request->getProperty("starttime"); // 取要验证的客户数据
-			$drymain['lineno'] = $this->request->getProperty("lineno"); // 取要验证的客户数据
-			$drymain['state'] = $this->request->getProperty("state"); // 取要验证的客户数据
-			$target["drymain"] = array('fields'=>$drymain);
-			$result = $this->changeRecords($target,function($domain,&$result) {
-				$session = \woo\base\SessionRegistry::instance();
-				$result['id'] = $result['drymain']['id'];
-				$session->set('dryid',$result['id']);
- 			},true);
-			$this->response(json_encode($result),201);
-		}	
- 	}
-	
 	function doDelete(){
 		$id = $this->request->getProperty("id");
 		$target = array(

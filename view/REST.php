@@ -425,6 +425,7 @@ class REST{
 	private function saveRecords($target,$datas,&$domain,$index,$isinsert=true){
 		$result = array();
 		$finder = null;
+		
 		foreach ($datas as $data){
 			$fields = array();
 			$main = null;
@@ -648,6 +649,7 @@ class REST{
 
 	function doCreate($item){
 		$this->beforeCreate($item);
+		//$this->request->log("item=".json_encode($item));
 		$target = array();
 		$_target = $this->_target;
 		$owner = empty($item[$_target]);
@@ -713,7 +715,7 @@ class REST{
 		$owner = empty($item[$_target]);
 		$tem = isset($item[$_target])? $item[$_target]:$item;
 		$target[$_target][] = array('fields'=>$tem,'condition'=>$this->request->getProperty("id"));
-		$this->request->log(json_encode($target));
+		//$this->request->log(json_encode($target));
 		$result = $this->changeRecords($target,function($domain,&$result) use($owner,$_target){
 			$s = $result[$_target][0];
 			unset($result[$_target]);
