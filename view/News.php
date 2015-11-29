@@ -9,18 +9,18 @@ namespace woo\view;
 
 require_once("view/REST.php");
 
-class newsREST extends REST{
-	function __construct(){
-		parent::__construct("news");
-	}
-	
-	function doGet(){
-
+class getNewsREST extends getREST{
+	public function doAny($target){
+		/**
+		* 处理伪字段(非数据库字段，通常由数据库表中相关字段和特定字符按一定顺序组合而成的复合数据),伪字段只能读出，不能写入。
+		* 把与伪字段相关的字段列出，以键名为 extend 保存到 Request 类管理的白板中.
+		*
+		*/
 		$this->pseudoLanguageFields(array("title","content"));
 
-		parent::doGet();
+		return parent::doAny($target);
 	}
 }
 
-new newsREST();
+new REST('news');
 ?>

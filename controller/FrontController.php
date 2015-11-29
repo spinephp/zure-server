@@ -21,7 +21,7 @@ class FrontController{
 			include("view/$uctarget.php");
 		else if(file_exists("domain/$uctarget.php")){
 			include("view/REST.php");
-			new \woo\view\REST($lctarget);
+			new \woo\view\REST();
 		}
 		exit;
 	}

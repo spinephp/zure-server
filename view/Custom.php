@@ -11,11 +11,8 @@ require_once("view/REST.php");
 require_once("domain/Person.php");
 require_once("domain/Systemnotice.php");
 
-class customREST extends REST{
+class postCustomREST extends postREST{
 	static $language = 0;
-	function __construct(){
-		parent::__construct("custom");
-	}
 	
 	function sucessPerson($person,$finder,&$result){
 		$pic = $person->getPicture();
@@ -32,7 +29,7 @@ class customREST extends REST{
 		}
 	}
 	
-	function doCreate($item){
+	public function doAny($item){
 		$lang = $item["language"];
 		if(isset($lang))
 			self::$language = $lang;
@@ -69,7 +66,7 @@ class customREST extends REST{
 		$target["systemnotice"][] = array('condition'=>$extNotice);
 
 		//$this->createRecords($target,function($domain,&$result){
-		$result = $this->changeRecords($target,function($domain,&$result){
+		return $this->changeRecords($target,function($domain,&$result){
 			$register = array("Account registration success!","账号注册成功！");
 			$email = array( 
 			"Account activation email has been sent to your mailbox. Activate your message within 48 hours. 
@@ -77,69 +74,13 @@ class customREST extends REST{
 			"账号激活邮件已发送到你的邮箱中。激活邮件48小时内有效。请尽快登录您的邮箱点击激活链接完成账号激活。"
 			);
 			// 发送激活邮件
-			customREST::activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
+			self::activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
 			$result['id'] = $result['custom']['id'];
 			$result['custom']['userid'] = $domain[0]->getId();
-			$result["register"] = $register[customREST::$language];
-			$result["email"] = $email[customREST::$language];
+			$result["register"] = $register[self::$language];
+			$result["email"] = $email[self::$language];
 			unset($result['person']['pwd']);
 		},true);
-		$this->response(json_encode($result),201);
-	}
-	
-	function doUpdate($item){
-		$target = array();
-		if(empty($item["custom"]))
-			throw new \woo\base\AppException("Custom data is null!");
-		$target["custom"][] = array('fields'=>$item["custom"],'condition'=>$this->request->getProperty("id"));
-
-		if(!empty($item["person"])){
-			$extPerson['id'] = array('0'=>'userid');
-			$target["person"][] = array('fields'=>$item["person"],'condition'=>$extPerson);
-		}
-		if(count($target)==0)
-			throw new \woo\base\AppException("Data is null!");
-		$result = $this->changeRecords($target,function($domain,&$result){
-		},false);
-		$this->response(json_encode($result),201);
-	}
-	
-	function doDelete(){
-
-		// 从 billfree 表中删除记录
-		// 从 billsale 表中删除记录
-		// 从 cart 表中删除记录
-		// 从 company 表中删除记录
-		// 从 consignee 表中删除记录
-		// 从 customgrade 表中删除记录
-		// 从 customaccount 表中删除记录
-		// 从 order_complain 表中删除记录
-		// 从 order_eval 表中删除记录
-		// 从 order_pro 表中删除记录
-		// 从 order_status 表中删除记录
-		// 从 proeval 表中删除记录
-		// 从 pro_care 表中删除记录
-		// 从 pro_consult 表中删除记录
-		// 从 pro_use 表中删除记录
-		// 从 sys_notice 表中删除记录
-		$target = array(
-			"custom"=>array('fields'=>array('id','userid'),'value'=>$this->request->getProperty("id")),
-			"person"=>array('fields'=>array('id','companyid','picture'),'value'=>array('0'=>'userid')),
-			"billfree"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
-			"billsale"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
-			"cart"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
-			"company"=>array('fields'=>array('id'),'value'=>array('1'=>'companyid')),
-			"consignee"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
-			"customgrade"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
-			"customaccount"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
-			"order"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id'))
-		);
-		$this->deleteRecords($target,function($domain,&$result){
-			$pic = $domain[1]->getPicture();
-			if(!empty($pic) && $pic!='noimg.png' && file_exists("images/user/$pic"))
-				unlink("images/user/$pic");
-			$result['id'] = $result['custom']['id'];
-		});
 	}
   
 	static function activeEmail($username,$email,$token){
@@ -203,5 +144,67 @@ class customREST extends REST{
 	}
 }
 
-new customREST();
+class putCustomREST extends putREST{
+	public function doAny($item){
+		$target = array();
+		if(empty($item["custom"]))
+			throw new \woo\base\AppException("Custom data is null!");
+		$target["custom"][] = array('fields'=>$item["custom"],'condition'=>$this->request->getProperty("id"));
+
+		if(!empty($item["person"])){
+			$extPerson['id'] = array('0'=>'userid');
+			$target["person"][] = array('fields'=>$item["person"],'condition'=>$extPerson);
+		}
+		if(count($target)==0)
+			throw new \woo\base\AppException("Data is null!");
+		return $this->changeRecords($target,function($domain,&$result){
+		},false);
+	}
+}
+
+class deleteCustomREST extends deleteREST{
+	public function doMethod(\woo\controller\Request $request){
+		try{
+			// 从 billfree 表中删除记录
+			// 从 billsale 表中删除记录
+			// 从 cart 表中删除记录
+			// 从 company 表中删除记录
+			// 从 consignee 表中删除记录
+			// 从 customgrade 表中删除记录
+			// 从 customaccount 表中删除记录
+			// 从 order_complain 表中删除记录
+			// 从 order_eval 表中删除记录
+			// 从 order_pro 表中删除记录
+			// 从 order_status 表中删除记录
+			// 从 proeval 表中删除记录
+			// 从 pro_care 表中删除记录
+			// 从 pro_consult 表中删除记录
+			// 从 pro_use 表中删除记录
+			// 从 sys_notice 表中删除记录
+			$target = array(
+				"custom"=>array('fields'=>array('id','userid'),'value'=>$this->request->getProperty("id")),
+				"person"=>array('fields'=>array('id','companyid','picture'),'value'=>array('0'=>'userid')),
+				"billfree"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
+				"billsale"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
+				"cart"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
+				"company"=>array('fields'=>array('id'),'value'=>array('1'=>'companyid')),
+				"consignee"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
+				"customgrade"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
+				"customaccount"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
+				"order"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id'))
+			);
+			return $this->deleteRecords($target,function($domain,&$result){
+				$pic = $domain[1]->getPicture();
+				if(!empty($pic) && $pic!='noimg.png' && file_exists("images/user/$pic"))
+					unlink("images/user/$pic");
+				$result['id'] = $result['custom']['id'];
+			});
+		}catch(\woo\base\AppException $e){
+			throw new  \woo\base\AppException($e->message);
+		}
+	}
+	
+}
+new REST('custom');
+
 ?>

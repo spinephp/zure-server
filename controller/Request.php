@@ -1,6 +1,6 @@
 <?php
 namespace woo\controller;
-require_once("base/RequestRegistry.php");
+//require_once("base/RequestRegistry.php");
 
 class Request{
     private $properties;
@@ -17,7 +17,11 @@ class Request{
     public function getMethod(){
 	return $this->method;
 	}
-	// 返回当前请求的方法，请留意方法名称是大小写敏感的，按规范应转换为大写字母
+	
+	/**
+	 * 返回当前请求的方法，请留意方法名称是大小写敏感的，按规范应转换为大写字母
+	 * @assert (array("_method"=>"PUT")) == "PUT"
+	 */
 	public function findMethod($data)
 	{
 	    // $this->methodParam 默认值为 '_method'
@@ -40,7 +44,8 @@ class Request{
 
     function init(){
         if(isset( $_SERVER['REQUEST_METHOD'])){
-           $data = json_decode(stripslashes(file_get_contents('php://input')),true); // 支持 AJAX 的 PUT DELETE 请求
+			$data1 = null;
+            $data = json_decode(stripslashes(file_get_contents('php://input')),true); // 支持 AJAX 的 PUT DELETE 请求
 			foreach($_REQUEST as $key=>$val){
 				if($val!="")
 					$data1[$key] = $val;

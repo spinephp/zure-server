@@ -19,7 +19,7 @@ abstract class PageController{
 			include("view/$resource");
 		else{
 			include("view/REST.php");
-			new \woo\view\REST(strtolower(substr($resource,0,strpos($resource,".php"))));
+			new \woo\view\REST();
 		}
         exit(0);
     }

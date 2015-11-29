@@ -10,23 +10,17 @@ namespace woo\view;
 
 require_once("view/REST.php");
 
-class drymainREST extends REST{
-  
-	function __construct(){
-		parent::__construct("drymain");
-	}
-	
-	function doDelete(){
-		$id = $this->request->getProperty("id");
+class deleteDrymainREST extends deleteREST{
+	public function doAny($table,$id){
 		$target = array(
 			"drymain"=>array('fields'=>array('id'),'value'=>$id),
 			"drydata"=>array('fields'=>array('mainid','id'),'value'=>$id)
 		);
-		$this->deleteRecords($target,function($domain,&$result){
+		return $this->deleteRecords($target,function($domain,&$result){
 		});
 	}
 }
 
-new drymainREST();
+new REST('drymain');
 
 ?>

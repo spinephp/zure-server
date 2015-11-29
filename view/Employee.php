@@ -12,11 +12,21 @@ require_once("view/REST.php");
 require_once("domain/Person.php");
 require_once("domain/Systemnotice.php");
 
-class EmployeeREST extends REST{
-  
-	function __construct(){
-		parent::__construct("employee");
+class getEmployeeREST extends getREST{
+	public function doAny($target){
+		/**
+		* 处理伪字段(非数据库字段，通常由数据库表中相关字段和特定字符按一定顺序组合而成的复合数据),伪字段只能读出，不能写入。
+		* 把与伪字段相关的字段列出，以键名为 extend 保存到 Request 类管理的白板中.
+		*
+		*/
+		$this->pseudoLanguageFields(array("introduction"));
+		$this->pseudoFields(array('classname'=>array('name'),'classname_en'=> array('name_en'),'classnames'=> array('name','name_en')));
+
+		return parent::doAny($target);
 	}
+}
+
+class postEmployeeREST extends postREST{
 	
 	function personSuccess($person,$finder,&$result){
 		$pic = $person->getPicture();
@@ -33,7 +43,7 @@ class EmployeeREST extends REST{
 		}
 	}
 	
-	function doCreate($item){
+	public function doAny($item){
 		$itemPerson = $item["person"];
 		if(empty($itemPerson))
 			throw new \woo\base\AppException("none person infomation");
@@ -49,19 +59,32 @@ class EmployeeREST extends REST{
 			throw new \woo\base\AppException("Employee data is null!");
 		$extEmployee['userid'] = array('0'=>'id');
 		$target["employee"][] = array('fields'=>$itemEmployee,'condition'=>$extEmployee);
-		$result = $this->changeRecords($target,function($domain,&$result){
+		return $this->changeRecords($target,function($domain,&$result){
 			$result['id'] = $result['employee'][0]['id'];
 			$result['employee'][0]['userid'] = $result['person'][0]['id'];
 			unset($result['person'][0]['pwd']);
 		},true);
-		$this->response(json_encode($result),201);
 	}
-	/**
-	 * 根据 $item 数据，更新 employee 和 person 数据库，并生成回传数据
-	 * @param $item - array，键值对数组，包含要更新的数据
-	 * @return void
-	 */
-	function doUpdate($item){
+}
+
+class putEmployeeREST extends putREST{
+	
+	function personSuccess($person,$finder,&$result){
+		$pic = $person->getPicture();
+		$s_dir = "images/user/".session_id();
+		$s_file = $s_dir."/".$pic;
+		if(!empty($pic) && $pic!="noimg.png" && file_exists($s_file)){
+			$imgName = sprintf("u%08d",$person->getId());
+			$headshot = $imgName.".png";
+			rename($s_file, "images/user/$headshot");
+			$person->setPicture($headshot);
+			$finder->insert($person);
+			$result['picture'] = $headshot;
+			rmdir($s_dir);
+		}
+	}
+	
+	public function doAny($item){
 		$itemEmployee = $item["employee"];
 		if(is_null($itemEmployee))
 			throw new \woo\base\AppException("Employee data is null!");
@@ -74,24 +97,25 @@ class EmployeeREST extends REST{
 			$extPerson['id'] = array('0'=>'userid');
 			$target["person"][] = array('fields'=>$itemPerson,'condition'=>$extPerson,'sucess'=>"personSuccess");
 		}
-		$result = $this->changeRecords($target,function($domain,&$result){
+		return $this->changeRecords($target,function($domain,&$result){
 		},false);
-		$this->response(json_encode($result),201);
 	}
-	
-	function doDelete(){
-		$target["employee"] = array('fields'=>array('id','userid'),'value'=>$this->request->getProperty("id"));
+}
+
+class deleteEmployeeREST extends deleteREST{
+	public function doAny($table,$id){
+		$target["employee"] = array('fields'=>array('id','userid'),'value'=>$id);
 		$target["person"] = array('fields'=>array('id','picture'),'value'=>array('0'=>'userid'));
 
-		$this->deleteRecords($target,function($domain,&$result){
+		return $this->deleteRecords($target,function($domain,&$result){
 			$pic = $domain[1]->getPicture();
 			if(!empty($pic) && $pic!='noimg.png' && file_exists("images/user/$pic"))
 				unlink("images/user/$pic");
 			$result['id'] = $result['employee']['id'];
 		});
 	}
+	
 }
 
-new EmployeeREST();
-
+new REST('employee');
 ?>

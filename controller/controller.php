@@ -37,10 +37,10 @@ class Controller{
 		$lctarget = strtolower($target);
 		$uctarget = ucfirst($lctarget);
 		if(file_exists("view/$uctarget.php"))
-			include("view/$uctarget.php");
+			include_once("view/$uctarget.php");
 		else if(file_exists("domain/$uctarget.php")){
-			include("view/REST.php");
-			new \woo\view\REST($lctarget);
+			include_once("view/REST.php");
+			new \woo\view\REST();
 		}
 		exit;
 	}
