@@ -442,7 +442,7 @@ class changeFactory extends restFactory{
 	
 	function doAfter(&$result,$item){}
 
-	function doBbefore(&$item){}
+	function doBefore(&$item){}
 	
 	function doAny($item){}
 }
