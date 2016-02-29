@@ -23,6 +23,52 @@ class getProductREST extends getREST{
 	}
 }
 
+class postProductREST extends postREST{
+	
+	function goodsSuccess($Productclass,$finder,&$result){
+		$pic = $Productclass->getPicture();
+		$token = session_id();
+		$sdir = "images/good/$token";
+		if(!empty($pic) && $pic!="noimg.png" && file_exists("{$sdir}/$pic")){
+			$headshot = sprintf("%d_%d.png",$Productclass->getParentid(),$Productclass->getId());
+			rename("{$sdir}/$pic", "images/good/$headshot");
+			$Productclass->setPicture($headshot);
+			$finder->insert($Productclass);
+			$result[0]['picture'] = $headshot;
+			self::deldir($sdir);
+		}
+	}
+	
+	public function doAny(&$item){
+		$item["_processimage"] = "goodsSuccess";
+		return parent::doAny($item);
+	}
+}
+
+class putProductREST extends putREST{
+	
+	function goodsSuccess($Productclass,$finder,&$result){
+		$pic = $Productclass->getPicture();
+		$token = session_id();
+		$sdir = "images/good/$token";
+		if(!empty($pic) && $pic!="noimg.png" && file_exists("{$sdir}/$pic")){
+			$headshot = sprintf("%d_%d.png",$Productclass->getParentid(),$Productclass->getId());
+			$dimg = "images/good/$headshot";
+			if(file_exists($dimg))
+				@unlink($dimg);
+			rename("{$sdir}/$pic", $dimg);
+			$Productclass->setPicture($headshot);
+			$finder->insert($Productclass);
+			$result[0]['picture'] = $headshot;
+			self::deldir($sdir);
+		}
+	}
+	public function doAny(&$item){
+		$item["_processimage"] = "goodsSuccess";
+		return parent::doAny($item);
+	}
+}
+	
 class deleteProductREST extends deleteREST{
 	public function doAny($table,$id){
 		$target = array(

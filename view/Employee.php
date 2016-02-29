@@ -28,7 +28,7 @@ class getEmployeeREST extends getREST{
 
 class postEmployeeREST extends postREST{
 	
-	function personSuccess($person,$finder,&$result){
+	function personSucess($person,$finder,&$result){
 		$pic = $person->getPicture();
 		$s_dir = "images/user/".session_id();
 		$s_file = $s_dir."/".$pic;
@@ -38,8 +38,8 @@ class postEmployeeREST extends postREST{
 			rename($s_file, "images/user/$headshot");
 			$person->setPicture($headshot);
 			$finder->insert($person);
-			$result['picture'] = $headshot;
-			rmdir($s_dir);
+			$result[0]['picture'] = $headshot;
+			self::deldir($s_dir);
 		}
 	}
 	
@@ -60,9 +60,17 @@ class postEmployeeREST extends postREST{
 		$extEmployee['userid'] = array('0'=>'id');
 		$target["employee"][] = array('fields'=>$itemEmployee,'condition'=>$extEmployee);
 		return $this->changeRecords($target,function($domain,&$result){
-			$result['id'] = $result['employee'][0]['id'];
-			$result['employee'][0]['userid'] = $result['person'][0]['id'];
-			unset($result['person'][0]['pwd']);
+			
+			foreach(array("employee","person") as $_target){
+				$s = $result[$_target][0];
+				unset($result[$_target]);
+				$result[$_target] = $s;
+			}
+			$result['id'] = $result['employee']['id'];
+			$result['employee']['userid'] = $domain[0]->getId();
+			$result["register"] = $register[self::$language];
+			$result["email"] = $email[self::$language];
+			unset($result['person']['pwd']);
 		},true);
 	}
 }
@@ -74,13 +82,15 @@ class putEmployeeREST extends putREST{
 		$s_dir = "images/user/".session_id();
 		$s_file = $s_dir."/".$pic;
 		if(!empty($pic) && $pic!="noimg.png" && file_exists($s_file)){
-			$imgName = sprintf("u%08d",$person->getId());
-			$headshot = $imgName.".png";
-			rename($s_file, "images/user/$headshot");
+			$headshot = sprintf("u%08d.png",$person->getId());
+			$dimg = "images/user/$headshot";
+			if(file_exists($dimg))
+				@unlink($dimg);
+			rename("{$s_dir}/$pic", $dimg);
 			$person->setPicture($headshot);
 			$finder->insert($person);
-			$result['picture'] = $headshot;
-			rmdir($s_dir);
+			$result[0]['picture'] = $headshot;
+			self::deldir($s_dir);
 		}
 	}
 	

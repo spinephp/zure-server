@@ -339,7 +339,7 @@ class changeFactory extends restFactory{
 				}
 
 				if(!empty($data['sucess'])){
-					$this->$data['sucess']($domain[$index],$finder,$result[$target]);
+					$this->$data['sucess']($domain[$index],$finder,$result);
 				}
 			}
 		}
@@ -439,22 +439,54 @@ class changeFactory extends restFactory{
 			throw new \woo\base\AppException($e);
 		}
 	}
+
+	// 删除文件夹和文件夹下的所有文件
+	static function deldir($dir) {
+		//先删除目录下的文件：
+		$dh=opendir($dir);
+		while ($file=readdir($dh)) {
+			if($file!="." && $file!="..") {
+				$fullpath=$dir."/".$file;
+				if(!is_dir($fullpath)) {
+					unlink($fullpath);
+				} else {
+					deldir($fullpath);
+				}
+			}
+		}
+
+		closedir($dh);
+		//删除当前文件夹：
+		if(rmdir($dir)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	function doAfter(&$result,$item){}
 
 	function doBefore(&$item){}
 	
-	function doAny($item){}
+	function doAny(&$item){}
 }
 
 class postREST extends changeFactory{
 	
-	public function doAny($item){
+	public function doAny(&$item){
 		$target = array();
 		$_target = strtolower($this->request->getProperty("cmd"));
 		$owner = empty($item[$_target]);
 		$tem = isset($item[$_target])? $item[$_target]:$item;
 		$target[$_target][] = array('fields'=>$tem);
+		
+		if(isset($item["_processimage"])){
+			// 处理图片水印
+			$this->processWatermask($this->request) ;   
+			$target[$_target][0]['sucess'] = $item["_processimage"];
+			unset($item["_processimage"]);
+		}
+		
 		$result = $this->changeRecords($target,function($domain,&$result) use($owner,$item,$_target){
 
 			$s = $result[$_target][0];
@@ -496,12 +528,19 @@ class postREST extends changeFactory{
 }
 
 class putREST extends changeFactory{
-	public function doAny($item){
+	public function doAny(&$item){
 		$target = array();
 		$_target = strtolower($this->request->getProperty("cmd"));
 		$owner = empty($item[$_target]);
 		$tem = isset($item[$_target])? $item[$_target]:$item;
 		$target[$_target][] = array('fields'=>$tem,'condition'=>$this->request->getProperty("id"));
+		
+		if(isset($item["_processimage"])){
+			// 处理图片水印
+			$this->processWatermask($this->request) ;   
+			$target[$_target][0]['sucess'] = $item["_processimage"];
+			unset($item["_processimage"]);
+		}
 		//$this->request->log(json_encode($target));
 		return  $this->changeRecords($target,function($domain,&$result) use($owner,$_target){
 			$s = $result[$_target][0];

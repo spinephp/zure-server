@@ -24,8 +24,8 @@ class postCustomREST extends postREST{
 			rename($s_file, "images/user/$headshot");
 			$person->setPicture($headshot);
 			$finder->insert($person);
-			$result['picture'] = $headshot;
-			rmdir($s_dir);
+			$result[0]['picture'] = $headshot;
+			self::deldir($s_dir);
 		}
 	}
 	
@@ -75,6 +75,12 @@ class postCustomREST extends postREST{
 			);
 			// 发送激活邮件
 			self::activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
+			
+			foreach(array("custom","person") as $_target){
+				$s = $result[$_target][0];
+				unset($result[$_target]);
+				$result[$_target] = $s;
+			}
 			$result['id'] = $result['custom']['id'];
 			$result['custom']['userid'] = $domain[0]->getId();
 			$result["register"] = $register[self::$language];
@@ -145,6 +151,22 @@ class postCustomREST extends postREST{
 }
 
 class putCustomREST extends putREST{
+	
+	function sucessPerson($person,$finder,&$result){
+		$pic = $person->getPicture();
+		$s_dir = "images/user/".session_id();
+		$s_file = $s_dir."/".$pic;
+		if(!empty($pic) && $pic!="noimg.png" && file_exists($s_file)){
+			$imgName = sprintf("u%08d",$person->getId());
+			$headshot = $imgName.".png";
+			rename($s_file, "images/user/$headshot");
+			$person->setPicture($headshot);
+			$finder->insert($person);
+			$result[0]['picture'] = $headshot;
+			self::deldir($s_dir);
+		}
+	}
+	
 	public function doAny($item){
 		$target = array();
 		if(empty($item["custom"]))
@@ -153,7 +175,7 @@ class putCustomREST extends putREST{
 
 		if(!empty($item["person"])){
 			$extPerson['id'] = array('0'=>'userid');
-			$target["person"][] = array('fields'=>$item["person"],'condition'=>$extPerson);
+			$target["person"][] = array('fields'=>$item["person"],'condition'=>$extPerson,'sucess'=>"sucessPerson");
 		}
 		if(count($target)==0)
 			throw new \woo\base\AppException("Data is null!");
@@ -182,7 +204,7 @@ class deleteCustomREST extends deleteREST{
 			// 从 pro_use 表中删除记录
 			// 从 sys_notice 表中删除记录
 			$target = array(
-				"custom"=>array('fields'=>array('id','userid'),'value'=>$this->request->getProperty("id")),
+				"custom"=>array('fields'=>array('id','userid'),'value'=>$request->getProperty("id")),
 				"person"=>array('fields'=>array('id','companyid','picture'),'value'=>array('0'=>'userid')),
 				"billfree"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),
 				"billsale"=>array('fields'=>array('userid','id'),'value'=>array('1'=>'id')),

@@ -29,36 +29,46 @@ class postProductclassREST extends postREST{
 	
 	function goodsClassSuccess($Productclass,$finder,&$result){
 		$pic = $Productclass->getPicture();
-		if(!empty($pic) && $pic!="noimg.png" && file_exists("images/good/$pic")){
+		$token = session_id();
+		$sdir = "images/good/$token";
+		if(!empty($pic) && $pic!="noimg.png" && file_exists("{$sdir}/$pic")){
 			$headshot = sprintf("%d_%d.png",$Productclass->getParentid(),$Productclass->getId());
-			rename("images/good/$pic", "images/good/$headshot");
+			rename("{$sdir}/$pic", "images/good/$headshot");
 			$Productclass->setPicture($headshot);
 			$finder->insert($Productclass);
-			$result['picture'] = $headshot;
+			$result[0]['picture'] = $headshot;
+			self::deldir($sdir);
 		}
 	}
 	
-	public function doAny($item){
-		$itemProductclass = $item["productclass"];
-		if(is_null($itemProductclass))
-			throw new \woo\base\AppException("Productclass data is null!");
-
-		// 处理图片水印
-		$this->processWatermask($request) ;   
-
-		$target["productclass"][] = array('fields'=>$itemProductclass,'sucess'=>"goodsClassSuccess");
-
-		return $this->changeRecords($target,function($domain,&$result){
-		},true);
+	public function doAny(&$item){
+		$item["_processimage"] = "goodsClassSuccess";
+		return parent::doAny($item);
 	}
 }
 
 class putProductclassREST extends putREST{
 	
-	public function doAny($item){
-		// 处理图片水印
-		$this->processWatermask($request) ;   
-		return parent::doMethod($request);
+	function goodsClassSuccess($Productclass,$finder,&$result){
+		$pic = $Productclass->getPicture();
+		$token = session_id();
+		$sdir = "images/good/$token";
+		if(!empty($pic) && $pic!="noimg.png" && file_exists("{$sdir}/$pic")){
+			$headshot = sprintf("%d_%d.png",$Productclass->getParentid(),$Productclass->getId());
+			$dimg = "images/good/$headshot";
+			if(file_exists($dimg))
+				@unlink($dimg);
+			rename("{$sdir}/$pic", $dimg);
+			$Productclass->setPicture($headshot);
+			$finder->insert($Productclass);
+			$result[0]['picture'] = $headshot;
+			self::deldir($sdir);
+		}
+	}
+	
+	public function doAny(&$item){
+		$item["_processimage"] = "goodsClassSuccess";
+		return parent::doAny($item);
 	}
 }
 
