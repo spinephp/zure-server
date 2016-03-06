@@ -27,6 +27,7 @@ class getEmployeeREST extends getREST{
 }
 
 class postEmployeeREST extends postREST{
+	static $language = 0;
 	
 	function personSucess($person,$finder,&$result){
 		$pic = $person->getPicture();
@@ -52,7 +53,7 @@ class postEmployeeREST extends postREST{
 		$now = date('Y-m-d H:i:s');
 		$extend['lasttime'] = $now;
 		$extend['hash'] = md5($itemPerson['UserName'].$itemPerson['pwd'].$now);
-		$target["person"][] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>"personSuccess");
+		$target["person"][] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>"personSucess");
 			
 		$itemEmployee = $item["employee"];
 		if(is_null($itemEmployee))

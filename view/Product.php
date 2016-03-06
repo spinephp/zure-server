@@ -52,7 +52,7 @@ class putProductREST extends putREST{
 		$token = session_id();
 		$sdir = "images/good/$token";
 		if(!empty($pic) && $pic!="noimg.png" && file_exists("{$sdir}/$pic")){
-			$headshot = sprintf("%d_%d.png",$Productclass->getParentid(),$Productclass->getId());
+			$headshot = sprintf("%d_%d.png",$Productclass->getClassid(),$Productclass->getId());
 			$dimg = "images/good/$headshot";
 			if(file_exists($dimg))
 				@unlink($dimg);
