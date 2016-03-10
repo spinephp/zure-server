@@ -495,7 +495,7 @@ class postREST extends changeFactory{
 				unset($result['id']);
 				$result = $s;
 			}else{
-				$result[$_target] = $s;
+				$result[$_target][0] = $s;
 			}
 		},true);
 		
@@ -519,7 +519,7 @@ class postREST extends changeFactory{
 						$target[$other['table']][] = array('fields'=>$other['data']);
 						$opse = $other['method']=='post'? true:false;
 						$temp = $this->changeRecords($target,null,$opse);
-						$result[$other['table']] = $temp[$other['table']][0];
+						$result[$other['table']][0] = $temp[$other['table']][0];
 					}
 				}
 			}
@@ -549,7 +549,7 @@ class putREST extends changeFactory{
 				unset($result['id']);
 				$result = $s;
 			}else{
-				$result[$_target] = $s;
+				$result[$_target] [0]= $s;
 			}
 		},false);
 	}
