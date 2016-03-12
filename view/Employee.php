@@ -65,13 +65,13 @@ class postEmployeeREST extends postREST{
 			foreach(array("employee","person") as $_target){
 				$s = $result[$_target][0];
 				unset($result[$_target]);
-				$result[$_target] = $s;
+				$result[$_target][0] = $s;
 			}
-			$result['id'] = $result['employee']['id'];
-			$result['employee']['userid'] = $domain[0]->getId();
+			$result['id'] = $result['employee'][0]['id'];
+			$result['employee'][0]['userid'] = $domain[0]->getId();
 			$result["register"] = $register[self::$language];
 			$result["email"] = $email[self::$language];
-			unset($result['person']['pwd']);
+			unset($result['person'][0]['pwd']);
 		},true);
 	}
 }

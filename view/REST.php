@@ -386,15 +386,20 @@ class changeFactory extends restFactory{
 	protected function processWatermask(\woo\controller\Request $request){
 		$item = $request->getProperty("item");
 		if(isset($item['watermask']) && $item['watermask']=='on'){
+			$target = strtolower($request->getProperty("cmd"));
 			$waterText = "";
 			$waterImage = "";
-			$fontFile = "./arial.ttf";
+			$fontFile = "./mnjcy.TTF";
 			$fontSize = 12;
 			$textColor = "#CCCCCC";
 			$xOffset = 0;
 			$yOffset = 0;
 			$waterPos = 0;
-			$groundImage = "images/good/".$item['productclass']['picture'];
+			$picture = $item[$target]['picture'];
+			$groundImage = "images/good/";
+			if(!strpos($picture,"_"))
+				$groundImage .= session_id()."/";
+			$groundImage .= $picture;
 			if($item['watersel']=='0'){
 				$waterText = $item['watermasktxt'];
 				if(isset( $item['fontfile'])) $fontFile = $item['fontfile'];

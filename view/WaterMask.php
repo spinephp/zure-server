@@ -37,7 +37,7 @@
 * 说明：本程序根据longware的程序改写而成。 
 */ 
 namespace woo\view;
-function imageWaterMark($groundImage,$waterPos=0,$waterImage="",$waterText="",$fontSize=12,$textColor="#CCCCCC", $fontfile='./arial.ttf',$xOffset=0,$yOffset=0) 
+function imageWaterMark($groundImage,$waterPos=0,$waterImage="",$waterText="",$fontSize=12,$textColor="#CCCCCC", $fontfile='./mnjcy.TTF',$xOffset=0,$yOffset=0) 
 { 
    $isWaterImage = FALSE; 
      //读取水印文件 

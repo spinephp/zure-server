@@ -9,6 +9,7 @@
 namespace woo\view;
 
 require_once("view/REST.php");
+require_once("view/WaterMask.php");
 
 class getProductREST extends getREST{
 	public function doAny($target){

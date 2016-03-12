@@ -79,13 +79,13 @@ class postCustomREST extends postREST{
 			foreach(array("custom","person") as $_target){
 				$s = $result[$_target][0];
 				unset($result[$_target]);
-				$result[$_target] = $s;
+				$result[$_target] [0]= $s;
 			}
-			$result['id'] = $result['custom']['id'];
-			$result['custom']['userid'] = $domain[0]->getId();
+			$result['id'] = $result['custom'][0]['id'];
+			$result['custom'][0]['userid'] = $domain[0]->getId();
 			$result["register"] = $register[self::$language];
 			$result["email"] = $email[self::$language];
-			unset($result['person']['pwd']);
+			unset($result['person'][0]['pwd']);
 		},true);
 	}
   
