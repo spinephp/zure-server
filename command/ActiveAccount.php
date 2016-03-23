@@ -37,7 +37,7 @@ class ActiveAccount extends Command{
 				    if(!$obj){ // 记录是否存在
 					    $request->addFeedback("Invalid hash value！");
 				    }else{
-              if($obj->getActive()=='N'){
+              if($obj->getActive()=='N' && $obj->getHash()==$hash){
                 $now = strtotime(date('Y-m-d H:i:s'));
                 $registertime = strtotime($obj->getLasttime());
                 if($now-$registertime>2*24*60*60)

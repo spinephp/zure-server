@@ -83,8 +83,8 @@ class postCustomREST extends postREST{
 			}
 			$result['id'] = $result['custom'][0]['id'];
 			$result['custom'][0]['userid'] = $domain[0]->getId();
-			$result["register"] = $register[self::$language];
-			$result["email"] = $email[self::$language];
+			$result["register"] = $register[postCustomREST::$language];
+			$result["email"] = $email[postCustomREST::$language];
 			unset($result['person'][0]['pwd']);
 		},true);
 	}
