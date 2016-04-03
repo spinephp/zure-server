@@ -258,7 +258,7 @@ class changeFactory extends restFactory{
 				$fun = "set".ucfirst($field);
 				if(!method_exists($domaini,$fun))
 					throw new  \woo\base\AppException("Invalid field name or field value!");
-				$domaini->$fun($val);
+				$domaini->$fun($this->autoValue($val));
 			}
 		}else{
 			$domaini->setId($condition);
@@ -429,11 +429,11 @@ class changeFactory extends restFactory{
 		try{
 			$this->request = $request;
 			$cmdStatus = $request->getFeedbackString();
-			if($cmdStatus!="Command Ok!")
+			if($cmdStatus != "Command Ok!")
 				throw new \woo\base\AppException($cmdStatus);
 			$item = $request->getProperty("item");
 			if(is_null($item))
-				throw new \woo\base\AppException($request->getFeedbackString());
+				throw new \woo\base\AppException("None item, data  is null!");//$request->getFeedbackString());
 			$this->doBefore($item);
 			$result = $this->doAny($item);
 			//$this->request->log("item=".json_encode($item));
@@ -481,7 +481,6 @@ class postREST extends changeFactory{
 	public function doAny(&$item){
 		$target = array();
 		$_target = strtolower($this->request->getProperty("cmd"));
-		$owner = empty($item[$_target]);
 		$tem = isset($item[$_target])? $item[$_target]:$item;
 		$target[$_target][] = array('fields'=>$tem);
 		
@@ -492,11 +491,11 @@ class postREST extends changeFactory{
 			unset($item["_processimage"]);
 		}
 		
-		$result = $this->changeRecords($target,function($domain,&$result) use($owner,$item,$_target){
+		$result = $this->changeRecords($target,function($domain,&$result) use($item,$_target){
 
 			$s = $result[$_target][0];
 			unset($result[$_target]);
-			if($owner){
+			if(empty($item[$_target])){
 				unset($result['id']);
 				$result = $s;
 			}else{

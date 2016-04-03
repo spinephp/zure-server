@@ -33,7 +33,7 @@ class Company extends DomainObject{
 	}
 
 	function setAccount($account_s){
-    if(!preg_match('/^\d{12,19}$/',$account_s))
+    if(!preg_match('/^\d{12,19}|\s{0}$/',$account_s))
       throw new \Exception("Account is invalid");
 		$this->objects["account"] = $account_s;
 	}
@@ -51,7 +51,7 @@ class Company extends DomainObject{
 	// }
 
 	function setTel($tel_s){
-		if(!preg_match('/^(\+?\d{2,3}[\-\ ]?)?(0?[0-9]{2,3}[\-\ ]?)?\d{7,8}$/',$tel_s))
+		if(!preg_match('/^(\+?\d{2,3}[\-\ ]?)?(0?[0-9]{2,3}[\-\ ]?)?\d{7,8}|\s{0}$/',$tel_s))
 		  throw new \Exception("Tel is error");
 		$this->objects["tel"] = $tel_s;
 	}
@@ -61,8 +61,8 @@ class Company extends DomainObject{
 	}
 
 	function setFax($fax_s){
-		if(!preg_match('/^(\+?\d{2,3}[\-\ ]?)?(0?[0-9]{2,3}[\-\ ]?)?\d{7,8}$/',$fax_s))
-		  throw new \Exception("Tel is error");
+		if(!preg_match('/^(\+?\d{2,3}[\-\ ]?)?(0?[0-9]{2,3}[\-\ ]?)?\d{7,8}|\s{0}$/',$fax_s))
+		  throw new \Exception("Fax is error");
 		$this->objects["fax"] = $fax_s;
 	}
 
@@ -89,7 +89,7 @@ class Company extends DomainObject{
 	}
 
 	function setWww($web_s){
-    if(!filter_var("http://$web_s", FILTER_VALIDATE_URL))
+    if(!empty($web_s) && !filter_var("http://$web_s", FILTER_VALIDATE_URL))
       throw new \Exception("Url is invalid");
 		$this->objects["www"] = $web_s;
 	}
@@ -99,7 +99,7 @@ class Company extends DomainObject{
 	}
 
 	function setPostcard($postcard_s){
-    if(!preg_match('/^[1-9]\d{5}$/', $postcard_s))
+    if(!preg_match('/^[1-9]\d{5}|\s{0}$/', $postcard_s))
       throw new \Exception("Postcard is invalid");
 		$this->objects["postcard"] = $postcard_s;
 	}
@@ -109,7 +109,7 @@ class Company extends DomainObject{
 	}
 
 	function setDuty($duty_s){
-		if(!preg_match('/^[1-9]\d{14}$/',$duty_s))
+		if(!preg_match('/^[1-9]\d{14}|\s{0}$/',$duty_s))
 		  throw new \Exception("Duty is error");
 		$this->objects["duty"] = $duty_s;
 	}

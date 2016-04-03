@@ -40,7 +40,8 @@ abstract class Command{
 	'OrdersState'=>array('userShell',null,null,null),
   	'OrderState'=>array('userShell',array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
 	'Payment'=>array('userShell',null,null,null),
-  	'Product'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
+ 	'Person'=>array('userShell',array('fn'=>'captchaShell','autoParam'=>null),'userShell','captchaShell userShell'),
+ 	'Product'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
   	'ProductClass'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
 	'Right'=>array('employeeShell',array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
 	'Transport'=>array('userShell',null,null,null),
@@ -246,6 +247,7 @@ class RESTCommand extends Command{
 		$right = self::validates($cmd);
 		$status = 'CMD_OK';
 		if(empty($right) || empty($right[1])){
+			$request->addFeedback(COMMAND_OK);
 			//if(1==$this->userShell($request)){
 				//$status = $this->_restCreate($request,null);
 			//}
