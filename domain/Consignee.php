@@ -79,7 +79,7 @@ class Consignee extends DomainObject{
 	}
 
 	function setMobile($mobile_s){
-    if(!preg_match('/^[(86)|0]?(1[3|5|8]\d{9})$/',$mobile_s))
+    if(!preg_match('/^[(86)|0]?(1[3|5|8]\d{9})|\s{0}$/',$mobile_s))
       throw new \Exception("Mobile is error");
 		$this->objects["mobile"] = $mobile_s;
 	}
@@ -89,7 +89,8 @@ class Consignee extends DomainObject{
 	}
 
 	function setEmail($email_s){
-    if(!preg_match('/^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/',$email_s))
+    if(!preg_match('/^[a-z0-9]([a-z0-9]*[-_.]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\.][a-z]{2,3}([\.][a-z]{2})?$/',$email_s))
+		//if(!filter_var ($email_s, FILTER_VALIDATE_EMAIL))
       throw new \Exception("email is error");
 		$this->objects["email"] = $email_s;
 	}
