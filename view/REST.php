@@ -670,7 +670,8 @@ class REST{
 			$name = strtolower($this->request->getMethod());
 			if(!empty($target)){
 				$temp = ucfirst($target);
-				include_once("view/$temp.php");
+				if(file_exists("view/$temp.php"))
+					include_once("view/$temp.php");
 				if(class_exists("woo\\view\\".$name.$temp."REST",false))
 					$name .= $temp;
 			}

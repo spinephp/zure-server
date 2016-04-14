@@ -43,8 +43,13 @@ class postOrderREST extends postREST{
 		* 处理 order 表数据
 		*/
 		$itemOrder = $item;
-		unset($itemOrder['products']);
-		$extend['code'] = $code; // '0' - 表示表名在 $target 数组中的索引值，这里指 order ，'id' - 指定表名对应表中的字段名
+        unset($itemOrder['products']);
+
+        if(array_key_exists('code',$itemOrder))
+            $itemOrder['code'] = $code;
+        else
+            $extend['code'] = $code;
+
 		$extend['userid'] = "?userid";
 		$extend['time'] = "?time";
 		$target["order"][] = array('fields'=>$itemOrder,'condition'=>$extend);
@@ -52,9 +57,17 @@ class postOrderREST extends postREST{
 		/**
 		* 处理 orderproduct 表数据，支持多条记录
 		*/
+		$factory = \woo\mapper\PersistenceFactory::getFactory("product",array("id","price","amount"));
+		$finder = new \woo\mapper\DomainObjectAssembler($factory);
 		$extendProduct['orderid'] = array('0'=>'id'); // '0' - 表示表名在 $target 数组中的索引值，这里指 order ，'id' - 指定表名对应表中的字段名
-		foreach($item['products'] as $product)
+		foreach($item['products'] as $product){
+			// 
+			$idobj = $factory->getIdentityObject()->field('id')->eq($product["proid"]);
+			$collection = $finder->find($idobj);
+			$obj = $collection->current();
+			$extendProduct["price"] = $obj->getPrice();
 			$target["orderproduct"][] = array('fields'=>$product,'condition'=>$extendProduct);
+		}
 
 		/**
 		* 处理 ordersstate 表数据
@@ -64,11 +77,9 @@ class postOrderREST extends postREST{
 		$extendState['time'] = "?time";
 		$target["ordersstate"][] = array('condition'=>$extendState);
 
-		return $this->changeRecords($target,function($domain,&$result){
+		return $this->changeRecords($target,function($domain,&$result) use($factory,$finder){
 			if(!empty($result['orderproduct'])){
 				// 更新产品库存数量
-				$factory = \woo\mapper\PersistenceFactory::getFactory("product",array("id","amount"));
-				$finder = new \woo\mapper\DomainObjectAssembler($factory);
 				foreach($result['orderproduct'] as $goods){
 					if($goods["number"]>0){
 						$idobj = $factory->getIdentityObject()->field('id')->eq($goods["proid"]);
