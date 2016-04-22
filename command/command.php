@@ -40,7 +40,7 @@ abstract class Command{
 	'OrdersState'=>array('userShell',null,null,null),
   	'OrderState'=>array('userShell',array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
 	'Payment'=>array('userShell',null,null,null),
- 	'Person'=>array('userShell',array('fn'=>'captchaShell','autoParam'=>null),'userShell','captchaShell userShell'),
+ 	'Person'=>array(null,array('fn'=>'captchaShell','autoParam'=>null),'userShell','captchaShell userShell'),
  	'Product'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
   	'ProductClass'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
 	'Right'=>array('employeeShell',array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
