@@ -264,6 +264,10 @@
     <view>SystemNotice</view>
   </command>
 
+  <command name="PasswordVerify">
+    <view>P_passwordverify</view>
+  </command>
+
   <command name="UpdatePassword">
     <view>UpdatePassword</view>
   </command>

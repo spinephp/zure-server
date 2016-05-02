@@ -20,26 +20,30 @@ require_once("controller/Request.php");
 require_once("base/SessionRegistry.php");
 require_once("domain/Person.php");
 class ResetPassword extends Command{
-    function doExecute(\woo\controller\Request $request){
-	 /**
-		* 准备用户数据集合，并保存到白板($request)
-		*/
+	function doExecute(\woo\controller\Request $request){
+    		$result = $this->captchaShell($request);
+    		if($result==1)
+    			$result = $this->safeShell($request,'_resetPWD');
+    		return $result;
+	}
+
+	function _resetPWD(\woo\controller\Request $request){
 		$state = 'CMD_OK';
 		$session = \woo\base\SessionRegistry::instance();
 		$username = $request->getProperty("username");
 		$email = $request->getProperty("email");
-		  $factory = \woo\mapper\PersistenceFactory::getFactory("person",array('id','username','email'));
-		  $finder = new \woo\mapper\DomainObjectAssembler($factory);
-		  $idobj = $factory->getIdentityObject()->field('username')->eq($username)->field('email')->eq($email);
-		  $collection = $finder->find($idobj);
-		  $obj = $collection->current();
-		  if(!$obj){ // 记录是否存在
-			  $request->addFeedback("Invalid username or email！");
-			  $state = 'CMD_INSUFFICIENT_DATA';
-		  }else{
-			  $request->setObject('person',$obj);
-			  $request->addFeedback("'$username' ID is ({$obj->getId()})");
-		  }
+		$factory = \woo\mapper\PersistenceFactory::getFactory("person",array('id','username','email'));
+		$finder = new \woo\mapper\DomainObjectAssembler($factory);
+		$idobj = $factory->getIdentityObject()->field('username')->eq($username)->field('email')->eq($email);
+		$collection = $finder->find($idobj);
+		$obj = $collection->current();
+		if(!$obj){ // 记录是否存在
+			$request->addFeedback("Invalid username or email！");
+			$state = 'CMD_INSUFFICIENT_DATA';
+		}else{
+			$request->setObject('person',$obj);
+			$request->addFeedback(COMMAND_OK);
+		}
 		return self::statuses($state);
 	}
 }

@@ -8,6 +8,7 @@
  */
 namespace woo\controller;
 require_once("controller/PageController.php");
+require_once("view/SendEmail.php");
 require_once("base/SessionRegistry.php");
 
 class ResetPasswordController extends PageController{
@@ -27,6 +28,7 @@ class ResetPasswordController extends PageController{
 					if($action=="custom_resetPassword"){
 						// 创建唯一标识符
 						$hash = md5(uniqid(rand(1,1)));
+						$now = date('Y-m-d h:i:s');
 						// 把登录时间和登录次数写入 person 表
 						$person = new \woo\domain\Person(null);
 						$person->setId($result["id"]);
@@ -35,14 +37,6 @@ class ResetPasswordController extends PageController{
 						$finder = new \woo\mapper\DomainObjectAssembler($factory);
 						$finder->insert($person);
 			
-						$msg = <<<_EMAIL
-						Dear user:
-						Check on the following link to reset your password:
-						http://www.yrr8.com/lostpassword.php?id=$hash
-_EMAIL;
-			
-      $now = date('Y-m-d h:i:s');
-      
       $url = "http://".$_SERVER["HTTP_HOST"];
       $url .= "/woo/index.php? cmd=PasswordVerify&verify={$hash}&type=$type";
       $subject = array("重设密码","Reset password"); //邮件标题
@@ -67,7 +61,7 @@ _EMAIL;
   If you have any questions or Suggestions, please contact us.<br />
 LIANYUNGANG YUNRUI REFRACTORY CO,.LTD<br /><img alt='helloweba' src='cid:my-attach'>";
       $body = array($body_cn,$body_en); //邮件主体内容
-      $this->sendEmail($email,$subject[$language],$body[$language]);
+      sendEmail($email,$subject[$language],$body[$language]);
 						echo json_encode($result);
 					}
 				}
@@ -80,42 +74,6 @@ LIANYUNGANG YUNRUI REFRACTORY CO,.LTD<br /><img alt='helloweba' src='cid:my-atta
 			echo json_encode($result);
         }
     }
-  function sendEmail($email,$subject,$body){
-    require_once('phpmailer/class.phpmailer.php');
-
-		$mail = new \PHPMailer(); // create a new object
-		$mail->IsSMTP(); // enable SMTP
-		$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-		$mail->SMTPAuth = true; // authentication enabled
-		$mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
-		$mail->Host = "smtp.qq.com";//"smtp.gmail.com";
-		$mail->Port = 465; // or 587
-		$mail->IsHTML(true);
-		$mail->Hostname = 'yrr8.com';
-		$mail->Username = "1619584123";  //????? QQ ?
-		$mail->Password = "lxm@tsl121314";  //????????
-		$mail->SetFrom("admin@yrr8.com");
-		$mail->Subject = $subject; //????
-		$mail->AddAddress($email);
-
-		$mail->CharSet  = "UTF-8"; //???
-		$mail->Encoding = "base64"; //????
-
-
-    //$mail->From = "yrrlyg@gmail.comm";  //发件人地址（也就是你的邮箱）
-    //$mail->FromName = "云瑞";  //发件人姓名
-
-    //$address = $email;//收件人email
-    //$mail->AddAddress($address, "亲");//添加收件人（地址，昵称）
-
-    //$mail->AddAttachment('xx.xls','我的附件.xls'); // 添加附件,并指定名称
-    //$mail->AddEmbeddedImage("logo.jpg", "my-attach", "logo.jpg"); //设置邮件中的图片
-    $mail->Body = $body;
-
-    //发送
-    if(!$mail->Send())
-      throw new \woo\base\AppException("发送失败: " . $mail->ErrorInfo);
-  }
 }
 
 $controller = new ResetPasswordController();
