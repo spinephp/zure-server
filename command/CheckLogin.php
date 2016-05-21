@@ -32,7 +32,7 @@ class CheckLogin extends Command{
 			  $state = 'CMD_INSUFFICIENT_DATA';
         $username = htmlentities($request->getProperty("username"),ENT_QUOTES,'UTF-8');
         $action = $request->getProperty("action");
-				$factory = \woo\mapper\PersistenceFactory::getFactory("person",array('id','username','pwd','active','nick','picture'));
+				$factory = \woo\mapper\PersistenceFactory::getFactory("person",array('id','username','pwd','active','email','nick','picture'));
 				$finder = new \woo\mapper\DomainObjectAssembler($factory);
 				$idobj = $factory->getIdentityObject()->field('username')->eq($username);
 				$collection = $finder->find($idobj);

@@ -20,10 +20,11 @@ class CheckLoginController extends PageController{
         $action = $request->getProperty('action');
 			  if(!is_null($obj)){ // 如客户数据存在
 			  if($obj->isPassword($request->getProperty('pwd'))){ // 如密码正确
+					$result['id'] = $obj->getid();
+					$result['name'] = $obj->getUsername();
+					$result["active"] = $obj->getActive();
+					$result["email"] = $obj->getEmail();
 					if($obj->getActive()=='Y'){ // 如果客户已激活
-						$result['id'] = $obj->getid();
-						$result['name'] = $obj->getUsername();
-						$result["nick"] = $obj->getNick();
 						$result["picture"] = $obj->getPicture();
 						$result["state"] = 0;
 						if($result["id"]){
@@ -59,7 +60,7 @@ class CheckLoginController extends PageController{
 						// 返回客户信息
 						echo json_encode($result);
 					}else{
-				    throw new \woo\base\AppException("Account not activeed!");
+				    throw new \woo\base\AppException("Account not actived!");
 					}
 				}else{
 				    throw new \woo\base\AppException("Password error!");
@@ -68,8 +69,9 @@ class CheckLoginController extends PageController{
 				    throw new \woo\base\AppException($request->getFeedBackString());
 			}
         }catch(\woo\base\AppException $e){
-          $result["id"] = -1;
-          $result["username"] = $e->getMessage();
+          $result["cid"] = $result["id"];
+           $result["id"] = -1;
+          $result["error"] = $e->getMessage();
 					echo json_encode($result);
         }
     }

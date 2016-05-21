@@ -88,13 +88,45 @@ abstract class Command{
 		$session = \woo\base\SessionRegistry::instance();
 		$userid = $session->get("userid");
 		$result = 'CMD_INSUFFICIENT_DATA';
+		$item = $request->getProperty('item');
+		$cmd = $request->getProperty('cmd');
+		if(!isset($userid) && isset($item['person']['id']))
+			$userid = $item['person']['id'];
+		
+
 		if(isset($userid)){
 			$result = 'CMD_OK';
 			if(!empty($fun))
 				$result = $fun($request,$userid);
-		}else{
+		}else if($cmd=='Person' && isset($item['hash'])){
+			// 重置密码
+			$hash = $item['hash'];
+			$factory = \woo\mapper\PersistenceFactory::getFactory("person",array("id","hash","lasttime"));
+			$finder = new \woo\mapper\DomainObjectAssembler($factory);
+			$idobj = $factory->getIdentityObject()->field("hash")->eq($hash);
+			$collection = $finder->find($idobj);
+			if($collection->count()){
+				$obj = $collection->current();
+				if($obj){
+					$zero1=strtotime(date('y-m-d h:i:s')); //当前时间
+					$zero2=strtotime($obj->getLasttime());  //过年时间
+					//$guonian=($zero2-$zero1)/86400; //60s*60min*24h
+					if($zero2-$zero1< 2*86400){
+						$userid = $obj->getId();
+						$result = 'CMD_OK';
+						if(!empty($fun))
+							$result = $fun($request,$userid);
+						$item['hash'] = '00000000000000000000000000000000';
+						$request->setProperty('item',$item);
+					}else{
+						$request->addFeedback("Operation has expired!");
+					}
+				}else
+					$request->addFeedback("Invalid option!");
+			}else		
+				$request->addFeedback("Invalid option!");
+		}else
 			$request->addFeedback("Not logged!");
-		}
 		return is_numeric($result)? $result:self::statuses($result);
 	}
 	

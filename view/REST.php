@@ -25,7 +25,17 @@ abstract class restFactory{
 	public function getRequest(){
 		return $this->request;
 	}
-  
+ 
+	public function setPDO($pdo)
+	{
+		$this->pdo = $pdo;
+	}
+ 
+	public function getPDO()
+	{
+		return $this->pdo;
+	}
+ 
 	/**
 	 * 当查询条件中的字段值为 ? 号时，在 sessionRegistry 中取出字段对应的值
 	 * @param $field - string 类型，指定字段
@@ -50,7 +60,6 @@ abstract class restFactory{
 		}
 		return $value;
 	}
-
 	abstract function doMethod(\woo\controller\Request $request);
 }
 
@@ -219,7 +228,8 @@ class getREST extends restFactory{
 				throw new \woo\base\AppException("Invalid request parameter!");
 			return $this->doAny($target);
 		}catch(\woo\base\AppException $e){
-			if(!empty($this->pdo)) $this->pdo->rollBack();               //回滚事务  
+			$pdo = $this->getPDO();
+			if(!empty($pdo)) $pdo->rollBack();               //回滚事务  
 			throw new \woo\base\AppException($e);
 		}
 	}
@@ -227,7 +237,7 @@ class getREST extends restFactory{
 }
 
 class changeFactory extends restFactory{
-	protected $pdo = null;
+	//protected $pdo = null;
   
 	/**
 	 * 该方法根据 $condition 数组内容设置领域对象 $domain[$index] 的内容。
@@ -302,7 +312,7 @@ class changeFactory extends restFactory{
 	private function saveRecords($target,$datas,&$domain,$index,$isinsert=true){
 		$result = array();
 		$finder = null;
-		
+		$pdo = $this->getPDO();
 		foreach ($datas as $data){
 			$fields = array();
 			$main = null;
@@ -323,9 +333,10 @@ class changeFactory extends restFactory{
 				if(!empty($data['need']) && is_array($data['need']))
 					$fields = array_merge($fields,$data['need']);
 				$finder = \woo\mapper\PersistenceFactory::getFinder($target,array_unique($fields));
-				if(is_null($this->pdo)){
-					$this->pdo = \woo\mapper\DomainObjectAssembler::getPDO();
-					$this->pdo->beginTransaction();       //开始事务  
+				if(is_null($pdo)){
+					$pdo = \woo\mapper\DomainObjectAssembler::getPDO();
+					$this->setPDO($pdo);
+					$pdo->beginTransaction();       //开始事务  
 				}
 			}
 
@@ -363,7 +374,7 @@ class changeFactory extends restFactory{
 	function changeRecords($targets,$sucess,$is_new){
 		$domain = array();
 		$result = array();
-		$this->pdo = null;
+		$pdo = $this->getPDO();
 		$index = 0;
 		$len = count($targets)-1;
 		foreach($targets as $target=>$datas){
@@ -375,8 +386,8 @@ class changeFactory extends restFactory{
 				$result[$target] = $_result;
 			$index++;
 		}
-		if(!is_null($this->pdo))
-			$this->pdo->commit();                 //提交事务  
+		if(!is_null($pdo))
+			$pdo->commit();                 //提交事务  
 		$result["id"] = $domain[0]->getId();
 		if(!empty($sucess))
 			$sucess($domain,$result);
@@ -440,7 +451,8 @@ class changeFactory extends restFactory{
 			$this->doAfter($result,$item);
 			return $result;
 		}catch(\woo\base\AppException $e){
-			if(!empty($this->pdo)) $this->pdo->rollBack();               //回滚事务  
+			$pdo = $this->getPDO();
+			if(!empty($pdo)) $pdo->rollBack();               //回滚事务  
 			throw new \woo\base\AppException($e);
 		}
 	}
@@ -561,7 +573,7 @@ class putREST extends changeFactory{
 
 
 class deleteREST extends restFactory{
-	private $pdo = null;
+	//private $pdo = null;
 	public function doMethod(\woo\controller\Request $request){
 		try{
 			$this->request = $request;
@@ -574,17 +586,18 @@ class deleteREST extends restFactory{
 			$id = $this->request->getProperty("id");
 			if(is_null($id))
 				throw new \woo\base\AppException("Invalid id!");
-			$this->pdo = \woo\mapper\DomainObjectAssembler::getPDO();
+			$this->setPDO(\woo\mapper\DomainObjectAssembler::getPDO());
 			return $this->doAny($table,$id);
 		}catch(\woo\base\AppException $e){
-			if(!empty($this->pdo)) $this->pdo->rollBack();               //回滚事务  
+			$pdo =$this->getPDO();
+			if(!empty($pdo)) $pdo->rollBack();               //回滚事务  
 			throw new \woo\base\AppException($e);
 		}
 	}
   
 	public function doAny($table,$id){
 		$target[$table] = array('fields'=>array('id'),'value'=>$id);
-		$this->pdo = \woo\mapper\DomainObjectAssembler::getPDO();
+		//$this->pdo = \woo\mapper\DomainObjectAssembler::getPDO();
 		return $this->deleteRecords($target,function($domain,&$result)  use($target){
 			$result = $result[key($target)];
 		});
@@ -606,7 +619,7 @@ class deleteREST extends restFactory{
 	function deleteRecords($targets,$sucess){
 		$rec=array();
 		$index = 0;
-
+		$pdo = $this->getPDO();
 		foreach($targets as $target=>$condition){
 			if(!is_array($condition))
 				throw new \woo\base\AppException("Data format error!");
@@ -624,8 +637,8 @@ class deleteREST extends restFactory{
 			$collection = $finder->find($idobj);
 			$rec[$index] = $collection->current();
 			if($index==0){
-				$this->pdo = \woo\mapper\DomainObjectAssembler::getPDO();
-				$this->pdo->beginTransaction();       //开始事务  
+				//$this->pdo = \woo\mapper\DomainObjectAssembler::getPDO();
+				$pdo->beginTransaction();       //开始事务  
 			}
 			$recc = $rec[$index++];
 			if(!is_null($recc)){
@@ -641,7 +654,7 @@ class deleteREST extends restFactory{
 
 		}
 
-		$this->pdo->commit();                 //提交事务  
+		$pdo->commit();                 //提交事务  
 		if(!empty($sucess))
 			$sucess($rec,$result);
 
@@ -660,7 +673,7 @@ class REST{
 
 	protected $request;
 	
-	public function __construct($target=null){
+	public function __construct($target=null,$response=true){
 		try{
 			$this->request = \woo\view\VH::getRequest();
 
@@ -677,11 +690,18 @@ class REST{
 			}
 			$name = "\\woo\\view\\{$name}REST";
 			$this->factory = new $name();
-			$this->response(json_encode($this->factory->doMethod($this->request)));
+			$result = $this->factory->doMethod($this->request);
+			if($response)
+				$this->response(json_encode($result));
+			else
+				return $result;
 		}catch(\woo\base\AppException $e){
 			$result['id'] = -1;
 			$result['error'] = $e->getMessage();
-			$this->response(json_encode($result));
+			if($response)
+				$this->response(json_encode($result));
+			else
+				return $result;
 		}
 	}
 
