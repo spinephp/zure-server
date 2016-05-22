@@ -374,7 +374,7 @@ class changeFactory extends restFactory{
 	function changeRecords($targets,$sucess,$is_new){
 		$domain = array();
 		$result = array();
-		$pdo = $this->getPDO();
+		
 		$index = 0;
 		$len = count($targets)-1;
 		foreach($targets as $target=>$datas){
@@ -386,6 +386,7 @@ class changeFactory extends restFactory{
 				$result[$target] = $_result;
 			$index++;
 		}
+		$pdo = $this->getPDO();
 		if(!is_null($pdo))
 			$pdo->commit();                 //提交事务  
 		$result["id"] = $domain[0]->getId();

@@ -129,10 +129,6 @@ class putCustomREST extends putREST{
 				$extend['lasttime'] = $now;
 				$extend['hash'] = md5("active".$now);
 				unset($itemPerson["active"]);
-				if(!isset($itemPerson['username']))
-					$itemPerson[] = 'username'
-				if(!isset($itemPerson['email']))
-					$itemPerson[] = 'email'
 				$activeAccount = true;
 			}
 

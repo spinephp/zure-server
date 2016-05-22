@@ -21,43 +21,40 @@ require_once("domain/Person.php");
 require_once("mapper/PersistenceFactory.php");
 require_once("mapper/DomainObjectAssembler.php");
 class ActiveAccount extends Command{
-  function doExecute(\woo\controller\Request $request){
-	 /**
-		* 准备用户数据集合，并保存到白板($request)
-		*/
-			  $state = 'CMD_INSUFFICIENT_DATA';
-        $hash = $request->getProperty("verify");
-        if(preg_match("/^[a-fA-F0-9]{32}$/",$hash)){
-				  $factory = \woo\mapper\PersistenceFactory::getFactory("person",array("id","hash","active","lasttime"));
-				  $finder = new \woo\mapper\DomainObjectAssembler($factory);
-				  $idobj = $factory->getIdentityObject()->field('hash')->eq($hash);
-				  $collection = $finder->find($idobj);
-          if($collection->count()==1){
-				    $obj = $collection->current();
-				    if(!$obj){ // 记录是否存在
-					    $request->addFeedback("Invalid hash value！");
-				    }else{
-              if($obj->getActive()=='N' && $obj->getHash()==$hash){
-                $now = strtotime(date('Y-m-d H:i:s'));
-                $registertime = strtotime($obj->getLasttime());
-                if($now-$registertime>2*24*60*60)
-					        $request->addFeedback("Link expired！");
-                else{
-                    $request->setObject("id",$obj->getId());
-				            $request->addFeedback("Command Ok!");
-                    $state = 'CMD_OK';
-                }
-              }else{
-					        $request->addFeedback("Account has been actived！");
-              }
-            }
-          }else{
-					  $request->addFeedback("Invalid hash value！");
-          }
-        }else{
-					  $request->addFeedback("Invalid hash value！");
-          }
-		    return $state;
+	function doExecute(\woo\controller\Request $request){
+		/**
+		 * 准备用户数据集合，并保存到白板($request)
+		 */
+		$strState = array(COMMAND_OK,"Link expired!","Invalid hash value!","Account has been actived!");
+		$state = 'CMD_INSUFFICIENT_DATA';
+		$hash = $request->getProperty("verify");
+		$iState = 2;
+		if(preg_match("/^[a-fA-F0-9]{32}$/",$hash)){
+			$factory = \woo\mapper\PersistenceFactory::getFactory("person",array("id","hash","active","lasttime"));
+			$finder = new \woo\mapper\DomainObjectAssembler($factory);
+			$idobj = $factory->getIdentityObject()->field('hash')->eq($hash);
+			$collection = $finder->find($idobj);
+			if($collection->count()==1){
+				$obj = $collection->current();
+				if($obj){ // 记录是否存在
+					if($obj->getActive()=='N' && $obj->getHash()==$hash){
+						$now = strtotime(date('Y-m-d H:i:s'));
+						$registertime = strtotime($obj->getLasttime());
+						if($now-$registertime>2*24*60*60)
+							$iState = 1;
+						else{
+							$request->setObject("id",$obj->getId());
+							$iState = 0;
+							$state = 'CMD_OK';
+						}
+					}else{
+						$iState = 3;
+					}
+				}
+			}
+		}
+		$request->addFeedback($strState[$iState]);
+		return $state;
 	}
 }
 ?>

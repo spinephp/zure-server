@@ -155,7 +155,7 @@ class Person extends DomainObject{
 	}
 
 	function getHash(){
-		return $this->objects["hash"];
+		return trim($this->objects["hash"]);
 	}
 
 	function setCountry($country_s){
