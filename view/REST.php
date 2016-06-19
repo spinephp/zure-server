@@ -139,10 +139,12 @@ class getREST extends restFactory{
 	 * @return JSON 键值对，包含查寻到的数据
 	 */
 	protected function toJSON($collection){
-		$i = 0;
+		//$i = 0;
 		$result = array();
 		$filter = $this->request->getProperty("filter");
-		foreach($collection as $rec){
+		for($i=0;$i<$collection->count();++$i){
+		//foreach($collection as $rec){
+			$rec = $collection->current();
 			if(is_null($rec))
 				throw new \woo\base\AppException("The record is null!");
 			foreach($filter as $field){
@@ -158,9 +160,10 @@ class getREST extends restFactory{
 						throw new  \woo\base\AppException("Invalid field name!");
 				}
 			}
-			$i++;
+			$collection->seek(1);
+			//$i++;
 		}
-		// $this->request->log(json_encode($result));
+		//$this->request->log(json_encode($result));
 		return $result;
 	}
   
@@ -313,7 +316,7 @@ class changeFactory extends restFactory{
 		$result = array();
 		$finder = null;
 		$pdo = $this->getPDO();
-		foreach ($datas as $data){
+		foreach ($datas as $dIndex=>$data){
 			$fields = array();
 			$main = null;
 			$condition = null;
@@ -347,11 +350,14 @@ class changeFactory extends restFactory{
 					if($isinsert)
 						$main['id'] = $domain[$index]->getId();
 					$result[] = $main;
+					$this->request->log(json_encode($result));
 				}
 
 				if(!empty($data['sucess'])){
 					$this->$data['sucess']($domain[$index],$finder,$result);
 				}
+				if($isinsert && $dIndex < count($datas)-1)
+					$domain[$index]->nullId();
 			}
 		}
 		return $result;

@@ -1,13 +1,13 @@
 <?php
 //============================================================+
-// File name   : example_038.php
+// File name   : contract.edit.php
 // Begin       : 2008-09-15
-// Last Update : 2013-05-14
+// Last Update : 2016-06-02
 //
-// Description : Example 038 for TCPDF class
+// Description : Contract for TCPDF class
 //               CID-0 CJK unembedded font
 //
-// Author: Nicola Asuni
+// Author: Xingming Liu
 //
 // (c) Copyright:
 //               Nicola Asuni
@@ -66,19 +66,19 @@ class MYPDF extends TCPDF {
 	}
 
 	// Load table data from file
-	public function LoadProduct($order) {
+	public function LoadProduct($orderid,$shipdate) {
 		$proids = array();
 		$factory = \woo\mapper\PersistenceFactory::getFactory("orderproduct",array('id','orderid','proid','number','price','returnnow','modlcharge'));
 		$finder = new \woo\mapper\DomainObjectAssembler($factory);
-		$idobj = $factory->getIdentityObject()->field('orderid')->eq($order->getId());
+		$idobj = $factory->getIdentityObject()->field('orderid')->eq($orderid);
 		$order_pro = $finder->find($idobj);
 
-		$factory = \woo\mapper\PersistenceFactory::getFactory("product",array('id','classid','length','width','think','unitlen','unitwid','unitthi','unit'));
+		$factory = \woo\mapper\PersistenceFactory::getFactory("product",array('id','classid','length','width','think','unitlen','unitwid','unitthi','unit','sharp','note'));
 		$finder = new \woo\mapper\DomainObjectAssembler($factory);
 		$pro = $order_pro->next();
 		$i = 0;
 		$data = array();
-		$shipdate = $order->getShipdate();
+		//$shipdate = $order->getShipdate();
 		$ship = $shipdate=='0'? "现货":sprintf("%d%s",$shipdate," 天");
 		while($pro){
 			$data[$i][0] = $i+1;
@@ -150,6 +150,19 @@ class MYPDF extends TCPDF {
 		$this->SetX($spac);
 		$this->Cell($tablewidth, 0, '', 'T');
 	}
+
+	public function ToArray($company){
+		return array(85,'乙方',
+			$company->getName(),
+			$company->getAddress(),
+			'',
+			'',
+			$company->getTel(),
+			$company->getFax(),
+			$company->getBank(),
+			$company->getAccount()
+		);
+	}
 }
 
 // create new PDF document
@@ -199,26 +212,35 @@ $finder = new \woo\mapper\DomainObjectAssembler($factory);
 $idobj = $factory->getIdentityObject()->field('id')->eq($orderid);
 $collection = $finder->find($idobj);
 $order = $collection->current();
+$userid = $order->getUserid();
+$code = $order->getCode();
+$payment = $order->getDownpayment();
+$guarantee = $order->getGuarantee();
+$guaranteeperiod = $order->getGuaranteeperiod();
+$billtypeid = $order->getBilltypeid();
+$transortid = $order->getTransportid();
+$carriagecharge = $order->getCarriagecharge();
+$shipdate = $order->getShipdate();
 
 $factory = \woo\mapper\PersistenceFactory::getFactory("person",array('id','companyid'));
 $finder = new \woo\mapper\DomainObjectAssembler($factory);
-$idobj = $factory->getIdentityObject()->field('id')->eq($order->getUserid());
+$idobj = $factory->getIdentityObject()->field('id')->eq($userid);
 $collection = $finder->find($idobj);
 $custom = $collection->current();
-//$company2 = $custom->getCompany();
+$customid = $custom->getCompanyid();
+//$company = $custom->getCompany();
 
-$factory = \woo\mapper\PersistenceFactory::getFactory("company",array('id','name','address','tel','fax','bank','account'));
+$factory = \woo\mapper\PersistenceFactory::getFactory("company",array('id','name','address','email','www','tel','fax','bank','account'));
 $finder = new \woo\mapper\DomainObjectAssembler($factory);
-$idobj = $factory->getIdentityObject()->field('id')->eq('0');
+$idobj = $factory->getIdentityObject()->field('id')->in(array('0',$customid));
 $collection = $finder->find($idobj);
-$company1 = $collection->current();
-
-$idobj = $factory->getIdentityObject()->field('id')->eq($custom->getCompanyid());
-$collection = $finder->find($idobj);
-$company2 = $collection->current();
-
-
-$no = "YRR".$order->getCode();
+$company = $collection->find(0);
+$email =$company->getEmail();
+$www = $company->getWww();
+$ltd1 = $pdf->ToArray($company);
+$ltd1[1] = "甲方";
+$ltd2 = $pdf->ToArray($collection->find($customid));
+$no = "YRR".$code;
 
 $pdf->SetFont('droidsansfallback', '', 9);
 
@@ -244,15 +266,15 @@ $rh = 7;
 
 $y = 20;
 $pdf->SetXY(10,$y);
-$pdf->Write($rh,"甲方: ".$company1->getName()); 
+$pdf->Write($rh,"甲方: ".$ltd1[2]); 
 $pdf->SetXY(150,$y);
-$pdf->Write($rh,"合同编号: YRR".$order->getCode()); 
+$pdf->Write($rh,"合同编号: YRR".$code); 
 
-$pdf->SetXY(83,$y);
-$pdf->write1DBarcode('C'.$order->getCode(), 'C128', '', '', '', 18, 0.4, $style, 'N');
+$pdf->SetXY(69,$y);
+$pdf->write1DBarcode('SC'.$code, 'C128', '', '', '', 18, 0.6, $style, 'N');
 $y += $rh;
 $pdf->SetXY(10,$y);
-$pdf->Write($rh,"乙方: ".$company2->getName()); 
+$pdf->Write($rh,"乙方: ".$ltd2[2]); 
 $pdf->SetXY(150,$y);
 date_default_timezone_set("PRC");
 $date = "签订日期:  ".date("Y-m-d");
@@ -272,7 +294,7 @@ $header = array(array(8,'序号','C'),array(50,'产品名称','L'),array(30,'规
                array(10,'数量','R'),array(18,'单价','R'),array(20,'模具费','R'),array(20,'金额','R'),array(15,'交货时间','C'));
 
 // data loading
-$products = $pdf->LoadProduct($order);
+$products = $pdf->LoadProduct($orderid,$shipdate);
 
 $sum = 0;
 foreach($products as $product){
@@ -301,8 +323,6 @@ $y += 3*$rh-2;
 $pdf->SetXY(10,$y);
 $pdf->Write($rh,'三、结算方式、条件及期限：'); 
 
-$payment = $order->getDownpayment();
-$guarantee = $order->getGuarantee();
 $str = "";
 if($payment==100)
 	$str = "合同签订后，乙方即预付全部货款给甲方。交货时间从甲方收到乙方全部货款时起算。";
@@ -311,18 +331,20 @@ else if($payment>0){
 	if($guarantee==0)
 		$str .= "发货前，乙方须一次性付清余款。";
 	else
-		$str .= "发货前，乙方须再支付货款的 ".(100-$payment-$guarantee)."%。余款在交货后 ".$order->getGuaranteeperiod()." 个月内付清。";
+		$str .= "发货前，乙方须再支付货款的 ".(100-$payment-$guarantee)."%。余款在交货后 ".$guaranteepEriod." 个月内付清。";
 	$str .= "交货时间从甲方收到乙方预付货款时起算。";
 }else{
 	if($guarantee==0)
 		$str .= "发货前，乙方须一次性支付全部货款给甲方。";
+	else if($guarantee<100)
+		$str .= "发货前，乙方须支付全部货款的 ".(100-$guarantee)."% 给甲方。余款在交货后 ".$guaranteepEriod." 个月内付清。";
 	else
-		$str .= "发货前，乙方须支付全部货款的 ".(100-$guarantee)."% 给甲方。余款在交货后 ".$order->getGuaranteeperiod()." 个月内付清。";
+		$str = "合同签订后，甲方即安排生产，待产品交付后，乙方向甲方支付全额货款。";
 }
 
 $factory = \woo\mapper\PersistenceFactory::getFactory("bill",array('id','name'));
 $finder = new \woo\mapper\DomainObjectAssembler($factory);
-$idobj = $factory->getIdentityObject()->field('id')->eq($order->getBilltypeid());
+$idobj = $factory->getIdentityObject()->field('id')->eq($billtypeid);
 $collection = $finder->find($idobj);
 $bill = $collection->current();
 $str .=  "甲方向乙方开具全额".$bill->getName()."。";
@@ -335,14 +357,14 @@ $pdf->Write($rh,'四、运输方式及费用负担：');
 
 $factory = \woo\mapper\PersistenceFactory::getFactory("transport",array('id','name','note'));
 $finder = new \woo\mapper\DomainObjectAssembler($factory);
-$idobj = $factory->getIdentityObject()->field('id')->eq($order->getTransportid());
+$idobj = $factory->getIdentityObject()->field('id')->eq($transortid);
 $collection = $finder->find($idobj);
 $transport = $collection->current();
 $str = $transport->getNote();
 $str = str_replace("云瑞","甲方",$str);
 $str = str_replace("客户","乙方",$str);
-if($order->getCarriagecharge()>0)
-	$str .= "运费：¥".$order->getCarriagecharge();
+if($carriagecharge>0)
+	$str .= "运费：¥".$carriagecharge;
 $y += $rh;
 $pdf->SetXY(16,$y);
 $pdf->Write($rh,$transport->getName()."。 ".$str); 
@@ -367,24 +389,6 @@ $pdf->SetXY(16,$y);
 $pdf->Write($rh,'3．本合同正式文本一式两份，甲乙双方各持一份。双方代表签字盖章后生效。'); 
 $ltd = array(85,'','  单位名称：','  单位地址：','法定代表人：','委托代理人：','电话：','传真：','开户银行：','帐号：');
 
-$ltd1 = array(array(85,'甲方',
-						$company1->getName(),
-						$company1->getAddress(),
-						'',
-						'',
-						$company1->getTel(),
-						$company1->getFax(),
-						$company1->getBank(),
-						$company1->getAccount()),
-			array(85,'乙方',
-						$company2->getName(),
-						$company2->getAddress(),
-						'',
-						'',
-						$company2->getTel(),
-						$company2->getFax(),
-						$company2->getBank(),
-						$company2->getAccount()));
 $count = count($ltd);
 $y += $rh;
 $y1 = $y;
@@ -402,7 +406,8 @@ $style = array(
 );
 
 // QRCODE,L : QR-CODE Low error correction
-$pdf->write2DBarcode("ORG:".$company1->getName().';EMAIL:'.$company1->getEmail().';M:18961386627;URL:'.$company1->getWww().';', 'QRCODE,L',74, $y+41, 30, 30, $style, 'N');
+$pdf->write2DBarcode($www, 'QRCODE,L',77, $y+42, 30, 30, $style, 'N');
+$pdf->Image('images/sb24.png',89,$y+54,6);
 for($i=1;$i<$count;$i++){
 	if($i==1){
 		$line = 'T';
@@ -412,19 +417,19 @@ for($i=1;$i<$count;$i++){
 		$line = '';
 	}
 	$y += $rh;
-	$pdf->SetXY(19,$y);
+	$pdf->SetXY(15,$y);
 	$pdf->Cell(25,$rh,$ltd[$i],$line."L",0,'R');
-	$pdf->Cell(60,$rh,$ltd1[0][$i],$line,0,'L');
+	$pdf->Cell(65,$rh,$ltd1[$i],$line,0,'L');
 	$pdf->Cell(25,$rh,$ltd[$i],$line."L",0,'R');
-	$pdf->Cell(60,$rh,$ltd1[1][$i],$line."R",0,'L');
+	$pdf->Cell(65,$rh,$ltd2[$i],$line."R",0,'L');
 }
-$pdf->Image("images/sealcontract.png",65,$y1+8,35);
+$pdf->Image("images/sealcontract.png",70,$y1+8,35);
 
 
 // ---------------------------------------------------------
 
 //Close and output PDF document
-$pdfname = 'YRR'.$order->getCode().'.pdf';
+$pdfname = 'YRR'.$code.'.pdf';
 $pdf->Output($pdfname, 'I');
 
 //============================================================+

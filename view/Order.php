@@ -60,15 +60,23 @@ class postOrderREST extends postREST{
 		$factory = \woo\mapper\PersistenceFactory::getFactory("product",array("id","price","amount"));
 		$finder = new \woo\mapper\DomainObjectAssembler($factory);
 		$extendProduct['orderid'] = array('0'=>'id'); // '0' - 表示表名在 $target 数组中的索引值，这里指 order ，'id' - 指定表名对应表中的字段名
+		$ids = array();
 		foreach($item['products'] as $product){
 			// 
-			$idobj = $factory->getIdentityObject()->field('id')->eq($product["proid"]);
-			$collection = $finder->find($idobj);
-			$obj = $collection->current();
-			$extendProduct["price"] = $obj->getPrice();
-			$target["orderproduct"][] = array('fields'=>$product,'condition'=>$extendProduct);
+			$ids[] = $product["proid"];
 		}
-
+		if(count($ids)){
+			$idobj = $factory->getIdentityObject()->field('id')->in($ids);
+			$collection = $finder->find($idobj);
+			foreach($item['products'] as $product){
+				$obj = $collection->find($product["proid"]);
+				if($obj){
+					$product["price"] = $obj->getPrice();
+					$target["orderproduct"][] = array('fields'=>$product,'condition'=>$extendProduct);
+				}
+			}
+		}
+		//$this->request->log(json_encode($target["orderproduct"]));
 		/**
 		* 处理 ordersstate 表数据
 		*/

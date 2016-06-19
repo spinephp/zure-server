@@ -52,7 +52,7 @@ class Company extends DomainObject{
 
 	function setTel($tel_s){
 		if(!preg_match('/^(\+?\d{2,3}[\-\ ]?)?(0?[0-9]{2,3}[\-\ ]?)?\d{7,8}|\s{0}$/',$tel_s))
-		  throw new \Exception("Tel is error");
+			throw new \Exception("Tel is error");
 		$this->objects["tel"] = $tel_s;
 	}
 

@@ -18,7 +18,7 @@ class getProductREST extends getREST{
 		* 把与伪字段相关的字段列出，以键名为 extend 保存到 Request 类管理的白板中.
 		*
 		*/
-		$this->pseudoFields(array('size'=>array('length','width','think','unitlen','unitwid','unitthi','sharp'),'longname'=> array('classid'),'longnames'=> array('classid')));
+		$this->pseudoFields(array('size'=>array('length','width','think','unitlen','unitwid','unitthi','sharp','note'),'longname'=> array('classid'),'longnames'=> array('classid')));
 
 		return parent::doAny($target);
 	}

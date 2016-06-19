@@ -20,7 +20,7 @@ abstract class Command{
     
     protected static $DATA_RIGHT = array(
 	'Bill'=>array('userShell',null,null,null),
-	'BillSale'=>array('userShell',null,null,null),
+	'BillSale'=>array('userShell','userShell','userShell','userShell'),
 	'CarriageCharge'=>array('userShell',null,null,null),
 	'CarriageClass'=>array('userShell',null,null,null),
 	'Cart'=>array('userShell',null,null,null),

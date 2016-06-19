@@ -45,12 +45,12 @@ class Request{
     function init(){
         if(isset( $_SERVER['REQUEST_METHOD'])){
 			$data1 = null;
-            $data = json_decode(stripslashes(file_get_contents('php://input')),true); // 支持 AJAX 的 PUT DELETE 请求
-			foreach($_REQUEST as $key=>$val){
+            $data = json_decode(file_get_contents('php://input'),true); // 支持 AJAX 的 PUT DELETE 请求
+             foreach($_REQUEST as $key=>$val){
 				if($val!="")
 					$data1[$key] = $val;
 				else{
-					$jskey = json_decode(stripslashes($key),true);
+					$jskey = json_decode($key,true);
 					$data1["item"] = isset($jskey["item"])? $jskey["item"]:$jskey;
 				}
 			}

@@ -75,6 +75,10 @@ abstract class DomainObject{
         $this->id = (int)$id;
     }
 
+    function nullId(){
+        $this->id = null;
+    }
+
     function finder(){
 		return self::getFinder(get_class($this));
 	}

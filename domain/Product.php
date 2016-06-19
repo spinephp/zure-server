@@ -325,14 +325,33 @@ class Product extends DomainObject{
   function getSize(){
         $len = $this->getLength().$this->getUnitlen();
         $wid = $this->getWidth().$this->getUnitwid();
-        $thi = $this->getThink().$this->getUnitthi();
+		$thi = $this->getThink().$this->getUnitthi();
+		$h = $this->getNote().$this->getUnitlen();
         switch($this->getSharp()){
-            case 1:
+            case 1: // 立方体
                 $sharp = $len."×".$wid."×".$thi;
                 break;
-            case 2: $sharp = "R".$len."×".$thi; break;
-            case 3: $sharp = "D".$len."×".$thi; break;
-            case 4: $sharp = "D".$len."×d".$wid."×".$thi; break;
+			case 2: // 半圆柱 
+				$sharp = "R".$len."×".$thi; 
+				break;
+			case 3: // 圆柱 
+				$sharp = "D".$len."×".$thi; 
+				break;
+			case 4: // 圆管 
+				$sharp = "D".$len."×d".$wid."×".$thi; 
+				break;
+			case 5: // 方管 
+				$sharp = $len."×".$wid."×".$h."x".$thi; 
+				break;
+			case 6: // 方台 
+				$sharp = $len."×".$wid."×".$thi; 
+				break;
+			case 7: // 圆台 
+				$sharp = "D".$len."×d".$wid."×".$thi; 
+				break;
+			case 8: // 特异型 
+				$sharp = $this->getNote(); 
+				break;
             default:
                 $sharp = $len."×".$wid."×".$thi;
         }
