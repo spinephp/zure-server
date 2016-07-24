@@ -356,6 +356,8 @@ class changeFactory extends restFactory{
 				if(!empty($data['sucess'])){
 					$this->$data['sucess']($domain[$index],$finder,$result);
 				}
+
+				// 插入多条记录时，每条记录的 id 字段值清零 
 				if($isinsert && $dIndex < count($datas)-1)
 					$domain[$index]->nullId();
 			}

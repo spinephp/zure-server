@@ -103,9 +103,17 @@
   <command name="ShowContactUs">
        <view>P_contact</view>
     </command>
-	
+  
     <command name="ShowLeaveMessage">
        <view>ShowLeaveMessage</view>
+    </command>
+  
+    <command name="Werehouse">
+       <view>Werehouse</view>
+    </command>
+  
+    <command name="OrderPackingTrayCarton">
+       <view>OrderPackingTrayCarton</view>
     </command>
 
   <command name="Cart">
@@ -118,6 +126,10 @@
 
   <command name="Contract">
     <view>Contract</view>
+  </command>
+
+  <command name="Invoice">
+    <view>Invoice</view>
   </command>
 
   <command name="OrderState">
