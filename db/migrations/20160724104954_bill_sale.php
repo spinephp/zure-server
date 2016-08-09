@@ -38,10 +38,10 @@ class BillSale extends AbstractMigration
             ->addColumn('name',  'string', array('limit' => 60))
             ->addColumn('name_en',  'string', array('limit' => 60))
             ->addColumn('address',  'string', array('limit' => 60))
-            ->addColumn('tel',  'string', array('limit' => 16))
-            ->addColumn('duty',  'string', array('limit' => 20))
+            ->addColumn('tel',  'char', array('limit' => 16))
+            ->addColumn('duty',  'char', array('limit' => 20))
             ->addColumn('bank',  'string', array('limit' => 40))
-            ->addColumn('account',  'string', array('limit' => 16))
+            ->addColumn('account',  'char', array('limit' => 16))
             ->create();
     }
 

@@ -34,7 +34,7 @@ class District extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('district');
-        $table->addColumn('name',  'string', array('limit' => 30))
+        $table->addColumn('name',  'char', array('limit' => 30))
             ->create();
         $rows = [
             ['id'=>110101, 'name'=>'东城区'],

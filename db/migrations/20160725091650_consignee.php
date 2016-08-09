@@ -43,9 +43,9 @@ class Consignee extends AbstractMigration
             ->addColumn('zone', 'integer', array('limit' => MysqlAdapter::INT_TINY))
             ->addColumn('address',  'string', array('limit' => 40))
             ->addColumn('email',  'string', array('limit' => 20))
-            ->addColumn('mobile',  'string', array('limit' => 11))
-            ->addColumn('tel',  'string', array('limit' => 18))
-            ->addColumn('postcard',  'string', array('limit' => 6))
+            ->addColumn('mobile',  'char', array('limit' => 11))
+            ->addColumn('tel',  'char', array('limit' => 18))
+            ->addColumn('postcard',  'char', array('limit' => 6))
             ->create();
     }
 

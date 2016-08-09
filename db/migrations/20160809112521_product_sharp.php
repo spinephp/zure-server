@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class Payment extends AbstractMigration
+class ProductSharp extends AbstractMigration
 {
     /**
      * Change Method.
@@ -33,13 +33,23 @@ class Payment extends AbstractMigration
     public function up()
     {
        // create order packing tray carton table
-        $table = $this->table('payment');
-        $table->addColumn('name',  'string', array('limit' => 40))
-            ->addColumn('name_en',  'string', array('limit' => 60))
-            ->addColumn('note',  'string', array('limit' => 100))
-            ->addColumn('url',  'char', array('limit' => 20))
-            ->addColumn('urltext',  'char', array('limit' => 20))
-            ->create();
+        $table = $this->table('productsharp');
+        $table->addColumn('name', 'string', array('limit'=>10))
+            ->addColumn('name_en', 'string', array('limit'=>20))
+           ->create();
+
+        $rows = [
+            ['id'=>1,'name'=>'立方体','name_en'=>'Cube'],
+            ['id'=>2,'name'=>'半圆柱','name_en'=>'Half cylinder'],
+            ['id'=>3,'name'=>'圆柱','name_en'=>'Cylinder'],
+            ['id'=>4,'name'=>'圆管','name_en'=>'Round tube'],
+            ['id'=>5,'name'=>'方管','name_en'=>'Square tube'],
+            ['id'=>6,'name'=>'方台','name_en'=>'Square table'],
+            ['id'=>7,'name'=>'圆台','name_en'=>'Round table'],
+            ['id'=>8,'name'=>'特异型','name_en'=>'Special'],
+        ];
+
+        $this->insert('productsharp', $rows);
     }
 
     /**
@@ -47,6 +57,6 @@ class Payment extends AbstractMigration
      */
     public function down()
     {
-        $this->dropTable('paymant');
+        $this->dropTable('productsharp');
     }
 }

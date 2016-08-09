@@ -34,9 +34,9 @@ class Country extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('country');
-        $table->addColumn('code2',  'string', array('limit' => 2))
-            ->addColumn('code3',  'string', array('limit' => 3))
-            ->addColumn('number',  'string', array('limit' => 3))
+        $table->addColumn('code2',  'char', array('limit' => 2))
+            ->addColumn('code3',  'char', array('limit' => 3))
+            ->addColumn('number',  'char', array('limit' => 3))
             ->addColumn('name',  'string', array('limit' => 40))
             ->addColumn('name_en',  'string', array('limit' => 50))
             ->create();

@@ -37,13 +37,13 @@ class Company extends AbstractMigration
         $table->addColumn('name',  'string', array('limit' => 200))
             ->addColumn('address',  'string', array('limit' => 200))
             ->addColumn('bank',  'string', array('limit' => 200))
-            ->addColumn('account',  'string', array('limit' => 15))
+            ->addColumn('account',  'char', array('limit' => 15))
             ->addColumn('email',  'string', array('limit' => 20))
             ->addColumn('www',  'string', array('limit' => 50))
-            ->addColumn('tel',  'string', array('limit' => 18))
-            ->addColumn('fax',  'string', array('limit' => 18))
-            ->addColumn('postcard',  'string', array('limit' => 6))
-            ->addColumn('duty',  'string', array('limit' => 18))
+            ->addColumn('tel',  'char', array('limit' => 18))
+            ->addColumn('fax',  'char', array('limit' => 18))
+            ->addColumn('postcard',  'char', array('limit' => 6))
+            ->addColumn('duty',  'char', array('limit' => 18))
             ->create();
 
         $rows = [

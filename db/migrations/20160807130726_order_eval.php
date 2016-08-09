@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class Payment extends AbstractMigration
+class OrderEval extends AbstractMigration
 {
     /**
      * Change Method.
@@ -33,12 +33,12 @@ class Payment extends AbstractMigration
     public function up()
     {
        // create order packing tray carton table
-        $table = $this->table('payment');
-        $table->addColumn('name',  'string', array('limit' => 40))
-            ->addColumn('name_en',  'string', array('limit' => 60))
-            ->addColumn('note',  'string', array('limit' => 100))
-            ->addColumn('url',  'char', array('limit' => 20))
-            ->addColumn('urltext',  'char', array('limit' => 20))
+        $table = $this->table('ordereval', array('id' => false, 'primary_key' => array('orderid')));
+        $table->addColumn('orderid',  'integer')
+            ->addColumn('userid',  'integer')
+            ->addColumn('time',  'datetime')
+            ->addColumn('content',  'text')
+            ->addColumn('award',  'integer',array('limit'=>4))
             ->create();
     }
 
@@ -47,6 +47,6 @@ class Payment extends AbstractMigration
      */
     public function down()
     {
-        $this->dropTable('paymant');
+        $this->dropTable('ordereval');
     }
 }

@@ -34,7 +34,7 @@ class CarriageClass extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('carriageclass');
-        $table->addColumn('address',  'string', array('limit' => 6))
+        $table->addColumn('address',  'char', array('limit' => 6))
             ->addColumn('chargeid',  'integer')
             ->create();
     }

@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class Payment extends AbstractMigration
+class PhysicoIndex extends AbstractMigration
 {
     /**
      * Change Method.
@@ -33,12 +33,13 @@ class Payment extends AbstractMigration
     public function up()
     {
        // create order packing tray carton table
-        $table = $this->table('payment');
-        $table->addColumn('name',  'string', array('limit' => 40))
-            ->addColumn('name_en',  'string', array('limit' => 60))
-            ->addColumn('note',  'string', array('limit' => 100))
-            ->addColumn('url',  'char', array('limit' => 20))
-            ->addColumn('urltext',  'char', array('limit' => 20))
+        $table = $this->table('physicoindex');
+        $table->addColumn('name', 'char', array('limit'=>20))
+            ->addColumn('name_en', 'char', array('limit'=>40))
+            ->addColumn('unit', 'char', array('limit'=>20))
+            ->addColumn('operator', 'char', array('limit'=>2))
+            ->addColumn('environment', 'char', array('limit'=>10))
+            ->addColumn('value', 'float')
             ->create();
     }
 
@@ -47,6 +48,6 @@ class Payment extends AbstractMigration
      */
     public function down()
     {
-        $this->dropTable('paymant');
+        $this->dropTable('physicoindex');
     }
 }

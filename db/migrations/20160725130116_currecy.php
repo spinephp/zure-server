@@ -34,10 +34,10 @@ class Currecy extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('currency');
-        $table->addColumn('name',  'string', array('limit' => 20))
-            ->addColumn('name_en',  'string', array('limit' => 20))
-            ->addColumn('abbreviation',  'string', array('limit' => 3))
-            ->addColumn('symbol',  'string', array('limit' => 1))
+        $table->addColumn('name',  'char', array('limit' => 20))
+            ->addColumn('name_en',  'char', array('limit' => 20))
+            ->addColumn('abbreviation',  'char', array('limit' => 3))
+            ->addColumn('symbol',  'char', array('limit' => 1))
             ->addColumn('exchangerate', 'float')
             ->create();
         $rows = [

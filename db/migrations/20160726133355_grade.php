@@ -34,10 +34,10 @@ class Grade extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('grade');
-        $table->addColumn('name',  'string', array('limit' => 4))
-            ->addColumn('name_en',  'string', array('limit' => 10))
+        $table->addColumn('name',  'char', array('limit' => 4))
+            ->addColumn('name_en',  'char', array('limit' => 10))
             ->addColumn('cost',  'integer', array('limit' => 6))
-            ->addColumn('image',  'string', array('limit' => 10))
+            ->addColumn('image',  'char', array('limit' => 10))
             ->addColumn('right',  'text')
             ->addColumn('right_en',  'text')
             ->addColumn('evalintegral',  'integer', array('limit' => 4))

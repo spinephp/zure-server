@@ -40,8 +40,8 @@ class Custom extends AbstractMigration
             ->addColumn('emailstate', 'enum', array('values'=>['Y','N']))
             ->addColumn('mobilestate', 'enum', array('values'=>['Y','N']))
             ->addColumn('accountstate', 'enum', array('values'=>['E','D']))
-            ->addColumn('ip',  'string', array('limit' => 20))
-            ->addColumn('emailcode',  'string', array('limit' => 32))
+            ->addColumn('ip',  'char', array('limit' => 20))
+            ->addColumn('emailcode',  'char', array('limit' => 32))
             ->addColumn('integral', 'integer')
             ->create();
     }

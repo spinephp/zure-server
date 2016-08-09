@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class Language extends AbstractMigration
+class ProductLabel extends AbstractMigration
 {
     /**
      * Change Method.
@@ -33,17 +33,23 @@ class Language extends AbstractMigration
     public function up()
     {
        // create order packing tray carton table
-        $table = $this->table('language');
-        $table->addColumn('name',  'char', array('limit' => 20))
-            ->addColumn('name_en',  'char', array('limit' => 20))
-            ->create();
+        $table = $this->table('productlabel');
+        $table->addColumn('name', 'string', array('limit'=>20))
+            ->addColumn('name_en', 'string', array('limit'=>20))
+           ->create();
 
         $rows = [
-            ['id'=>1,'name'=>'英语','name_en'=>'english'],
-            ['id'=>2,'name'=>'汉语','name_en'=>'chinese'],
+            ['id'=>1,'name'=>'质量好','name_en'=>'Good quality'],
+            ['id'=>2,'name'=>'外观好','name_en'=>'Good Appearance'],
+            ['id'=>3,'name'=>'强度高','name_en'=>'High intensity'],
+            ['id'=>4,'name'=>'寿命长','name_en'=>'Long Life'],
+            ['id'=>5,'name'=>'包装好','name_en'=>'Packaging good'],
+            ['id'=>6,'name'=>'性价比高','name_en'=>'Cost-effective'],
+            ['id'=>7,'name'=>'颜色好','name_en'=>'Good color'],
+            ['id'=>8,'name'=>'密度高','name_en'=>'High-density'],
         ];
 
-        $this->insert('language', $rows);
+        $this->insert('productlabel', $rows);
     }
 
     /**
@@ -51,6 +57,6 @@ class Language extends AbstractMigration
      */
     public function down()
     {
-        $this->dropTable('language');
+        $this->dropTable('productlabel');
     }
 }

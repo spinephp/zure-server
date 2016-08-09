@@ -34,8 +34,8 @@ class Complain extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('complain');
-        $table->addColumn('name',  'string', array('limit' => 12))
-            ->addColumn('name_en',  'string', array('limit' => 20))
+        $table->addColumn('name',  'char', array('limit' => 12))
+            ->addColumn('name_en',  'char', array('limit' => 20))
             ->create();
 
         $rows = [

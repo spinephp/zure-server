@@ -34,8 +34,8 @@ class BillContent extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('billcontent');
-        $table->addColumn('name',  'string', array('limit' => 40))
-            ->addColumn('name_en',  'string', array('limit' => 40))
+        $table->addColumn('name',  'char', array('limit' => 40))
+            ->addColumn('name_en',  'char', array('limit' => 40))
             ->create();
 
         $rows = [

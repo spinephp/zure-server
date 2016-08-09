@@ -34,7 +34,7 @@ class Department extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('department');
-        $table->addColumn('name',  'string', array('limit' => 15))
+        $table->addColumn('name',  'char', array('limit' => 15))
             ->create();
         $rows = [
             ['id'=>1, 'name'=>'董事长'],
