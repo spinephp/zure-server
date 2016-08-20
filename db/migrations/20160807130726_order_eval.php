@@ -33,10 +33,10 @@ class OrderEval extends AbstractMigration
     public function up()
     {
        // create order packing tray carton table
-        $table = $this->table('ordereval', array('id' => false, 'primary_key' => array('orderid')));
+        $table = $this->table('order_eval', array('id' => false, 'primary_key' => array('orderid')));
         $table->addColumn('orderid',  'integer')
             ->addColumn('userid',  'integer')
-            ->addColumn('time',  'datetime')
+            ->addColumn('time',  'datetime', array('default' => '1900-01-01 00:00:00'))
             ->addColumn('content',  'text')
             ->addColumn('award',  'integer',array('limit'=>4))
             ->create();
@@ -47,6 +47,6 @@ class OrderEval extends AbstractMigration
      */
     public function down()
     {
-        $this->dropTable('ordereval');
+        $this->dropTable('order_eval');
     }
 }

@@ -36,16 +36,11 @@ class Department extends AbstractMigration
         $table = $this->table('department');
         $table->addColumn('name',  'char', array('limit' => 15))
             ->create();
-        $rows = [
-            ['id'=>1, 'name'=>'董事长'],
-            ['id'=>2, 'name'=>'经理'],
-            ['id'=>3, 'name'=>'副经理'],
-            ['id'=>4, 'name'=>'账务部'],
-            ['id'=>5, 'name'=>'业务部'],
-            ['id'=>6, 'name'=>'技术部'],
-            ['id'=>7, 'name'=>'生产部'],
-            ['id'=>8, 'name'=>'人事部'],
-        ];
+        $names = array('董事长','经理','副经理','账务部','业务部','生产部','人事部');
+        $rows=array();
+        foreach($names as $key=>$name){
+            $rows[$key] = array('id'=>$key+1,'name'=>$name); 
+        }
         $this->insert('department', $rows);
     }
 

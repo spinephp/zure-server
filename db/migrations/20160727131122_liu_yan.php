@@ -34,14 +34,14 @@ class LiuYan extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('liuyan');
-        $table->addColumn('name',  'string', array('limit' => 20))
+        $table->addColumn('name',  'string', array('limit' => 30))
             ->addColumn('company',  'string', array('limit' => 40))
-            ->addColumn('address',  'string', array('limit' => 40))
-            ->addColumn('title',  'string', array('limit' => 40))
-            ->addColumn('email',  'string', array('limit' => 20))
+            ->addColumn('address',  'string', array('limit' => 60))
+            ->addColumn('title',  'string', array('limit' => 80))
+            ->addColumn('email',  'string', array('limit' => 40))
             ->addColumn('tel',  'string', array('limit' => 15))
             ->addColumn('content',  'text')
-            ->addColumn('time',  'date')
+            ->addColumn('time',  'date', array('default'=>'1900-01-01 00:00:00'))
             ->addColumn('ip',  'string', array('limit' => 15))
             ->create();
     }

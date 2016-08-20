@@ -35,11 +35,12 @@ class CustomAccount extends AbstractMigration
        // create order packing tray carton table
         $table = $this->table('customaccount');
         $table->addColumn('userid',  'integer')
-            ->addColumn('in', 'float')
-            ->addColumn('out', 'float')
-            ->addColumn('lock', 'float')
-            ->addColumn('time', 'datetime')
-            ->addColumn('note',  'text')
+            ->addColumn('in', 'float', array('default'=>0))
+            ->addColumn('out', 'float', array('default'=>0))
+            ->addColumn('lock', 'float', array('default'=>0))
+            ->addColumn('time', 'datetime', array('default'=>'1900-01-01 00:00:00'))
+            ->addColumn('note',  'text', array('null'=>true,'default'=>NULL))
+            ->addIndex(array('userid'))
             ->create();
     }
 

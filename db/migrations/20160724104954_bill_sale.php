@@ -34,14 +34,15 @@ class BillSale extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('billsale');
-        $table->addColumn('userid','integer')
-            ->addColumn('name',  'string', array('limit' => 60))
+        $table->addColumn('userid','integer', array('signed' => false))
+            ->addColumn('name',  'string', array('limit' => 60, 'null'=>true))
             ->addColumn('name_en',  'string', array('limit' => 60))
             ->addColumn('address',  'string', array('limit' => 60))
             ->addColumn('tel',  'char', array('limit' => 16))
             ->addColumn('duty',  'char', array('limit' => 20))
             ->addColumn('bank',  'string', array('limit' => 40))
             ->addColumn('account',  'char', array('limit' => 16))
+            ->addIndex(array('userid'))
             ->create();
     }
 

@@ -38,9 +38,9 @@ class ProductConsult extends AbstractMigration
             ->addColumn('proid', 'integer')
             ->addColumn('type', 'integer', array('limit'=>4))
             ->addColumn('content', 'string', array('limit'=>100))
-            ->addColumn('time', 'datetime')
-            ->addColumn('reply', 'string', array('limit'=>100))
-            ->addColumn('replytime', 'datetime')
+            ->addColumn('time', 'datetime', array('default' => '1900-01-01 00:00:00'))
+            ->addColumn('reply', 'string', array('limit'=>100, 'null'=>true, 'default'=>NULL))
+            ->addColumn('replytime', 'datetime', array('default' => '1900-01-01 00:00:00', 'null'=>true))
             ->create();
     }
 

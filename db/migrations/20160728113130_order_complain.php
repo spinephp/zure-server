@@ -38,9 +38,9 @@ class OrderComplain extends AbstractMigration
             ->addColumn('orderid',  'integer')
             ->addColumn('content',  'text')
             ->addColumn('type',  'integer',array('limit' => 4))
-            ->addColumn('time',  'datetime')
+            ->addColumn('time',  'datetime', array('default' => '1900-01-01 00:00:00'))
             ->addColumn('status',  'enum',array('values'=>['S', 'D', 'C']))
-            ->addColumn('note',  'string', array('limit' => 40))
+            ->addColumn('note',  'string', array('null'=>true ,'default'=>NULL,'limit' => 40))
             ->create();
     }
 

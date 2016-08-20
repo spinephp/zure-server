@@ -37,10 +37,21 @@ class Employee extends AbstractMigration
         $table = $this->table('employee');
         $table->addColumn('userid',  'integer')
             ->addColumn('departmentid',  'integer')
-            ->addColumn('startdate',  'datetime')
-            ->addColumn('dateofbirth',  'date')
-            ->addColumn('myright',  'integer', array('limit' => 32,'signed'=>false))
+            ->addColumn('startdate',  'datetime', array('default'=>'1900-01-01 00:00:00'))
+            ->addColumn('dateofbirth',  'date', array('null'=>true, 'default'=>NULL))
+            ->addColumn('myright',  'integer', array('limit' => 32,'signed'=>false ,'default'=>0))
             ->create();
+        $rows = array(
+            array(
+                'id'=>1,
+                'userid'=>1,
+                'departmentid'=>1,
+                'startdate'=>'2013-08-11 00:00:00',
+                'dateofbirth'=>'1962-06-15',
+                'myright'=>1933572096
+            )
+        );
+        $this->insert('employee', $rows);
     }
 
     /**

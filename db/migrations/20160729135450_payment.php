@@ -37,9 +37,19 @@ class Payment extends AbstractMigration
         $table->addColumn('name',  'string', array('limit' => 40))
             ->addColumn('name_en',  'string', array('limit' => 60))
             ->addColumn('note',  'string', array('limit' => 100))
-            ->addColumn('url',  'char', array('limit' => 20))
-            ->addColumn('urltext',  'char', array('limit' => 20))
+            ->addColumn('url',  'char', array('limit' => 20 ,'null'=>true ,'default'=>NULL))
+            ->addColumn('urltext',  'char', array('limit' => 20 ,'null'=>true ,'default'=>NULL))
             ->create();
+
+        $rows = [
+            array('id'=>1, 'name'=>'在线支付', 'name_en'=>'Online payment', 'note'=>'即时到帐，支持绝大数银行借记卡及部分银行信用卡', 'url'=>NULL, 'urltext'=>NULL),
+            array('id'=>2, 'name'=>'现金', 'name_en'=>'Cash', 'note'=>'订货后，客户直接到云瑞支付现金。', 'url'=>NULL, 'urltext'=>NULL),
+            array('id'=>3, 'name'=>'公司转账', 'name_en'=>'Company transfer', 'note'=>'通过银行转账 转帐后1-3个工作日内到帐', 'url'=>NULL, 'urltext'=>NULL),
+            array('id'=>4, 'name'=>'汇款', 'name_en'=>'Remittance', 'note'=>'通过银行或邮局汇款，汇款后1-3个工作日到账', 'url'=>NULL, 'urltext'=>NULL),
+            array('id'=>5, 'name'=>'承兑汇票', 'name_en'=>'Acceptance bill', 'note'=>'客户用承兑汇票支付货款。', 'url'=>NULL, 'urltext'=>NULL)
+        ];
+
+        $this->insert('payment', $rows);
     }
 
     /**

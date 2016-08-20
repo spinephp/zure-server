@@ -34,9 +34,9 @@ class Announcement extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('announcement');
-        $table->addColumn(' title',  'string', array('limit' => 50))
+        $table->addColumn('title',  'string', array('limit' => 50))
             ->addColumn('content',  'string', array('limit' => 200))
-             ->addColumn('time',  'datetime')
+             ->addColumn('time',  'datetime', array('default' => '1900-01-01 00:00:00'))
             ->create();
     }
 

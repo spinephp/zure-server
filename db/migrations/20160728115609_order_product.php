@@ -44,8 +44,8 @@ class OrderProduct extends AbstractMigration
             ->addColumn('drynumber',  'integer', array('limit' => 4))
             ->addColumn('firingnumber',  'integer', array('limit' => 4))
             ->addColumn('packagenumber',  'integer', array('limit' => 4))
-            ->addColumn('evalid',  'integer')
-            ->addColumn('feelid',  'integer')
+            ->addColumn('evalid', 'integer', array('signed'=>false ,'default'=>0))
+            ->addColumn('feelid', 'integer', array('signed'=>false ,'default'=>0))
             ->create();
     }
 

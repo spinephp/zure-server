@@ -39,6 +39,7 @@ class Cart extends AbstractMigration
             ->addColumn('proid',  'integer')
             ->addColumn('number',  'integer', array('limit' => MysqlAdapter::INT_TINY))
             ->addColumn('time',  'date')
+            ->addIndex(array('userid','proid'))
             ->create();
     }
 

@@ -35,7 +35,7 @@ class OrdersState extends AbstractMigration
        // create order packing tray carton table
         $table = $this->table('ordersstate');
         $table->addColumn('orderid',  'integer')
-            ->addColumn('time',  'datetime')
+            ->addColumn('time', 'datetime', array('default' => '1900-01-01 00:00:00'))
             ->addColumn('stateid',  'integer')
             ->create();
     }

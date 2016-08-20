@@ -35,8 +35,8 @@ class EvalReply extends AbstractMigration
        // create order packing tray carton table
         $table = $this->table('evalreply');
         $table->addColumn('evalid',  'integer')
-            ->addColumn('userid',  'integer')
-            ->addColumn('parentid',  'integer')
+            ->addColumn('userid',  'integer', array('signed' => false))
+            ->addColumn('parentid',  'integer', array('signed' => false ,'default'=>0))
             ->addColumn('content',  'string', array('limit' => 500))
             ->addColumn('time',  'datetime')
             ->create();

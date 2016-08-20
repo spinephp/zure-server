@@ -37,6 +37,7 @@ class BillFree extends AbstractMigration
         $table->addColumn('userid','integer')
             ->addColumn('name',  'string', array('limit' => 60))
             ->addColumn('name_en',  'string', array('limit' => 60))
+            ->addIndex(array('userid'))
             ->create();
 
         $rows = [

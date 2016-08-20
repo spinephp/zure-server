@@ -38,11 +38,11 @@ class Company extends AbstractMigration
             ->addColumn('address',  'string', array('limit' => 200))
             ->addColumn('bank',  'string', array('limit' => 200))
             ->addColumn('account',  'char', array('limit' => 15))
-            ->addColumn('email',  'string', array('limit' => 20))
-            ->addColumn('www',  'string', array('limit' => 50))
+            ->addColumn('email',  'string', array('limit' => 40))
+            ->addColumn('www',  'string', array('limit' => 100))
             ->addColumn('tel',  'char', array('limit' => 18))
             ->addColumn('fax',  'char', array('limit' => 18))
-            ->addColumn('postcard',  'char', array('limit' => 6))
+            ->addColumn('postcard',  'char', array('limit' => 10))
             ->addColumn('duty',  'char', array('limit' => 18))
             ->create();
 

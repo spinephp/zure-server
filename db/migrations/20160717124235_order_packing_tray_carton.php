@@ -41,7 +41,7 @@ class OrderPackingTrayCarton extends AbstractMigration
             ->addColumn('cartonid',  'integer', array('limit' => MysqlAdapter::INT_TINY))
             ->addColumn('cartonnum',  'integer', array('limit' => MysqlAdapter::INT_TINY))
             ->addColumn('numincarton',  'integer', array('limit' => MysqlAdapter::INT_TINY))
-            ->addColumn('sumnum',  'integer', array('limit' => MysqlAdapter::INT_TINY))
+            ->addColumn('sumnum',  'integer')
             ->create();
     }
 

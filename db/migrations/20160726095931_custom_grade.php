@@ -36,7 +36,8 @@ class CustomGrade extends AbstractMigration
         $table = $this->table('customgrade');
         $table->addColumn('userid',  'integer')
             ->addColumn('gradeid',  'integer')
-            ->addColumn('date', 'datetime')
+            ->addColumn('date', 'datetime', array('default'=>'1900-01-01 00:00:00'))
+            ->addIndex(array('userid'))
             ->create();
     }
 

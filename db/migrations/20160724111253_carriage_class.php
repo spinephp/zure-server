@@ -36,6 +36,7 @@ class CarriageClass extends AbstractMigration
         $table = $this->table('carriageclass');
         $table->addColumn('address',  'char', array('limit' => 6))
             ->addColumn('chargeid',  'integer')
+            ->addIndex(array('address','chargeid'))
             ->create();
     }
 

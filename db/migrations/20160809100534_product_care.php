@@ -39,8 +39,8 @@ class ProductCare extends AbstractMigration
             ->addColumn('currencyid', 'integer')
             ->addColumn('exchangerate', 'float')
             ->addColumn('price', 'float')
-            ->addColumn('date', 'datetime')
-            ->addColumn('label', 'string', array('limit'=>20))
+            ->addColumn('date', 'datetime', array('default' => '1900-01-01 00:00:00'))
+            ->addColumn('label', 'string', array('limit'=>40, 'null'=>true,'default'=>NULL))
             ->create();
     }
 

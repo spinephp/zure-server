@@ -38,7 +38,7 @@ class News extends AbstractMigration
             ->addColumn('title_en',  'string', array('limit' => 200))
             ->addColumn('content',  'text')
             ->addColumn('content_en',  'text')
-            ->addColumn('time',  'date')
+            ->addColumn('time',  'date', array('default'=>'1900-01-01 00:00:00'))
             ->create();
     }
 

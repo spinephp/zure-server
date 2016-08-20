@@ -36,13 +36,13 @@ class ProductEval extends AbstractMigration
         $table = $this->table('producteval');
         $table->addColumn('proid', 'integer')
             ->addColumn('userid', 'integer')
-            ->addColumn('label', 'integer', array('limit'=>4))
+            ->addColumn('label', 'integer', array('signed'=>false, 'limit'=>4))
             ->addColumn('useideas', 'text')
             ->addColumn('star', 'integer', array('limit'=>4))
-            ->addColumn('integral', 'integer', array('limit'=>4))
-            ->addColumn('date', 'date')
-            ->addColumn('useful', 'integer')
-            ->addColumn('status', 'enum', array('values'=>['W', 'A', 'S']))
+            ->addColumn('integral', 'integer', array('signed'=>false, 'limit'=>4, 'default'=>0))
+            ->addColumn('date', 'date', array('default' => '1900-01-01'))
+            ->addColumn('useful', 'integer', array('default'=>0))
+            ->addColumn('status', 'enum', array('values'=>['W', 'A', 'S'], 'default'=>'W'))
             ->create();
     }
 

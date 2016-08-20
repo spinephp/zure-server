@@ -37,15 +37,16 @@ class Consignee extends AbstractMigration
         $table = $this->table('consignee');
         $table->addColumn('userid',  'integer')
             ->addColumn('name',  'string', array('limit' => 40))
-            ->addColumn('country',  'integer', array('limit' => MysqlAdapter::INT_TINY))
+            ->addColumn('country',  'integer', array('limit' => MysqlAdapter::INT_SMALL, 'default'=>48))
             ->addColumn('province', 'integer', array('limit' => MysqlAdapter::INT_TINY))
-            ->addColumn('city', 'integer', array('limit' => MysqlAdapter::INT_TINY))
-            ->addColumn('zone', 'integer', array('limit' => MysqlAdapter::INT_TINY))
+            ->addColumn('city', 'integer', array('limit' => MysqlAdapter::INT_SMALL))
+            ->addColumn('zone', 'integer', array('limit' => MysqlAdapter::INT_MEDIUM))
             ->addColumn('address',  'string', array('limit' => 40))
-            ->addColumn('email',  'string', array('limit' => 20))
+            ->addColumn('email',  'string', array('limit' => 40))
             ->addColumn('mobile',  'char', array('limit' => 11))
             ->addColumn('tel',  'char', array('limit' => 18))
-            ->addColumn('postcard',  'char', array('limit' => 6))
+            ->addColumn('postcard',  'char', array('limit' => 10 ,'null'=>true))
+            ->addIndex(array('userid'))
             ->create();
     }
 

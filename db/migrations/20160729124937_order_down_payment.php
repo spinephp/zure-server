@@ -35,7 +35,7 @@ class OrderDownPayment extends AbstractMigration
        // create order packing tray carton table
         $table = $this->table('order_downpayment', array('id' => false, 'primary_key' => array('orderid')));
         $table->addColumn('orderid',  'integer')
-            ->addColumn('downpaymet',  'float')
+            ->addColumn('downpayment',  'float')
             ->addColumn('date',  'datetime')
             ->create();
     }

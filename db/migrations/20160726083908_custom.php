@@ -36,13 +36,14 @@ class Custom extends AbstractMigration
        // create order packing tray carton table
         $table = $this->table('custom');
         $table->addColumn('userid',  'integer')
-            ->addColumn('type', 'enum', array('values'=>['P','U']))
-            ->addColumn('emailstate', 'enum', array('values'=>['Y','N']))
-            ->addColumn('mobilestate', 'enum', array('values'=>['Y','N']))
-            ->addColumn('accountstate', 'enum', array('values'=>['E','D']))
+            ->addColumn('type', 'enum', array('values'=>['P','U'] ,'default'=>'P'))
+            ->addColumn('emailstate', 'enum', array('values'=>['Y','N'] ,'default'=>'N'))
+            ->addColumn('mobilestate', 'enum', array('values'=>['Y','N'] ,'default'=>'N'))
+            ->addColumn('accountstate', 'enum', array('values'=>['E','D'] ,'default'=>'E'))
             ->addColumn('ip',  'char', array('limit' => 20))
-            ->addColumn('emailcode',  'char', array('limit' => 32))
+            ->addColumn('emailcode',  'char', array('limit' => 32 ,'null'=>true ,'default'=>NULL))
             ->addColumn('integral', 'integer')
+            ->addIndex(array('userid'))
             ->create();
     }
 

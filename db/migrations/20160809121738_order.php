@@ -49,11 +49,12 @@ class Order extends AbstractMigration
             ->addColumn('guaranteeperiod', 'integer', array('signed'=>false,'limit'=>2,'default'=>0))
             ->addColumn('carriagecharge', 'float')
             ->addColumn('returnnow', 'float')
-            ->addColumn('time', 'datetime')
+            ->addColumn('time', 'datetime', array('default' => '1900-01-01 00:00:00'))
             ->addColumn('note', 'text', array('default'=>null))
             ->addColumn('stateid', 'integer', array('signed'=>false,'limit'=>4))
             ->addColumn('contract', 'integer', array('signed'=>false,'limit'=>1,'default'=>1))
             ->addColumn('packingtypeid', 'integer', array('limit' => MysqlAdapter::INT_TINY))
+            ->addIndex(array('consigneeid' ,'transportid'))
            ->create();
     }
 

@@ -42,6 +42,12 @@ class ChemicalIndex extends AbstractMigration
             ->addColumn('cao','float')
             ->addColumn('al2o3','float')
             ->create();
+
+        $rows = [
+            ['id'=>1,'sic'=>'75','si3n4'=>'20','sio2'=>1,'si'=>0.5,'fe2o3'=>0.5,'cao'=>0.2,'al2o3'=>0.1],
+        ];
+
+        $this->insert('chemicalindex', $rows);
     }
 
     /**
