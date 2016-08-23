@@ -17,7 +17,7 @@ class ProductSeeder extends AbstractSeed
         $faker = Faker\Factory::create();
         $data = [];
         for ($i = 0; $i < 10; $i++) {
-            $classid = $faker->numberBetween(1,30);
+            $classid = $faker->numberBetween(7,17);
             $data[] = [
                 'classid'  => $classid,
                 'length'  => $faker->randomFloat(2,200,900),

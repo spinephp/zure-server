@@ -24,8 +24,8 @@ class CompanySeeder extends AbstractSeed
               'account'  => $faker->numerify("5###########"),
               'email'  => $faker->email,
               'www'  => $faker->url,
-              'tel'  => $faker->tollFreePhoneNumber,
-              'fax'  => $faker->tollFreePhoneNumber,
+              'tel'  => $faker->e164PhoneNumber,
+              'fax'  => $faker->e164PhoneNumber,
               'postcard'  => $faker->postcode,
               'duty'  => $faker->numerify("#################A")
          ];

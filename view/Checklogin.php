@@ -12,6 +12,7 @@ require_once("base/SessionRegistry.php");
 
 class CheckLoginController extends PageController{
 	function process(){
+		$result = array();
 		try{
 			$session = \woo\base\SessionRegistry::instance();
 			$request = $this->getRequest();

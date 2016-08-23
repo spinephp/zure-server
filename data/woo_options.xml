@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <options>
-<dsn>mysql:host=127.0.0.1;dbname=_test</dsn>
+<dsn>mysql:host=127.0.0.1;dbname=test</dsn>
 <user>root</user>
 <pwd>lxm@tsl12</pwd>
 <control>

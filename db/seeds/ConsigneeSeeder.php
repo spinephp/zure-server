@@ -19,10 +19,10 @@ class ConsigneeSeeder extends AbstractSeed
         $data = [];
         for ($i = 0; $i < 10; $i++) {
             $province = $faker->numberBetween(31,37);
-            $city = $province.'0'.$faker->numberBetween(1,9);
-            $zone = $city.'0'.$faker->numberBetween(1,9);
+            $city = '0'.$faker->numberBetween(1,9);
+            $zone = '0'.$faker->numberBetween(1,9);
             $data[] = [
-                'userid'    => $faker->numberBetween(1,11),
+                'customid'    => $faker->numberBetween(1,10),
                 'name'    => $i % 4? $faker1->name:$faker->name,
                 'country'  => $faker->numberBetween(1,251),
                 'province'     => $province,
@@ -31,7 +31,7 @@ class ConsigneeSeeder extends AbstractSeed
                 'address'  => $faker->streetAddress,
                 'email'  => $faker->email,
                 'mobile'  => $faker1->phoneNumber,
-                'tel'  => $faker->tollFreePhoneNumber,
+                'tel'  => $faker->e164PhoneNumber,
                 'postcard'  => $faker1->postcode,
             ];
         }

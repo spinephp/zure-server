@@ -22,10 +22,11 @@ class PersonSeeder extends AbstractSeed
             $city = $faker->numberBetween(1,7);
             $zone = $faker->numberBetween(1,7);
             $county = sprintf("%02d%02d%02d",$province,$city,$zone);
+            $salt = substr(md5($faker->userName),0,7);
             $data[] = [
                 'username'    => $faker->userName,
-                'pwd'    => sha1($faker->password),
-                'email'    => $faker->email,
+                'pwd'    => $salt.sha1($salt."82340137"),
+                'email'    => $faker1->email,
                 'active'    => ['Y','N'][$faker->numberBetween(0,1)],
                 'companyid'  => $faker->numberBetween(1,10),
                 'name'  => $faker1->name,
@@ -35,7 +36,7 @@ class PersonSeeder extends AbstractSeed
                 'county'  => $county,
                 'address'  => $faker1->address,
                 'mobile'  => $faker1->phoneNumber,
-                'tel'  => $faker->tollFreePhoneNumber,
+                'tel'  => $faker1->e164PhoneNumber,
                 'qq'  => $faker->numerify("##########"),
                 'identitycard'  => sprintf("%s%s%04d",$county,$faker->date('Ymd'),$faker->numberBetween(1,9999)),
                 'picture'  => sprintf("u%08d.png",$i+2),

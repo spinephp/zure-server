@@ -35,7 +35,7 @@ class Consignee extends AbstractMigration
     {
        // create order packing tray carton table
         $table = $this->table('consignee');
-        $table->addColumn('userid',  'integer')
+        $table->addColumn('customid',  'integer')
             ->addColumn('name',  'string', array('limit' => 40))
             ->addColumn('country',  'integer', array('limit' => MysqlAdapter::INT_SMALL, 'default'=>48))
             ->addColumn('province', 'integer', array('limit' => MysqlAdapter::INT_TINY))
@@ -46,7 +46,7 @@ class Consignee extends AbstractMigration
             ->addColumn('mobile',  'char', array('limit' => 11))
             ->addColumn('tel',  'char', array('limit' => 18))
             ->addColumn('postcard',  'char', array('limit' => 10 ,'null'=>true))
-            ->addIndex(array('userid'))
+            ->addIndex(array('customid'))
             ->create();
     }
 

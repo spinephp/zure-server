@@ -18,7 +18,7 @@ class CustomSeeder extends AbstractSeed
         $data = [];
         for ($i = 0; $i < 10; $i++) {
             $data[] = [
-                'userid'    => $faker->numberBetween(11,21),
+                'userid'    => $i+10,
                 'type'    => ['P','U'][$faker->numberBetween(0,1)],
                 'emailstate'  => ['Y','N'][$faker->numberBetween(0,1)],
                 'mobilestate'     => ['Y','N'][$faker->numberBetween(0,1)],

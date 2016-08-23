@@ -42,7 +42,7 @@ class Custom extends AbstractMigration
             ->addColumn('accountstate', 'enum', array('values'=>['E','D'] ,'default'=>'E'))
             ->addColumn('ip',  'char', array('limit' => 20))
             ->addColumn('emailcode',  'char', array('limit' => 32 ,'null'=>true ,'default'=>NULL))
-            ->addColumn('integral', 'integer')
+            ->addColumn('integral', 'integer', array('default'=>0))
             ->addIndex(array('userid'))
             ->create();
     }
