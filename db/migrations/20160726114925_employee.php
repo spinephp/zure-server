@@ -37,6 +37,7 @@ class Employee extends AbstractMigration
         $table = $this->table('employee');
         $table->addColumn('userid',  'integer')
             ->addColumn('departmentid',  'integer')
+            ->addColumn('postids',  'char', array('limit' => 20,'default'=>''))
             ->addColumn('startdate',  'datetime', array('default'=>'1900-01-01 00:00:00'))
             ->addColumn('dateofbirth',  'date', array('null'=>true, 'default'=>NULL))
             ->addColumn('myright',  'integer', array('limit' => 32,'signed'=>false ,'default'=>0))

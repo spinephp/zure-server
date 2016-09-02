@@ -47,7 +47,7 @@ class Person extends AbstractMigration
             ->addColumn('address', 'string', array('limit'=>40 ,'null'=>true,'default'=>NULL))
             ->addColumn('mobile', 'string', array('limit'=>18 ,'null'=>true,'default'=>NULL))
             ->addColumn('tel', 'string', array('limit'=>18 ,'null'=>true,'default'=>NULL))
-            ->addColumn('qq', 'string', array('limit'=>50 ,'null'=>true,'default'=>NULL))
+            ->addColumn('qq', 'char', array('limit'=>15 ,'null'=>true,'default'=>NULL))
             ->addColumn('identitycard', 'char', array('limit'=>18 ,'null'=>true,'default'=>NULL))
             ->addColumn('picture', 'char', array('limit'=>36 ,'null'=>true,'default'=>NULL))
             ->addColumn('registertime', 'datetime', array('default' => '1900-01-01 00:00:00'))

@@ -36,7 +36,10 @@ class MaterialInOut extends AbstractMigration
         $table = $this->table('materialinout');
         $table->addColumn('materialid',  'integer')
             ->addColumn('number',  'float')
-            ->addColumn('time',  'datetime')
+            ->addColumn('operatorid',  'integer')
+            ->addColumn('authorizerid',  'integer', array('default' => 0))
+            ->addColumn('operatortime',  'datetime', array('default' => null))
+            ->addColumn('authorizertime',  'datetime')
             ->addColumn('note',  'string', array('limit' => 100))
             ->create();
     }

@@ -36,7 +36,7 @@ class Person extends DomainObject{
 	}
 	
 	function setUsername($name_s){
-    if (!preg_match('/^[a-zA-Z]{1}[a-zA-Z0-9\-\_\@\.]{3,18}[a-zA-Z0-9]{1}$/', $name_s))
+    if (!preg_match('/^[a-zA-Z]{1}[a-zA-Z0-9\-\_\@\.]{2,18}[a-zA-Z0-9]{1}$/', $name_s))
       throw new \Exception("Username is invalid");
 		$this->objects["username"] = $name_s;
 	}
@@ -81,7 +81,7 @@ class Person extends DomainObject{
 	}
 	
 	function setQq($qq_s){
-    if($qq_s!=null && !preg_match('/^[1-9][0-9]{4,9}$/', $qq_s))
+    if($qq_s!=null && !preg_match('/^[1-9][0-9]{5,10}$/', $qq_s))
       throw new \Exception("QQ is invalid");
 		$this->objects["qq"] = $qq_s;
 	}
@@ -101,7 +101,7 @@ class Person extends DomainObject{
 	}
 
 	function setMobile($mobile_s){
-		if(!preg_match('/^[(86)|0]?(1[3|5|7|8]\d{9})$/',$mobile_s))
+		if(!preg_match('/^[(86)|0]?(1[3|4|5|7|8]\d{9})$/',$mobile_s))
 			throw new \Exception("Mobile is invalid");
 		$this->objects["mobile"] = $mobile_s;
 	}

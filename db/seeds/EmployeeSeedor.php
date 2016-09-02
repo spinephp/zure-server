@@ -16,9 +16,9 @@ class EmployeeSeedor extends AbstractSeed
     {
         $faker = Faker\Factory::create();
         $data = [];
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 9; $i++) {
             $data[] = [
-                'userid'    => $i+1,
+                'userid'    => $i+2,
                 'departmentid'    => $faker->numberBetween(2,7),
                 'startdate'  => $faker->date('Y-m-d').' '.$faker->time('H:i:s'),
                 'dateofbirth'  => $faker->date('Y-m-d'),

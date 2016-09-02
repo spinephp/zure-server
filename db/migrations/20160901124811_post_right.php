@@ -1,9 +1,8 @@
 <?php
-require_once('db/migrations/ProvinceCode.php');
 
 use Phinx\Migration\AbstractMigration;
 
-class Province extends AbstractMigration
+class PostRight extends AbstractMigration
 {
     /**
      * Change Method.
@@ -34,11 +33,11 @@ class Province extends AbstractMigration
     public function up()
     {
        // create order packing tray carton table
-        $table = $this->table('province');
-        $table->addColumn('name', 'char', array('limit'=>21))
+        $table = $this->table('postright');
+        $table->addColumn('postid',  'integer')
+            ->addColumn('name',  'string', array('limit'=>20,'default'=>''))
+            ->addColumn('bit',  'integer', array('limit' => 32,'signed'=>false ,'default'=>0))
             ->create();
-
-        $this->insert('province', \provinceCode::getCode());
     }
 
     /**
@@ -46,6 +45,6 @@ class Province extends AbstractMigration
      */
     public function down()
     {
-        $this->dropTable('province');
+        $this->dropTable('postright');
     }
 }

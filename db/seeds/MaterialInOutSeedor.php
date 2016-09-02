@@ -20,7 +20,10 @@ class MaterialInOutSeedor extends AbstractSeed
             $data[] = [
                 'materialid'    => $faker->numberBetween(1,66),
                 'number'    => $faker->randomFloat(2,-10000,100000),
-                'time'  => $faker->date('Y-m-d').' '.$faker->time('H:i:s'),
+                'operatorid'    => $faker->numberBetween(2,10),
+                'authorizerid'    => $faker->numberBetween(2,10),
+                'operatortime'  => $faker->date('Y-m-d').' '.$faker->time('H:i:s'),
+                'authorizertime'  => $faker->date('Y-m-d').' '.$faker->time('H:i:s'),
                 'note'  => $faker->text($maxNbChars = 100)
             ];
         }

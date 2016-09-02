@@ -18,8 +18,8 @@ class AnnouncementSeeder extends AbstractSeed
       $data = [];
       for ($i = 0; $i < 100; $i++) {
           $data[] = [
-              'title'    => $faker->sentence(3),
-              'content'  => $faker->text,
+              'title'    => $faker->text(50),
+              'content'  => $faker->text(200),
               'time'     => $faker->date('Y-m-d').' '.$faker->time('H:i:s')
           ];
       }

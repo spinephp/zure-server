@@ -112,6 +112,10 @@
        <view>Werehouse</view>
     </command>
   
+    <command name="MaterialInOut">
+       <view>MaterialInOut</view>
+    </command>
+  
     <command name="OrderPackingTrayCarton">
        <view>OrderPackingTrayCarton</view>
     </command>

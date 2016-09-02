@@ -5,7 +5,7 @@ require_once("domain/domain.php");
 class Employee extends DomainObject{
 
 	function __construct($array){
-		parent::__construct($array,array("userid","departmentid","startdate","dateofbirth","myright"));
+		parent::__construct($array,array("userid","departmentid","postids","startdate","dateofbirth","myright"));
 	}
 
 	function setUserid($userid_s){
@@ -22,6 +22,16 @@ class Employee extends DomainObject{
 
 	function getDepartmentid(){
 		return $this->objects["departmentid"];
+	}
+
+	function setPostids($postids_s){
+    if (!preg_match('/^([0-9][0-9]){0,10}$/', $postids_s))
+      throw new \Exception("Post ids is invalid");
+		$this->objects["postids"] = (int)$postids_s;
+	}
+
+	function getPostids(){
+		return $this->objects["postids"];
 	}
 
 	function setStartdate($startdate_s){

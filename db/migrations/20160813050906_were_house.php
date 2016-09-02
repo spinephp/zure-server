@@ -38,7 +38,8 @@ class WereHouse extends AbstractMigration
             ->addColumn('size', 'string', array('limit'=>12))
             ->addColumn('unit', 'string', array('limit'=>10))
             ->addColumn('number', 'float', array('default'=>0))
-            ->addColumn('note', 'string', array('limit'=>50))
+            ->addColumn('picture', 'char', array('limit'=>36,'default'=>''))
+            ->addColumn('note', 'string', array('limit'=>50,'default'=>''))
            ->create();
 
         $rows = array(
