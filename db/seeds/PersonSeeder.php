@@ -21,7 +21,7 @@ class PersonSeeder extends AbstractSeed
         $code = array_keys($City);
         $n = count($code)-1;
         for ($i = 0; $i < 20; $i++) {
-            $province = $code[$faker->numberBetween(0,$n)];
+            $province = $faker->randomElement($code);
             $city = $faker->numberBetween(1,7);
             $zone = $faker->numberBetween(1,7);
             $county = sprintf("%02d%02d%02d",$province,$city,$zone);

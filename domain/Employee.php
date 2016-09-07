@@ -27,7 +27,7 @@ class Employee extends DomainObject{
 	function setPostids($postids_s){
     if (!preg_match('/^([0-9][0-9]){0,10}$/', $postids_s))
       throw new \Exception("Post ids is invalid");
-		$this->objects["postids"] = (int)$postids_s;
+		$this->objects["postids"] = $postids_s;
 	}
 
 	function getPostids(){

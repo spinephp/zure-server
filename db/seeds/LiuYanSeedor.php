@@ -21,7 +21,7 @@ class LiuYanSeedor extends AbstractSeed
                 'name'    => $faker->name(),
                 'company'    => $faker->company,
                 'address'    => $faker->address,
-                'title'    => $faker->sentence(6,true),
+                'title'    => $faker->text(50),
                 'email'    => $faker->email,
                 'tel'    => $faker->phoneNumber,
                 'content'  => $faker->text,

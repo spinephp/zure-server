@@ -329,6 +329,10 @@
     <view>VerifyStatus</view>
   </command>
 
+  <command name="Post">
+       <view>Post</view>
+    </command>
+
   <command name="ProductsHomeToJSON">
        <view>ProductsHomeToJSON</view>
     </command>

@@ -35,17 +35,18 @@ class Post extends AbstractMigration
        // create order packing tray carton table
         $table = $this->table('post');
         $table->addColumn('name',  'string', array('limit'=>20))
-            ->addColumn('myright',  'integer', array('limit' => 32,'signed'=>false ,'default'=>0))
+            ->addColumn('departmentids',  'char', array('limit' => 20,'default'=>''))
+            ->addColumn('right',  'integer', array('limit' => 32,'signed'=>false ,'default'=>0))
             ->create();
         $rows = array(
-            array('id'=>1,'name'=>'董事长','right'=>0xffffffff),
-            array('id'=>2,'name'=>'总经理','right'=>0xffffffff),
-            array('id'=>3,'name'=>'经营经理','right'=>0xffffffff),
-            array('id'=>4,'name'=>'生产经理','right'=>0xffffffff),
-            array('id'=>5,'name'=>'账务部长','right'=>0xffffffff),
-            array('id'=>6,'name'=>'业务部长','right'=>0xffffffff),
-            array('id'=>7,'name'=>'生产部长','right'=>0xffffffff),
-            array('id'=>8,'name'=>'人事部长','right'=>0xffffffff),
+            array('id'=>1,'name'=>'董事长','departmentids'=>'02050607','right'=>0xffffffff),
+            array('id'=>2,'name'=>'总经理','departmentids'=>'0304','right'=>0xffffffff),
+            array('id'=>3,'name'=>'经营经理','departmentids'=>'','right'=>0xffffffff),
+            array('id'=>4,'name'=>'生产经理','departmentids'=>'','right'=>0xffffffff),
+            array('id'=>5,'name'=>'账务部长','departmentids'=>'04','right'=>0xffffffff),
+            array('id'=>6,'name'=>'业务部长','departmentids'=>'05','right'=>0xffffffff),
+            array('id'=>7,'name'=>'生产部长','departmentids'=>'06','right'=>0xffffffff),
+            array('id'=>8,'name'=>'人事部长','departmentids'=>'07','right'=>0xffffffff),
         );
         $this->insert('post', $rows);
     }

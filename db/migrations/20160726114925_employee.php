@@ -47,9 +47,10 @@ class Employee extends AbstractMigration
                 'id'=>1,
                 'userid'=>1,
                 'departmentid'=>1,
+                'postids'=>'01',
                 'startdate'=>'2013-08-11 00:00:00',
                 'dateofbirth'=>'1962-06-15',
-                'myright'=>1933572096
+                'myright'=>1933572097
             )
         );
         $this->insert('employee', $rows);
