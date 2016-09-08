@@ -24,6 +24,7 @@ class EmployeeSeedor extends AbstractSeed
                 'startdate'  => $faker->date('Y-m-d').' '.$faker->time('H:i:s'),
                 'dateofbirth'  => $faker->date('Y-m-d'),
                 'myright'  => $faker->numberBetween(0,0xffffffff),
+                'rights'  => $faker->numberBetween(0,0xffffffff),
             ];
         }
 

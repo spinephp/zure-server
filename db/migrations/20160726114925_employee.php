@@ -41,6 +41,7 @@ class Employee extends AbstractMigration
             ->addColumn('startdate',  'datetime', array('default'=>'1900-01-01 00:00:00'))
             ->addColumn('dateofbirth',  'date', array('null'=>true, 'default'=>NULL))
             ->addColumn('myright',  'integer', array('limit' => 32,'signed'=>false ,'default'=>0))
+            ->addColumn('rights',  'integer', array('limit' => 32,'signed'=>false ,'default'=>0))
             ->create();
         $rows = array(
             array(
@@ -50,7 +51,8 @@ class Employee extends AbstractMigration
                 'postids'=>'01',
                 'startdate'=>'2013-08-11 00:00:00',
                 'dateofbirth'=>'1962-06-15',
-                'myright'=>1933572097
+                'myright'=>1933572097,
+                'rights'=>0xffffffff
             )
         );
         $this->insert('employee', $rows);

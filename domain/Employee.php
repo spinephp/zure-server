@@ -5,7 +5,7 @@ require_once("domain/domain.php");
 class Employee extends DomainObject{
 
 	function __construct($array){
-		parent::__construct($array,array("userid","departmentid","postids","startdate","dateofbirth","myright"));
+		parent::__construct($array,array("userid","departmentid","postids","startdate","dateofbirth","myright","rights"));
 	}
 
 	function setUserid($userid_s){
@@ -56,6 +56,14 @@ class Employee extends DomainObject{
 
 	function getMyright(){
 		return $this->objects["myright"];
+	}
+
+	function setRights($rights_s){
+		$this->objects["rights"] = (int)$rights_s;
+	}
+
+	function getRights(){
+		return $this->objects["rights"];
 	}
 }
 ?>

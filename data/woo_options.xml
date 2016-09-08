@@ -56,6 +56,10 @@
     <view>Department</view>
   </command>
 
+  <command name="DepartmentRight">
+    <view>DepartmentRight</view>
+  </command>
+
   <command name="Employee">
     <view>Employee</view>
   </command>
