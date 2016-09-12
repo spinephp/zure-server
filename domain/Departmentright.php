@@ -2,7 +2,7 @@
 namespace woo\domain;
 require_once("domain/domain.php");
 
-class Post extends DomainObject{
+class Departmentright extends DomainObject{
 
 	function __construct($array){
 		parent::__construct($array,array("departmentid","name","bit"));
