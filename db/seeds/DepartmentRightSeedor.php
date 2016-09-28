@@ -21,6 +21,7 @@ class DepartmentRightSeedor extends AbstractSeed
                 'departmentid'    => $faker->numberBetween(2,7),
                 'name'  => $faker->text(20),
                 'bit'  => $faker->numberBetween(0,32),
+                'time'  => $faker->date('Y-m-d').' '.$faker->time('H:i:s'),
             ];
         }
 

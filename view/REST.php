@@ -316,7 +316,7 @@ class changeFactory extends restFactory{
 		$result = array();
 		$finder = null;
 		$pdo = $this->getPDO();
-		foreach ($datas as $dIndex=>$data){
+		foreach ($datas as $data){
 			$fields = array();
 			$main = null;
 			$condition = null;
@@ -344,22 +344,22 @@ class changeFactory extends restFactory{
 			}
 
 			if(!empty($main) || !empty($condition)){
+				// 插入多条记录时，每条记录的 id 字段值清零 
+				if($isinsert)
+					$domain[$index]->nullId();
+				
 				// 把数据插入表 $target 中
 				$finder->insert($domain[$index]);
 				if(!empty($main)){
 					if($isinsert)
 						$main['id'] = $domain[$index]->getId();
 					$result[] = $main;
-					$this->request->log(json_encode($result));
+					//$this->request->log(json_encode($result));
 				}
 
 				if(!empty($data['sucess'])){
 					$this->$data['sucess']($domain[$index],$finder,$result);
 				}
-
-				// 插入多条记录时，每条记录的 id 字段值清零 
-				if($isinsert && $dIndex < count($datas)-1)
-					$domain[$index]->nullId();
 			}
 		}
 		return $result;
@@ -395,8 +395,10 @@ class changeFactory extends restFactory{
 			$index++;
 		}
 		$pdo = $this->getPDO();
-		if(!is_null($pdo))
+		if(!is_null($pdo)){
 			$pdo->commit();                 //提交事务  
+			$this->setPDO(null);
+		}
 		$result["id"] = $domain[0]->getId();
 		if(!empty($sucess))
 			$sucess($domain,$result);

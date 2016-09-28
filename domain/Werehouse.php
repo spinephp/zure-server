@@ -5,7 +5,15 @@ require_once("domain/domain.php");
 class Werehouse extends DomainObject{
 
 	function __construct($array){
-		parent::__construct($array,array("name","size","unit","number","picture","note"));
+		parent::__construct($array,array("typeid","name","size","unit","number","picture","note"));
+	}
+
+	function setTypeid($typeid_s){
+		$this->objects["typeid"] = (int)$typeid_s;
+	}
+
+	function getTypeid(){
+		return $this->objects["typeid"];
 	}
 
 	function setName($name_s){

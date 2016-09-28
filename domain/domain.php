@@ -76,7 +76,7 @@ abstract class DomainObject{
     }
 
     function nullId(){
-        $this->id = null;
+        $this->id = -1;
     }
 
     function finder(){

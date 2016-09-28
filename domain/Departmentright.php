@@ -5,7 +5,7 @@ require_once("domain/domain.php");
 class Departmentright extends DomainObject{
 
 	function __construct($array){
-		parent::__construct($array,array("departmentid","name","bit"));
+		parent::__construct($array,array("departmentid","name","bit",'time'));
 	}
 
 	function setDepartmentid($departmentid_s){
@@ -30,6 +30,14 @@ class Departmentright extends DomainObject{
 
 	function getBit(){
 		return $this->objects["bit"];
+	}
+
+	function setTime($time_s){
+		$this->objects["time"] = $this->checkTime($time_s);
+	}
+
+	function getTime(){
+		return $this->objects["time"];
 	}
 }
 ?>

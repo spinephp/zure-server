@@ -39,6 +39,7 @@ class DepartmentRight extends AbstractMigration
         $table->addColumn('departmentid',  'integer')
             ->addColumn('name',  'string', array('limit'=>20,'default'=>''))
             ->addColumn('bit',  'integer', array('limit' => 32,'signed'=>false ,'default'=>0))
+            ->addColumn('time',  'datetime', array('default'=>'1900-01-01 00:00:00'))
             ->create();
     }
 

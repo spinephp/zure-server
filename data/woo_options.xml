@@ -116,6 +116,10 @@
        <view>Werehouse</view>
     </command>
   
+    <command name="MaterialType">
+       <view>MaterialType</view>
+    </command>
+  
     <command name="MaterialInOut">
        <view>MaterialInOut</view>
     </command>
