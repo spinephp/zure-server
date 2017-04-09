@@ -52,6 +52,7 @@ class postEmployeeREST extends postREST{
 		date_default_timezone_set("PRC");
 		$now = date('Y-m-d H:i:s');
 		$extend['lasttime'] = $now;
+		$extend['times'] = 0;
 		$extend['hash'] = md5($itemPerson['UserName'].$itemPerson['pwd'].$now);
 		$target["person"][] = array('fields'=>$itemPerson,'condition'=>$extend,'sucess'=>"personSucess");
 			

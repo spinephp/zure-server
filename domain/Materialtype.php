@@ -5,7 +5,7 @@ require_once("domain/domain.php");
 class Materialtype extends DomainObject{
 
 	function __construct($array){
-		parent::__construct($array,array("parentid","name","inrightid","outrightid","note"));
+		parent::__construct($array,array("parentid","name","inrightid","outrightid","picture","note"));
 	}
 
 	function setParentid($parentid_s){
@@ -38,6 +38,16 @@ class Materialtype extends DomainObject{
 
 	function getOutrightid(){
     	return $this->objects["outrightid"];
+	}
+
+	function setPicture($picture_s){
+		if(!$this->isPicture($picture_s))
+			throw new \Exception("picture is invalid");
+		$this->objects["picture"] = $picture_s;
+	}
+
+	function getPicture(){
+		return $this->objects["picture"];
 	}
 
 	function setNote($note_s){

@@ -197,7 +197,13 @@ abstract class Command{
     function getStatus(){
         return $this->status;
     }
-    
+	
+	/**
+	 * 验证验证码后执行函数
+	 * @param {object} $request - Request 类对象
+	 * @param {object} $fun - 函数
+	 * @return command status word
+	 */
     static function statuses($str='CMD_DEFAULT'){
         if(empty($str)){ $str = 'CMD_DEFAULT';}
         if(is_numeric($str)) return $str;

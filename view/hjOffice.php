@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/office.css" type="text/css" charset="utf-8">
   <script src="scripts/office.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
-    var jQuery  = require("jqueryify");
+    //var jQuery  = require("jqueryify");
     require("lib/jquery.ztree.core-3.5.min");
     require("lib/jquery-ui.min");
     var exports = this;

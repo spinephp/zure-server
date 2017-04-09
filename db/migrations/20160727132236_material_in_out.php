@@ -38,9 +38,9 @@ class MaterialInOut extends AbstractMigration
             ->addColumn('number',  'float')
             ->addColumn('operatorid',  'integer')
             ->addColumn('authorizerid',  'integer', array('default' => 0))
-            ->addColumn('operatortime',  'datetime', array('default' => null))
-            ->addColumn('authorizertime',  'datetime')
-            ->addColumn('note',  'string', array('limit' => 100))
+            ->addColumn('operatortime',  'datetime')
+            ->addColumn('authorizertime',  'datetime', array('null' => true))
+            ->addColumn('note',  'string', array('limit' => 100,'null' => true))
             ->create();
     }
 

@@ -108,7 +108,7 @@ class Consignee extends DomainObject{
 	}
 
 	function setPostcard($postcard_s){
-    if(!empty($postcard_s)&&!preg_match('/^[1-9]\d{5}$/',$postcard_s))
+    if(!empty($postcard_s)&&!preg_match('/^\d{6}$/',$postcard_s))
       throw new \Exception("postcard is error");
 		$this->objects["postcard"] = $postcard_s;
 	}

@@ -46,6 +46,7 @@ class postPersonREST extends postREST{
 		$now = date('Y-m-d H:i:s');
 		$extend['registertime'] = $now;
 		$extend['lasttime'] = $now;
+		$extend['times'] = 0;
 		$extend['hash'] = md5($person['username'].$person['pwd'].$now);
 		$target["person"][] = array('fields'=>$person,'condition'=>$extend,'sucess'=>"sucessPerson");
 

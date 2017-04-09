@@ -38,6 +38,7 @@ class MaterialType extends AbstractMigration
             ->addColumn('name',  'string', array('limit' => 40))
             ->addColumn('inrightid',  'integer', array('default' => 0))
             ->addColumn('outrightid',  'integer', array('default' => 0))
+            ->addColumn('picture', 'char', array('limit'=>36,'default'=>''))
             ->addColumn('note',  'string', array('limit'=>100,'default' => ''))
             ->create();
 
