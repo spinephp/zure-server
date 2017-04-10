@@ -361,6 +361,10 @@
     <view>DryData</view>
   </command>
 
+  <command name="DryLine">
+    <view>DryLine</view>
+  </command>
+
   <command name="ListVenues">
         <view>listvenues</view>
     </command>
