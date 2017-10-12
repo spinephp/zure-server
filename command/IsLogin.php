@@ -20,15 +20,23 @@ require_once("controller/Request.php");
 require_once("base/SessionRegistry.php");
 //require_once("mapper/PersonCollection.php");
 require_once("mapper/DomainObjectAssembler.php");
+
 class IsLogin extends Command{
 	function doExecute(\woo\controller\Request $request){
-		return $this->safeShell($request,'_isLogin');
-	}
-	function _isLogin($request){ 
-			$session = \woo\base\SessionRegistry::instance();
-			$userid = $session->get("userid");
-			$result['login'] = isset($userid)? true:false;
-			echo json_encode($result);
+		$session = \woo\base\SessionRegistry::instance();
+		$firstlogin = $session->get("firstlogin");
+		if(is_null($firstlogin)) $firstlogin = true;
+		$result['login'] = $firstlogin;
+		if($firstlogin){
+			$rsa = new \woo\base\Rsa();
+			$session->set('token',$rsa->privateKey);
+
+			$result['token'] = $rsa->publicKey;
+			$result['sessionid'] = session_id();
+
+			$session->set('firstlogin',false);
 		}
+		echo json_encode(array($result));
+	}
 }
 ?>

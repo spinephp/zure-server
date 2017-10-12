@@ -5,7 +5,6 @@ abstract class Registry {
     abstract protected function get($key);
     abstract protected function set($key,$val);
 }
-
 class AppException extends \Exception{
 	private $error;
 
