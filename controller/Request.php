@@ -42,20 +42,37 @@ class Request{
 	    return $this->method;
 	}
 
+  /**
+   * 如果输入数组是 RSA 加密数组则解密，否则直接返回输入数组
+   * @param $rsaData - 字符串数组，包含请求参数信息,有可能被 RSA 加密
+   * @return 返回明文数组
+   */
   function decodeRSA($rsaData){
     $result = $rsaData;
     if(isset($rsaData["td"])){
       $session = \woo\base\SessionRegistry::instance();
       $rsa = new \woo\base\Rsa();
-      $private_rsa = $session->get("token");
+      $private_rsa = $session->get("rsa_private");
 
       $tem = $rsa->privateDecrypt(base64_decode($rsaData["td"]),$private_rsa);
+      $tem1 = json_decode(base64_decode($tem),true);
       unset($result["td"]);
-      $result = array_merge($result,json_decode(base64_decode($tem),true));
+      if(is_array($result)){
+        if(is_array($tem1))
+          $result = array_merge($result,$tem1);
+      } else{
+        if(is_array($tem1))
+          $result = $tem1;
+        else
+          $result = array();
+      }
     }
     return $result;
   }
 
+  /**
+   * 获取请求参数，并写入白板. 支持 GET,POST,PUT,DELETE和命令行参数
+   */
   function init(){
     if(isset( $_SERVER['REQUEST_METHOD'])){
       $data1 = null;
@@ -106,6 +123,7 @@ class Request{
             $data["token"] = preg_replace("/\/\d+/","",$token);*/
           }
           $this->properties = $data;
+
           $this->log($method.json_encode($data)); // 把本次请求与入日志文件
           return;
       }
@@ -158,6 +176,10 @@ class Request{
     function getFeedbackString($separator="\n"){
         return implode($separator,$this->feedback);
     }
+
+  /**
+   * 把本次请求参数与入日志文件
+   */
   function log( $logthis ){
     Date_default_timezone_set("PRC");
     file_put_contents('logfile.log', date("Y-m-d H:i:s"). " " . $logthis.PHP_EOL, FILE_APPEND | LOCK_EX);

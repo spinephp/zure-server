@@ -387,4 +387,17 @@
             <forward>ListVenues</forward>
         </status>
     </command>
+
+    <!--video monitor-->
+    <command name="FirstHand">
+        <view>firsthand</view>
+    </command>
+    
+    <command name="MonitorScene">
+        <view>monitorscene</view>
+    </command>
+
+    <command name="MonitorUpload">
+      <view>monitorupload</view>
+    </command>
 </control></options>

@@ -451,6 +451,7 @@ class changeFactory extends restFactory{
 		try{
 			$this->request = $request;
 			$cmdStatus = $request->getFeedbackString();
+
 			if($cmdStatus != "Command Ok!")
 				throw new \woo\base\AppException($cmdStatus);
 			$item = $request->getProperty("item");

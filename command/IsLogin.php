@@ -29,7 +29,7 @@ class IsLogin extends Command{
 		$result['login'] = $firstlogin;
 		if($firstlogin){
 			$rsa = new \woo\base\Rsa();
-			$session->set('token',$rsa->privateKey);
+			$session->set('rsa_private',$rsa->privateKey);
 
 			$result['token'] = $rsa->publicKey;
 			$result['sessionid'] = session_id();

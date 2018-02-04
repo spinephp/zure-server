@@ -3,8 +3,9 @@
 //require_once("base/SessionRegistry.php");
 //$session = \woo\base\SessionRegistry::instance();
 @session_start();
+//echo phpinfo();
 // 建立一幅 100X30 的图像
-$im = imagecreate(50, 16);
+$im = imagecreate(50,16);// or die("创建图像资源失败");
 
 $bg = imagecolorallocate($im, 255, 255, 255); //白色背景
 $pattern = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLOMNOPQRSTUVWXYZ';    //字符池
