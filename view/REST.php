@@ -157,7 +157,7 @@ class getREST extends restFactory{
 						else
 							$result[$i][$field] = $rec->$name();
 					}else
-						throw new  \woo\base\AppException("Invalid field name!");
+						throw new  \woo\base\AppException("Invalid field name({$name})!");
 				}
 			}
 			$collection->seek(1);

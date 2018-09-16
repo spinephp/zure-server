@@ -3,8 +3,7 @@ namespace woo\command;
 
 require_once("controller/Request.php");
 require_once("base/SessionRegistry.php");
-require_once("mapper/DomainObjectAssembler.php");
-require_once("mapper/PersistenceFactory.php");
+require_once("mapper/FinalAssembler.php");
 require_once("domain/Employee.php");
 
 const COMMAND_OK = "Command Ok!";
@@ -47,7 +46,8 @@ abstract class Command{
 	'Transport'=>array('userShell',null,null,null),
  	'MonitorScene'=>array(null,null,null,null),
  	'DryData'=>array(null,null,null,null),
- 	'DryMain'=>array(null,null,null,null)
+ 	'DryMain'=>array(null,null,null,null),
+ 	'Emoji'=>array(null,null,null,null)
      );
 
     final function __construct(){}
@@ -67,14 +67,18 @@ abstract class Command{
 		$session = \woo\base\SessionRegistry::instance();
 		$result =self::statuses('CMD_INSUFFICIENT_DATA');
 		$token = $request->getProperty("token");
+		$request->log("aaa={$token}");
     if(!isset($token)){
       $item = $request->getProperty("item");
       $token = $item['token'];
     }
+		$request->log("bbb={$token}");
+		$request->log("ccc=".$session->get("token"));
+		$request->log("ccc1=".session_id());
 		if(isset($token) && ($token==$session->get("token") || $token==session_id())){
 				$result = $this->$fun($request);
 			}else{
-				$request->addFeedback("Access Denied");
+				$request->addFeedback("Access Denied in command.safeShell");
 			}
 			return $result;
 		}
@@ -102,18 +106,17 @@ abstract class Command{
 		}else if($cmd=='Person' && isset($item['hash'])){
 			// 重置密码
 			$hash = $item['hash'];
-			$factory = \woo\mapper\PersistenceFactory::getFactory("person",array("id","hash","lasttime"));
-			$finder = new \woo\mapper\DomainObjectAssembler($factory);
-			$idobj = $factory->getIdentityObject()->field("hash")->eq($hash);
-			$collection = $finder->find($idobj);
-			if($collection->count()){
-				$obj = $collection->current();
-				if($obj){
+			$cond = array(array("field"=>"hash","value"=>$hash,"operator"=>"eq"));
+			$m = new \woo\mapper\FinalAssembler("person",array("id","hash","lasttime"),$cond);
+			$objs = $m->find();
+			if(count($objs)){
+				$obj = $objs[0];
+				if(count($obj)){
 					$zero1=strtotime(date('y-m-d h:i:s')); //当前时间
-					$zero2=strtotime($obj->getLasttime());  //过年时间
+					$zero2=strtotime($obj["lasttime"]);  //过年时间
 					//$guonian=($zero2-$zero1)/86400; //60s*60min*24h
 					if($zero2-$zero1< 2*86400){
-						$userid = $obj->getId();
+						$userid = $obj["id"];
 						$result = 'CMD_OK';
 						if(!empty($fun))
 							$result = $fun($request,$userid);
@@ -142,20 +145,19 @@ abstract class Command{
 		$userid = $session->get("userid");
 		$result = 'CMD_INSUFFICIENT_DATA';
 		if(isset($userid)){
-      $factory = \woo\mapper\PersistenceFactory::getFactory("employee",array("id","userid"));
-      $finder = new \woo\mapper\DomainObjectAssembler($factory);
-      $idobj = $factory->getIdentityObject()->field("userid")->eq($userid);
-      $collection = $finder->find($idobj);
-      if($collection->count()){
-        $obj = $collection->current();
-        if($obj){
-          if($obj->getUserid()==$userid){
-			$result = 'CMD_OK';
-			if(!empty($fun))
-				$result = $fun($request,$userid);
-          }
-        }
-      }else
+			$cond = array(array("field"=>"userid","value"=>$userid,"operator"=>"eq"));
+			$m = new \woo\mapper\FinalAssembler("employee",array("id","userid"),$cond);
+			$objs = $m->find();
+			if(count($objs)){
+				$obj = $objs[0];
+				if($obj){
+					if($obj["userid"]==$userid){
+						$result = 'CMD_OK';
+					if(!empty($fun))
+						$result = $fun($request,$userid);
+					}
+				}
+			}else
 			  $request->addFeedback("No the employee!");
 		}else{
 			$request->addFeedback("Not logged!");

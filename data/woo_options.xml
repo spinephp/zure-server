@@ -400,4 +400,8 @@
     <command name="MonitorUpload">
       <view>monitorupload</view>
     </command>
+
+    <command name="Emoji">
+      <view>Emoji</view>
+    </command>
 </control></options>

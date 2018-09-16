@@ -20,7 +20,8 @@ class Request{
 	
 	/**
 	 * 返回当前请求的方法，请留意方法名称是大小写敏感的，按规范应转换为大写字母
-	 * @assert (array("_method"=>"PUT")) == "PUT"
+   * @param $data - 字符串数组，包含请求参数信息
+   * @return 返回请求的方法
 	 */
 	public function findMethod($data)
 	{
@@ -116,12 +117,20 @@ class Request{
                 }
               }
             }
-            
             /*$token = $data["token"];
             preg_match("/\/(\d+)/",$token,$match);
             $data["id"] = $match[1];
             $data["token"] = preg_replace("/\/\d+/","",$token);*/
           }
+            
+            $cond = $data["cond"];
+            if(!is_null($cond) && !is_array(($cond))){
+              $data["cond"] = json_decode($cond,true);
+            }
+            $filter = $data["filter"];
+            if(!is_null($filter) && !is_array(($filter))){
+              $data["filter"] = json_decode($filter,true);
+            }
           $this->properties = $data;
 
           $this->log($method.json_encode($data)); // 把本次请求与入日志文件
