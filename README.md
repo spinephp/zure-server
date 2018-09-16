@@ -11,6 +11,8 @@ GET 请求参数:<br/>
 }<br/>
 
 Angular 例子：<br/>
+<script><br/>
+    var app = angular.module('newApp',[]);<br/>
     app.controller('headerController',function($scope,$http){<br/>
 		var token = "oj20i5188mvg945mq2h0u2bgv6";<br/>
         $http.get('?cmd=Qiye',<br/>
@@ -19,7 +21,8 @@ Angular 例子：<br/>
             $scope.qiye = rs.data[0];<br/>
         });<br/>
     });<br/>
-    
+ </script><br/>
+   
 参数加密：<br/>
 支持 RSA 加密。<br/>
 GET 方式参数加密 ?cmd=xxx&td=...<br/>
