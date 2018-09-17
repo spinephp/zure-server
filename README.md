@@ -30,7 +30,16 @@
     });
  </script>
 ```
-   
+##### jQuery(coffeescript) 例子
+```COFFEESCRIPT
+	jQuery.ajax
+		type: 'get'
+		url: '?cmd=Qiye'
+		data: {cond:[{'field':'id',value: 1,operator:'eq'}], filter: ["id","names"], token: "oj20i5188mvg945mq2h0u2bgv6"  }
+		async: false   #ajax执行完毕后才执行后续指令
+		success: (result) =>
+			obj = JSON.parse(result)
+```
 参数加密：<br/>
 支持 RSA 加密。<br/>
 GET 方式参数加密 ?cmd=xxx&td=...<br/>
