@@ -13,16 +13,9 @@
 ```
 ##### PHP 例子：
 ```PHP
-	$factory = \woo\mapper\PersistenceFactory::getFactory("Qiye",array('id','names'));
-	$finder = new \woo\mapper\DomainObjectAssembler($factory);
-	$idobj = $factory->getIdentityObject()->field('id')->eq("1");
-	$collection = $finder->find($idobj);
-	if($collection){
-	  $obj = $collection->current();
-	  $result[0]["id"] = $obj->getId();
-	  $result[0]["names"] = $obj->getName();
-	}
-	return $result;
+	$query = new FinalAssember('Qiye',array("id","names"),array(array("field"=>"id","value"=>"1","operator"=>"eq")));
+	$result = $query->find();
+	return $result; // [{id:1,names:["china","中国"]},{id:2,names:["amrican","美国"]}]
 ```
 ##### Angular 例子：
 ```JAVASCRIPT
@@ -32,7 +25,7 @@
 	var token = "oj20i5188mvg945mq2h0u2bgv6";
         $http.get('?cmd=Qiye',{params:{"filter":angular.toJson(["id","names"]),"token":token}
 	}).then(function successCallback (rs){
-            $scope.qiye = rs.data[0];
+            $scope.qiye = rs.data[0];  // [{id:1,names:["china","中国"]},{id:2,names:["amrican","美国"]}]
         });
     });
  </script>
