@@ -20,7 +20,7 @@ class DomainObjectAssembler{
 			else
                 self::$PDO = new \PDO($dsn,$dbuser,$dbpwd);
             self::$PDO->setAttribute(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
-			self::$PDO->exec("SET NAMES 'utf8';");
+			self::$PDO->exec("SET NAMES 'utf8mb4';");
 		}
 	}
 	

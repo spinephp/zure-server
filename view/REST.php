@@ -104,17 +104,20 @@ class getREST extends restFactory{
 		$keys[] = 'id';
 		$filter = $this->request->getProperty("filter");
 		$extend = $this->request->getProperty("extend");
-		foreach($filter as $field)
-		if(in_array($field,$keys)){
-			$fields[] = $field; 
-		}else{ // 处理伪字段
-			if($field=='names'){ //  names
-				if(!in_array('name',$fields)) $fields[] = 'name';
-				if(!in_array('name_en',$fields)) $fields[] = 'name_en';
-			}else if(isset($extend[$field])){
-				foreach($extend[$field] as $ext){
-					if(in_array($ext,$keys) && !in_array($ext,$fields))
-						$fields[] = $ext; 
+		if(!empty($filter)){
+			foreach($filter as $field){
+				if(in_array($field,$keys)){
+					$fields[] = $field; 
+				}else{ // 处理伪字段
+					if($field=='names'){ //  names
+						if(!in_array('name',$fields)) $fields[] = 'name';
+						if(!in_array('name_en',$fields)) $fields[] = 'name_en';
+					}else if(isset($extend[$field])){
+						foreach($extend[$field] as $ext){
+							if(in_array($ext,$keys) && !in_array($ext,$fields))
+								$fields[] = $ext; 
+						}
+					}
 				}
 			}
 		}
@@ -806,6 +809,7 @@ class REST{
 		//header("Location: ".$host); $this->request->log($host);
 		header("Content-Length: " . $datalen);
 		header("Connection: keep-alive");
+		header("Access-Control-Allow-Origin: *"); //CORS
 	}
 }
 ?>

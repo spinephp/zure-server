@@ -5,7 +5,7 @@ require_once("domain/domain.php");
 class Country extends DomainObject{
 
 	function __construct($array){
-		parent::__construct($array,array("code2","code3","number","name","name_en"));
+		parent::__construct($array,array("code2","code3","number","name","name_en",'emoji'));
 	}
 
 	function setCode2($code2_s){
@@ -56,6 +56,14 @@ class Country extends DomainObject{
 
 	function getNames(){
 		return array($this->getName_en(),$this->getName());
+	}
+
+	function setEmoji($name_en_s){
+		$this->objects["emoji"] = htmlentities($name_en_s,ENT_QUOTES,'UTF-8');
+	}
+
+	function getEmoji(){
+		return $this->objects["emoji"];
 	}
 }
 ?>

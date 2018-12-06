@@ -32,7 +32,7 @@ class PersonMapper extends Mapper{
     function update(\woo\domain\Domainobject $object){
         print "updating\n";
         $values = array($object->getName(),$object->getId(),$object->getId());
-        $this->updateStmt-><execute($values);
+        $this->updateStmt->execute($values);
     }
 
     function selectStmt(){

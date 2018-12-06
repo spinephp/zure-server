@@ -122,15 +122,14 @@ class Request{
             $data["id"] = $match[1];
             $data["token"] = preg_replace("/\/\d+/","",$token);*/
           }
-            
-            $cond = $data["cond"];
-            if(!is_null($cond) && !is_array(($cond))){
-              $data["cond"] = json_decode($cond,true);
+          foreach(["cond","filter"] as $name){
+            if(isset($data[$name])){
+              $cond = $data[$name];
+              if(!is_null($cond) && !is_array(($cond))){
+                $data[$name] = json_decode($cond,true);
+              }
             }
-            $filter = $data["filter"];
-            if(!is_null($filter) && !is_array(($filter))){
-              $data["filter"] = json_decode($filter,true);
-            }
+          }
           $this->properties = $data;
 
           $this->log($method.json_encode($data)); // 把本次请求与入日志文件

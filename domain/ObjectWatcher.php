@@ -16,7 +16,7 @@ class ObjectWatcher{
 		return self::$instance;
 	}
 
-	function globalKey(DomainObject $obj){
+	static function globalKey(DomainObject $obj){
 		$key = get_class($obj).".".$obj->getId();
 		return $key;
 	}
@@ -34,13 +34,13 @@ class ObjectWatcher{
 	static function addDirty(DomainObject $obj){
 		$inst = self::instance();
 		if(!in_array($obj,$inst->new,true)){
-			$inst->dirty[$this->globalKey($obj)] = $obj;
+			$inst->dirty[self::globalKey($obj)] = $obj;
 		}
 	}
 
 	static function addNew(DomainObject $obj){
 		$inst = self::instance();
-		// ÎÒÃÇ»¹Ã»ÓÐid
+		// ï¿½ï¿½ï¿½Ç»ï¿½Ã»ï¿½ï¿½id
 		$inst->new[] = $obj;
 	}
 

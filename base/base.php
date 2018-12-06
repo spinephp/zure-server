@@ -1,5 +1,6 @@
 <?php
 namespace woo\base;
+require_once("controller/Request.php");
 
 abstract class Registry{
     abstract protected function get($key);
@@ -31,7 +32,7 @@ class RequestRegistry extends Registry{
         return self::instance()->get('request');
     }
 
-    static function setRequest\woo\controller\Request $request){
+    static function setRequest(\woo\controller\Request $request){
         return self::instance()->set('request',$request);
     }
 }

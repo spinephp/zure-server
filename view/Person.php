@@ -34,7 +34,7 @@ class postPersonREST extends postREST{
 		}
 	}
 	
-	public function doAny($item){
+	public function doAny(&$item){
 		$lang = $item["language"];
 		if(isset($lang))
 			$language = $lang;
@@ -93,7 +93,7 @@ class putPersonREST extends putREST{
 		}
 	}
 	
-	public function doAny($item){
+	public function doAny(&$item){
 		$target = array();
 
 		$person = isset($item["person"])? $item["person"]:$item;

@@ -36,7 +36,8 @@ class IsLogin extends Command{
 
 			$session->set('firstlogin',false);
 		}
-		echo json_encode(array($result));
+		header("Access-Control-Allow-Origin: *");
+		echo json_encode(array('ok'=>true,'data'=>array($result)));
 	}
 }
 ?>

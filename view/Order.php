@@ -36,7 +36,7 @@ class postOrderREST extends postREST{
 		return $code;
 	}
 	
-	public function doAny($item){
+	public function doAny(&$item){
 		$code = $this->makeOrderCode();
 	  
 		/**
@@ -115,7 +115,7 @@ class postOrderREST extends postREST{
 
 class putOrderREST extends putREST{
 	
-	public function doAny($item){
+	public function doAny(&$item){
 		/**
 		* 处理 order 表数据
 		*/

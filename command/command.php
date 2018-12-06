@@ -58,30 +58,27 @@ abstract class Command{
     }
 	
 	/**
-	 * 验证 token 标志后执行函数
+	 * 验证 token 标志成功后执行函数
 	 * @param {object} $request - Request 类对象
 	 * @param {object} $fun - 本类成员方法
 	 * @return command status word
 	 */
 	protected function safeShell(\woo\controller\Request $request,$fun){
-		$session = \woo\base\SessionRegistry::instance();
-		$result =self::statuses('CMD_INSUFFICIENT_DATA');
+		/*$session = \woo\base\SessionRegistry::instance();
+		$result = self::statuses('CMD_INSUFFICIENT_DATA');
 		$token = $request->getProperty("token");
-		$request->log("aaa={$token}");
-    if(!isset($token)){
-      $item = $request->getProperty("item");
-      $token = $item['token'];
-    }
-		$request->log("bbb={$token}");
-		$request->log("ccc=".$session->get("token"));
-		$request->log("ccc1=".session_id());
-		if(isset($token) && ($token==$session->get("token") || $token==session_id())){
-				$result = $this->$fun($request);
-			}else{
-				$request->addFeedback("Access Denied in command.safeShell");
-			}
-			return $result;
+		if (!isset($token)) {
+			$item = $request->getProperty("item");
+			$token = $item['token'];
 		}
+		if (isset($token) && ($token == $session->get("token") || $token == session_id())) {
+			$result = $this->$fun($request);
+		} else {
+			$request->addFeedback("Access Denied in command.safeShell");
+		}*/
+		$result = $this->$fun($request);
+		return $result;
+	}
 	
 	/**
 	 * 验证用户后执行函数
