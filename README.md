@@ -48,7 +48,7 @@ GET 方式参数加密 ?cmd=xxx&td=...<br/>
 
 检查登录状态：<br/>
 ```JAVASCRIPT
-POST{
+GET{
 	"cmd":"CheckLogin",
 	"username":"aaaaaa", // 用户名
 	"pwd":"123456", // 密码
@@ -56,4 +56,23 @@ POST{
 	"action":"custom_login", // 验证方式
 	"token":"user_token" // 防跨站攻击参数
 }
+```
+##### Angular2 例子：
+```TYPESCRIPT
+export class Userlogin {
+    constructor(
+        public username: string,
+        public pwd: string,
+        public code: string,
+        public action: string,
+        public token: string	// sessionid
+    ) {}
+}
+...
+loginModel = new Userlogin('张三', '123456', '1234', 'custom_login', sessionid);
+param = JSON.stringify(loginModel);
+this.requestService.get('http://www.xxx.com/index.php?cmd=CheckLogin', param).then(rs => {
+      const user = rs; // { active: "Y", email: "xyz@gmail.com", id: "3", name: "张三", picture: "u00000003.png", state: 1}
+});
+
 ```
