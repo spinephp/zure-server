@@ -46,7 +46,7 @@ GET 方式参数加密 ?cmd=xxx&td=...<br/>
 
 其它常用格式：<br/>
 
-检查登录状态：<br/>
+检查登录状态：CheckLogin<br/>
 ```JAVASCRIPT
 GET{
 	"cmd":"CheckLogin",
