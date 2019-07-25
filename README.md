@@ -48,12 +48,12 @@ GET 方式参数加密 ?cmd=xxx&td=...<br/>
 
 检查登录状态：<br/>
 ```JAVASCRIPT
-POST{<br/>
-"cmd":"CheckLogin",<br/>
-"username":"aaaaaa", // 用户名<br/>
-"pwd":"123456", // 密码<br/>
-"code":"2530", // 验证码<br>
-"action":"custom_login", // 验证方式<br/>
-"token":"user_token" // 防跨站攻击参数</br>
+POST{
+	"cmd":"CheckLogin",
+	"username":"aaaaaa", // 用户名
+	"pwd":"123456", // 密码
+	"code":"2530", // 验证码
+	"action":"custom_login", // 验证方式
+	"token":"user_token" // 防跨站攻击参数
 }
 ```
