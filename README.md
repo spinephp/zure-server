@@ -76,3 +76,26 @@ this.requestService.get('http://www.xxx.com/index.php?cmd=CheckLogin', param).th
 });
 
 ```
+
+退出用户登录：Logout<br/>
+```JAVASCRIPT
+POST{
+	"cmd":"Logout",
+	"user":"xxx@yyy.com", // 用户名
+	"action":"custom_logout", // 验证方式
+	"token":"user_token" // 防跨站攻击参数
+}
+```
+##### Angular2 例子：
+```TYPESCRIPT
+const param = {
+    user: 'userone',
+    action: 'custom_logout',
+    token: 'oj20i5188mvg945mq2h0u2bgv6'
+};
+...
+return this.requestService.post('/woo/index.php?cmd=Logout', JSON.stringify(param)).then(rs => {
+	return rs; // {id: 0, username: "userone"}
+});
+
+```
