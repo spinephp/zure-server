@@ -46,14 +46,56 @@ GET 方式参数加密 ?cmd=xxx&td=...<br/>
 
 其它常用格式：<br/>
 
-检查登录状态：<br/>
+检查登录状态：CheckLogin<br/>
 ```JAVASCRIPT
-POST{<br/>
-"cmd":"CheckLogin",<br/>
-"username":"aaaaaa", // 用户名<br/>
-"pwd":"123456", // 密码<br/>
-"code":"2530", // 验证码<br>
-"action":"custom_login", // 验证方式<br/>
-"token":"user_token" // 防跨站攻击参数</br>
+GET{
+	"cmd":"CheckLogin",
+	"username":"aaaaaa", // 用户名
+	"pwd":"123456", // 密码
+	"code":"2530", // 验证码
+	"action":"custom_login", // 验证方式
+	"token":"user_token" // 防跨站攻击参数
 }
+```
+##### Angular2 例子：
+```TYPESCRIPT
+export class Userlogin {
+    constructor(
+        public username: string,
+        public pwd: string,
+        public code: string,
+        public action: string,
+        public token: string	// sessionid
+    ) {}
+}
+...
+loginModel = new Userlogin('张三', '123456', '1234', 'custom_login', sessionid);
+param = JSON.stringify(loginModel);
+this.requestService.get('http://www.xxx.com/index.php?cmd=CheckLogin', param).then(rs => {
+      const user = rs; // { active: "Y", email: "xyz@gmail.com", id: "3", name: "张三", picture: "u00000003.png", state: 1}
+});
+
+```
+
+退出用户登录：Logout<br/>
+```JAVASCRIPT
+POST{
+	"cmd":"Logout",
+	"user":"xxx@yyy.com", // 用户名
+	"action":"custom_logout", // 验证方式
+	"token":"user_token" // 防跨站攻击参数
+}
+```
+##### Angular2 例子：
+```TYPESCRIPT
+const param = {
+    user: 'userone',
+    action: 'custom_logout',
+    token: 'oj20i5188mvg945mq2h0u2bgv6'
+};
+...
+return this.requestService.post('/woo/index.php?cmd=Logout', JSON.stringify(param)).then(rs => {
+	return rs; // {id: 0, username: "userone"}
+});
+
 ```
