@@ -34,10 +34,10 @@ class postCustomREST extends postREST{
 		}
 	}
 	
-	public function doAny($item){
+	public function doAny(&$item){
 		$lang = $item["language"];
 		if(isset($lang))
-			$language = $lang;
+			$this->language = $lang;
 		$itemPerson = $item["person"];
 		if(is_null($itemPerson))
 			throw new \woo\base\AppException("Person data is null!");
@@ -73,7 +73,7 @@ class postCustomREST extends postREST{
 		//$this->createRecords($target,function($domain,&$result){
 		return $this->changeRecords($target,function($domain,&$result){
 			// 发送激活邮件
-			activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
+			$this->activeEmail($domain[0]->getUsername(),$domain[0]->getEmail(),$domain[0]->getHash());
 			
 			foreach(array("custom","person") as $_target){
 				$s = $result[$_target][0];
@@ -82,16 +82,16 @@ class postCustomREST extends postREST{
 			}
 			$result['id'] = $result['custom'][0]['id'];
 			$result['custom'][0]['userid'] = $domain[0]->getId();
-			$result["register"] = postCustomREST::$register[$language];
-			$result["email"] = postCustomREST::$email[$language];
+			$result["register"] = postCustomREST::$register[$this->language];
+			$result["email"] = postCustomREST::$email[$this->language];
 			unset($result['person'][0]['pwd']);
 		},true);
 	}
   
 	function activeEmail($username,$email,$token){
-		require_once('"view/activeAccountEmail.php"');
-		$mail = new activeAccountMail($email,$username,$token);
-		$mail->setLanguage($language);
+		require_once("view/activeAccountEmail.php");
+		$mail = new \woo\view\activeAccountEmail($email,$username,$token);
+		$mail->setLanguage($this->language);
 		$mail->send();
 	}
 }
@@ -113,7 +113,7 @@ class putCustomREST extends putREST{
 		}
 	}
 	
-	public function doAny($item){
+	public function doAny(&$item){
 		$target = array();
 		if(empty($item["custom"]))
 			throw new \woo\base\AppException("Custom data is null!");

@@ -225,7 +225,7 @@ class Person extends DomainObject{
 	}
 
 	function getTimes(){
-		return $this->objects["times"];
+		return (int)$this->objects["times"];
 	}
 	
 	function isPassword($pwd){

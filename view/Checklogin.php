@@ -9,6 +9,7 @@
 namespace woo\controller;
 require_once("controller/PageController.php");
 require_once("base/SessionRegistry.php");
+require_once("view/REST.php");
 
 class CheckLoginController extends PageController{
 	function process(){
@@ -59,7 +60,7 @@ class CheckLoginController extends PageController{
 						$session->set('lasttime',$obj->getLasttime());
 
 						// 返回客户信息
-						echo json_encode($result);
+						\woo\view\REST::response(json_encode($result));
 					}else{
 						throw new \woo\base\AppException("Account not actived!");
 					}
@@ -73,7 +74,7 @@ class CheckLoginController extends PageController{
 			$result["cid"] = $result["id"];
 			$result["id"] = -1;
 			$result["error"] = $e->getMessage();
-			echo json_encode($result);
+			REST::response(json_encode($result));
 		}
 	}
 }

@@ -19,8 +19,8 @@ class yrrEmail
 		$this->mail->Port = 465; // or 587
 		$this->mail->IsHTML(true);
 		$this->mail->Hostname = 'yrr8.com';
-		$this->mail->Username = "1619584123";  //????? QQ ?
-		$this->mail->Password = "lxm@tsl121314";  //????????
+		$this->mail->Username = "1619584123@qq.com";  //????? QQ ?
+		$this->mail->Password = "gvnscwcdzsftgfce";  //????????
 		$this->mail->SetFrom("admin@yrr8.com");
 		$this->mail->AddAddress($email);
 

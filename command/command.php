@@ -173,11 +173,6 @@ abstract class Command{
 		$vcodes = $session->get('saftcode');
 		$session->set('saftcode',rand(1000,9999));
 		$code = $request->getProperty("code");
-    if(!isset($code)){
-      $item = $request->getProperty("item");
-      if(isset($item))
-        $code = $item["code"];
-    }
     if(isset($code)){
 		  $result = 'CMD_OK';
 		  if($vcodes==$code){ // 校验码是否正确
@@ -297,7 +292,8 @@ class RESTCommand extends Command{
 				}
 			}else{
 				$a = explode(' ',$right[1]['fn']);
-				if(1==$this->$a[0]($request,null)){ // 调用第一个验证函数
+				$fun = $a[0];
+				if(1==$this->$fun($request,null)){ // 调用第一个验证函数
 					if(count($a)==2){
 						if(1==$this->$a[1]($request,null)){  // 调用第二个验证函数
 							$status = $this->_restCreate($request,$b);

@@ -37,9 +37,7 @@ class Grade extends DomainObject{
 	}
 
 	function setImage($image_s){
-		if(!$this->isPicture($image_s))
-			throw new \Exception("picture is invalid");
-		$this->objects["image"] = $image_s;
+		$this->objects["image"] = htmlentities($image_s,ENT_QUOTES,'UTF-8');
 	}
 
 	function getImage(){

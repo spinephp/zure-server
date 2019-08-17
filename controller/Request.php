@@ -131,7 +131,11 @@ class Request{
             }
           }
           $this->properties = $data;
-
+          // $sessionid = $this->getProperty("token");
+          // $sessionid1 = session_id();
+          // if($sessionid!=session_id()){
+          //   session_id($sessionid);
+          // }
           $this->log($method.json_encode($data)); // 把本次请求与入日志文件
           return;
       }
@@ -144,11 +148,16 @@ class Request{
 }
 
     function getProperty($key){
+      $val = null;
         if(isset($this->properties[$key])){
           $val = $this->properties[$key];
-          return $val;
+        } else if(isset($this->properties["item"])){
+          $item = $this->properties["item"];
+          if(isset($item[$key])){
+            $val = $item[$key];
+          }
         }
-		return null;
+		return $val;
     }
 
     function setProperty($key,$val){

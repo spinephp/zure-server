@@ -361,7 +361,8 @@ class changeFactory extends restFactory{
 				}
 
 				if(!empty($data['sucess'])){
-					$this->$data['sucess']($domain[$index],$finder,$result);
+					$fun = $data['sucess'];
+					$this->$fun($domain[$index],$finder,$result);
 				}
 			}
 		}
@@ -680,11 +681,11 @@ class deleteREST extends restFactory{
 class REST{
 	private $factory;
 	public $_allow = array();
-	public $json_content_type = "application/json";
-	public $xml_content_type = "application/xml";
+	public static $json_content_type = "application/json";
+	public static $xml_content_type = "application/xml";
 
 	private $_method = "";		
-	private $_code = 200;
+	private static $_code = 200;
 
 	protected $request;
 	
@@ -707,14 +708,14 @@ class REST{
 			$this->factory = new $name();
 			$result = $this->factory->doMethod($this->request);
 			if($response)
-				$this->response(json_encode($result));
+				self::response(json_encode($result));
 			else
 				return $result;
 		}catch(\woo\base\AppException $e){
 			$result['id'] = -1;
 			$result['error'] = $e->getMessage();
 			if($response)
-				$this->response(json_encode($result));
+				self::response(json_encode($result));
 			else
 				return $result;
 		}
@@ -735,14 +736,14 @@ class REST{
 		return $_SERVER['HTTP_REFERER'];
 	}
 
-	public function response($data,$status=200,$format='json'){
-		$this->_code = ($status)?$status:200;
-		$this->set_headers($format,strlen($data));
+	public static function response($data,$status=200,$format='json'){
+		self::$_code = ($status)?$status:200;
+		self::set_headers($format,strlen($data));
 		echo $data;
 		exit;
 	}
 
-	private function get_status_message(){
+	private static function get_status_message(){
 		$status = array(
 			100 => 'Continue',  
 			101 => 'Switching Protocols',  
@@ -785,20 +786,20 @@ class REST{
 			503 => 'Service Unavailable',  
 			504 => 'Gateway Timeout',  
 			505 => 'HTTP Version Not Supported');
-		return ($status[$this->_code])?$status[$this->_code]:$status[500];
+		return ($status[self::$_code])?$status[self::$_code]:$status[500];
 	}
 
-	private function set_headers($format,$datalen){
-		header("HTTP/1.1 ".$this->_code." ".$this->get_status_message());
+	private static function set_headers($format,$datalen){
+		header("HTTP/1.1 ".self::$_code." ".self::get_status_message());
 		//header("Content-Type:".$this->_content_type);
 		$contenttype = "";
 		if($format =='json')
 		{
-			$contenttype = $this->json_content_type;
+			$contenttype = self::$json_content_type;
 		}
 		elseif($format =='xml')
 		{
-			$contenttype = $this->xml_content_type;
+			$contenttype = self::xml_content_type;
 		}
 		else
 		{
