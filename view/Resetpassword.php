@@ -8,7 +8,7 @@
  */
 namespace woo\controller;
 require_once("controller/PageController.php");
-require_once('"view/resetPasswordEmail.php"');
+require_once('view/resetPasswordEmail.php');
 require_once("base/SessionRegistry.php");
 
 class ResetPasswordController extends PageController{
@@ -38,7 +38,7 @@ class ResetPasswordController extends PageController{
 						$finder = new \woo\mapper\DomainObjectAssembler($factory);
 						$finder->insert($person);
 			
-						$mail = new resetPasswordMail($email,$username,$hash,$type);
+						$mail = new \woo\view\activeAccountEmail($email,$username,$hash,$type);
 						$mail->setLanguage($language);
 						$mail->send();
 						echo json_encode($result);

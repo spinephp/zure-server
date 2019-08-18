@@ -1,15 +1,16 @@
 <?php
-require_once('"view/SendEmail.php"');
+namespace woo\view;
+require_once('view/SendEmail.php');
 
 class activeAccountEmail extends yrrEmail
 {
 	final function __construct($email,$username,$hash,$type){
 		parent::__construct($email);
-		$mail->setSubject(array("重设密码","Reset password"));
+		$this->setSubject(array("重设密码","Reset password"));
 		$url = "http://".$_SERVER["HTTP_HOST"];
 		$url .= "/woo/index.php? cmd=PasswordVerify&verify={$hash}&type=$type";
 		$now = date('Y-m-d h:i:s');
- 		$mail->setBody(array(
+ 		$this->setBody(array(
 			"尊敬的 {$username} 您好!<br/>您于 $now 因忘记密码而申请系统重置，为保障您的帐户安全，请在24小时内点击该链接，您也可以将链接复制到浏览器地址栏访问：<br/> 
 			<a href='{$url}' target= 
 			'_blank'>{$url}</a><br/> 

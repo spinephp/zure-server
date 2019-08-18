@@ -72,7 +72,52 @@ export class Userlogin {
 loginModel = new Userlogin('张三', '123456', '1234', 'custom_login', sessionid);
 param = JSON.stringify(loginModel);
 this.requestService.get('http://www.xxx.com/index.php?cmd=CheckLogin', param).then(rs => {
-      const user = rs; // { active: "Y", email: "xyz@gmail.com", id: "3", name: "张三", picture: "u00000003.png", state: 1}
+      return rs; // { active: "Y", email: "xyz@gmail.com", id: "3", name: "张三", picture: "u00000003.png", state: 1}
+});
+
+```
+
+：Register<br/>
+```JAVASCRIPT
+POST{
+	"cmd":"Custom",
+	{
+		"custom":{
+			"type":"P"
+		},
+		"person":{
+			"username":"aaaaaa", // 用户名,
+			"pwd":"Aa112112", // 密码
+			"email":"gstools@qq.com",
+			"times":"0"
+		},
+		"code":"4529", // 验证码
+		"action":"custom_create", // 验证方式
+		"language":0,
+		"token":"qborm7obvjgngns23r2r9iautl" // 防跨站攻击参数
+	}
+}
+```
+##### Angular2 例子：
+```TYPESCRIPT
+const params = {
+		"custom":{
+			"type":"P"
+		},
+		"person":{
+			"username":"aaaaaa",
+			"pwd":"Aa112112",
+			"email":"gstools@qq.com",
+			"times":"0"
+		},
+		"code":"4529",
+		"action":"custom_create",
+		"language":0,
+		"token":"qborm7obvjgngns23r2r9iautl"
+	}
+...
+this.requestService.get('/api/index.php?cmd=Custom', JSON.stringify(params)).then(rs => {
+      const user = rs; // { id: 132, custom:[{id: 132, type: 'P', userid: 192}], person: [{id: 192, username: "xxxxxx", email: "abc@xx.com",times: "0"}], email: "账号激活邮件已发送到你的邮箱中。激活邮件48小时内有效。请尽快登录您的邮箱点击激活链接完成账号激活。", register: "账号注册成功！"}
 });
 
 ```
@@ -96,6 +141,39 @@ const param = {
 ...
 return this.requestService.post('/woo/index.php?cmd=Logout', JSON.stringify(param)).then(rs => {
 	return rs; // {id: 0, username: "userone"}
+});
+
+```
+
+：ResetPassword<br/>
+```JAVASCRIPT
+POST{
+	"cmd":"ResetPassword",
+	{
+		username: "aaaaaa", // 用户名,
+		email: 'xxxxx@qq.com',
+		code: '1234', // 验证码
+		type: 'ResetPassword',
+		action: 'custom_resetPassword', // 验证方式
+		language: 1, // 
+		token: "qborm7obvjgngns23r2r9iautl" // 防跨站攻击参数
+	}
+}
+```
+##### Angular2 例子：
+```TYPESCRIPT
+const params = {
+	username: "aaaaaa", // 用户名,
+	email: 'xxxxx@qq.com',
+	code: '1234', // 验证码
+	type: 'ResetPassword',
+	action: 'custom_resetPassword', // 验证方式
+	language: 1, // 
+	token: "qborm7obvjgngns23r2r9iautl" // 防跨站攻击参数
+};
+...
+this.requestService.get('/api/index.php?cmd=ResetPassword', JSON.stringify(params)).then(rs => {
+      const user = rs; // { id: 192}
 });
 
 ```
