@@ -31,7 +31,8 @@ abstract class Command{
 	'CustomAccount'=>array('userShell',null,null,null),
   	'Department'=>array('employeeShell',array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
 	'District '=>array('userShell',null,null,null),
- 	'Employee'=>array('userShell',array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
+	'Employee'=>array('userShell',array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
+	'EvalReply'=>array(null,array('fn'=>'userShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
 	'Language'=>array(null,array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
 	'Navigation'=>array(null,array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
 	'Order'=>array('userShell',null,null,null),
@@ -41,9 +42,11 @@ abstract class Command{
 	'Payment'=>array('userShell',null,null,null),
  	'Person'=>array(null,array('fn'=>'captchaShell','autoParam'=>null),'userShell','captchaShell userShell'),
  	'Product'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
-  	'ProductClass'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
+	'ProductClass'=>array(null,array('fn'=>'captchaShell employeeShell','autoParam'=>null),'captchaShell employeeShell','captchaShell employeeShell'),
+	'ProductEval'=>array(null,array('fn'=>'captchaShell userShell','autoParam'=>null),null,'captchaShell employeeShell'),
 	'Right'=>array('employeeShell',array('fn'=>'employeeShell','autoParam'=>null),'employeeShell','employeeShell'),
 	'Transport'=>array('userShell',null,null,null),
+
  	'MonitorScene'=>array(null,null,null,null),
  	'DryData'=>array(null,null,null,null),
  	'DryMain'=>array(null,null,null,null),
@@ -285,7 +288,11 @@ class RESTCommand extends Command{
 				//$status = $this->_restCreate($request,null);
 			//}
 		}else{
-			$b = explode(' ',$right[1]['autoParam']);
+			$b = null;
+			$autoparam = $right[1]['autoParam'];
+			if(!empty($autoparam)){
+				$b = explode(' ',$autoparam);
+			}
 			if(empty($right[1]['fn'])){
 				if(1==$this->userShell($request)){
 					$status = $this->_restCreate($request,$b);
@@ -370,11 +377,13 @@ class RESTCommand extends Command{
 		$status = 'CMD_INSUFFICIENT_DATA';
 		if(empty($right) || empty($right[$index])){
 			if(1==$this->userShell($request)){
-				$status = $this->$fun[$index]($request);
+				$funa = $fun[$index];
+				$status = $this->$funa($request);
 			}
 		}else{
 			$a = explode(' ',$right[$index]);
-			if(1==$this->$a[0]($request,NULL)){ // 调用第一个验证函数
+			$funa = $a[0];
+			if(1==$this->$funa($request,NULL)){ // 调用第一个验证函数
 				if(count($a)==2){
 					if(1==$this->$a[1]($request,null)){  // 调用第二个验证函数
 						$status = $this->$fun[$index]($request);

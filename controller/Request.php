@@ -81,7 +81,11 @@ class Request{
       $data = json_decode(file_get_contents('php://input'),true); // 支持 AJAX 的 PUT DELETE 请求
       if(!is_null($data)){
         $data = $this->decodeRSA($data);
-        $data1["item"] = isset($data["item"])? $data["item"]:$data;
+        if(!isset($data["item"])){
+          $data1["item"] = $data;
+        } else {
+          $data1 = $data;
+        }
       }
 
       if(!is_null($_REQUEST)){

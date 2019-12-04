@@ -71,10 +71,10 @@ class CheckLoginController extends PageController{
 				throw new \woo\base\AppException($request->getFeedBackString());
 			}
 		}catch(\woo\base\AppException $e){
-			$result["cid"] = $result["id"];
+			$result["cid"] = isset($result["id"])? $result["id"]:-1;
 			$result["id"] = -1;
 			$result["error"] = $e->getMessage();
-			REST::response(json_encode($result));
+			\woo\view\REST::response(json_encode($result));
 		}
 	}
 }
