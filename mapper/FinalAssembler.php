@@ -3,16 +3,18 @@ namespace woo\mapper;
 
 require_once("mapper/IdentityObject.php");
 require_once("mapper/DomainObjectAssembler.php");
+require_once("mapper/PersistenceFactory.php");
 
 class FinalAssembler{
 	protected $tableName = "";
 	protected $idobj = "";
 	protected $finder = "";
+	protected $factory = "";
 	protected $fields = array();
 	function __construct($tableName,$fields,$condictions){
 		$this->tableName = $tableName;
 		$this->fields = $fields;
-		$factory = \woo\mapper\PersistenceFactory::getFactory($tableName,$fields);
+		$this->factory = \woo\mapper\PersistenceFactory::getFactory($tableName,$fields);
 		$this->idobj = $this->factory->getIdentityObject();
 		$this->finder = new \woo\mapper\DomainObjectAssembler($this->factory);
 		foreach($condictions as $cond){

@@ -50,8 +50,15 @@ abstract class Command{
  	'MonitorScene'=>array(null,null,null,null),
  	'DryData'=>array(null,null,null,null),
  	'DryMain'=>array(null,null,null,null),
- 	'Emoji'=>array(null,null,null,null)
-     );
+	'Emoji'=>array(null,null,null,null),
+
+	'OpenApp'=>array(null,null,null,null),
+	'LevelData'=>array(null,null,null,null),
+	'LevelAlarm'=>array(null,null,null,null),
+	'BuyVerifyiOS'=>array(null,null,null,null),
+	'Level'=>array(null,null,null,null),
+	'GetValidProduct'=>array(null,null,null,null)
+    );
 
     final function __construct(){}
 
@@ -67,18 +74,20 @@ abstract class Command{
 	 * @return command status word
 	 */
 	protected function safeShell(\woo\controller\Request $request,$fun){
-		/*$session = \woo\base\SessionRegistry::instance();
-		$result = self::statuses('CMD_INSUFFICIENT_DATA');
-		$token = $request->getProperty("token");
-		if (!isset($token)) {
-			$item = $request->getProperty("item");
-			$token = $item['token'];
-		}
-		if (isset($token) && ($token == $session->get("token") || $token == session_id())) {
-			$result = $this->$fun($request);
-		} else {
-			$request->addFeedback("Access Denied in command.safeShell");
-		}*/
+	// 	$session = \woo\base\SessionRegistry::instance();
+	// 	$result = self::statuses('CMD_INSUFFICIENT_DATA');
+	// 	$token = $request->getProperty("token");
+	// 	if (!isset($token)) {
+	// 		$item = $request->getProperty("item");
+	// 		$token = $item['token'];
+	// 	}
+	// 	$token0 = $session->get("token");
+	// 	$token1 = session_id();
+	// 	if (isset($token) && ($token == $session->get("token") || $token == session_id())) {
+	// 		$result = $this->$fun($request);
+	// 	} else {
+	// 		$request->addFeedback("Access Denied in command.safeShell");
+	// 	}
 		$result = $this->$fun($request);
 		return $result;
 	}
@@ -95,9 +104,13 @@ abstract class Command{
 		$result = 'CMD_INSUFFICIENT_DATA';
 		$item = $request->getProperty('item');
 		$cmd = $request->getProperty('cmd');
-		if(!isset($userid) && isset($item['person']['id']))
-			$userid = $item['person']['id'];
-		
+		$id = $request->getProperty("id");
+		if(!isset($userid)) {
+			if(isset($item['person']['id']))
+				$userid = $item['person']['id'];
+			else if (isset($id))
+				$userid = $id;
+		}		
 
 		if(isset($userid)){
 			$result = 'CMD_OK';
@@ -219,12 +232,14 @@ abstract class Command{
 
 class RESTCommand extends Command{
 	function doExecute(\woo\controller\Request $request){
+		$fun = 'restGet';
 		switch($request->getMethod()){
-			case "GET": $this->safeShell($request,'restGet');break;
-			case "POST": $this->safeShell($request,'restCreate');break;
-			case "PUT": $this->safeShell($request,'restUpdate');break;
-			case "DELETE": $this->safeShell($request,'restDelete');break;
+			case "GET": $fun = 'restGet';break;
+			case "POST": $fun = 'restCreate';break;
+			case "PUT": $fun = 'restUpdate';break;
+			case "DELETE": $fun = 'restDelete';break;
 		}
+		return $this->safeShell($request,$fun);
 	}
 	
 	/**
@@ -393,7 +408,7 @@ class RESTCommand extends Command{
 				}
 			}
 		}
-		return $status;
+		return self::statuses($status);
 	}
 }
 

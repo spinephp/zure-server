@@ -635,13 +635,14 @@ class deleteREST extends restFactory{
 	function deleteRecords($targets,$sucess){
 		$rec=array();
 		$index = 0;
-		$pdo = $this->getPDO();
+		$pdo = null;
 		foreach($targets as $target=>$condition){
 			if(!is_array($condition))
 				throw new \woo\base\AppException("Data format error!");
 			include_once("domain/".ucfirst($target).".php");
 			$factory = \woo\mapper\PersistenceFactory::getFactory($target,$condition['fields']);
 			$finder = new \woo\mapper\DomainObjectAssembler($factory);
+			$pdo = \woo\mapper\DomainObjectAssembler::getPDO();
 			$key = $condition['fields'][0];
 			$value = $condition['value'];
 			if(is_array($value)){

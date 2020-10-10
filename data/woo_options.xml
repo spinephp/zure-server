@@ -36,6 +36,18 @@
     <view>Checklogin</view>
   </command>
 
+  <command name="CheckDevice">
+    <view>CheckDevice</view>
+  </command>
+
+  <command name="OpenApp">
+    <view>OpenApp</view>
+  </command>
+
+  <command name="PrivacyPolicy">
+    <view>OpenApp</view>
+  </command>
+
   <command name="Logout">
     <view>Logout</view>
   </command>
@@ -387,6 +399,55 @@
             <forward>ListVenues</forward>
         </status>
     </command>
+
+  /* Feild Level */
+  <command name="Level">
+    <view>Level</view>
+  </command>
+
+  <command name="LevelDevice">
+    <view>LevelDevice</view>
+  </command>
+
+  <command name="LevelAlarm">
+    <view>LevelAlarm</view>
+  </command>
+
+  <command name="LevelData">
+    <view>LevelData</view>
+  </command>
+
+  <command name="IsLevel">
+    <view>IsLevel</view>
+  </command>
+
+  <command name="PurchasediOS">
+    <view>PurchasediOS</view>
+  </command>
+
+  <!-- CloudLevel -->
+  <command name="CloudLevel">
+      <view>CloudLevel</view>
+  </command>
+  <command name="CloudLevelLogin">
+      <view>CloudLevelLogin</view>
+  </command>
+  <command name="CloudLevelDevice">
+      <view>CloudLevelDevice</view>
+  </command>
+  <command name="LevelBuy">
+      <view>LevelBuy</view>
+  </command>
+  <command name="CloudLevelBuy">
+      <view>CloudLevelBuy</view>
+  </command>
+  <command name="BuyVerifyiOS">
+      <view>BuyVerifyiOS</view>
+  </command>
+  <command name="GetValidProduct">
+      <view>GetValidProduct</view>
+  </command>
+
 
     <!--video monitor-->
     <command name="FirstHand">

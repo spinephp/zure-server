@@ -15,9 +15,13 @@ class Request{
     }
     
     public function getMethod(){
-	return $this->method;
-	}
-	
+      return $this->method;
+      }
+    
+      public function setMethod($method){
+        $this->method = $method;
+        }
+            
 	/**
 	 * 返回当前请求的方法，请留意方法名称是大小写敏感的，按规范应转换为大写字母
    * @param $data - 字符串数组，包含请求参数信息
@@ -92,11 +96,17 @@ class Request{
         $data = $this->decodeRSA($_REQUEST);
 
         foreach($data as $key=>$val){
-  				if($val!="")
-  					$data2[$key] = $val;
+          if($val!="")
+            if(strlen($key)<50) {
+              $data2[$key] = $val;
+            } else {
+              // $tem = $key.$val;
+              // $data2["item"] = json_decode($tem,true);
+            }
   				else{
-  					$jskey = json_decode($key,true);
-  					$data2["item"] = isset($jskey["item"])? $jskey["item"]:$jskey;
+            $jskey = json_decode($key,true);
+            if (!is_null($jskey))
+  					  $data2["item"] = isset($jskey["item"])? $jskey["item"]:$jskey;
   				}
         }
       }
@@ -107,7 +117,7 @@ class Request{
         if(is_null($data2))
           $data = $data1;
         else
-          $data = array_merge($data1,$data2);
+          $data = array_merge($data2,$data1);
      }
           //$data = is_null($data)? $_REQUEST:array_merge($_REQUEST, array("item"=>$data));
 	$method = $this->findMethod($data);
@@ -126,7 +136,7 @@ class Request{
             $data["id"] = $match[1];
             $data["token"] = preg_replace("/\/\d+/","",$token);*/
           }
-          foreach(["cond","filter"] as $name){
+          foreach(array("cond","filter") as $name){
             if(isset($data[$name])){
               $cond = $data[$name];
               if(!is_null($cond) && !is_array(($cond))){
@@ -134,13 +144,14 @@ class Request{
               }
             }
           }
+
           $this->properties = $data;
           // $sessionid = $this->getProperty("token");
           // $sessionid1 = session_id();
           // if($sessionid!=session_id()){
           //   session_id($sessionid);
           // }
-          $this->log($method.json_encode($data)); // 把本次请求与入日志文件
+          // $this->log($method.json_encode($data)); // 把本次请求与入日志文件
           return;
       }
       foreach($_SERVER['argv'] as $arg){
@@ -203,7 +214,32 @@ class Request{
    */
   function log( $logthis ){
     Date_default_timezone_set("PRC");
-    file_put_contents('logfile.log', date("Y-m-d H:i:s"). " " . $logthis.PHP_EOL, FILE_APPEND | LOCK_EX);
+    $content = NULL;
+    $file = 'logfile.log';
+    //file_put_contents('logfile.log', date("Y-m-d H:i:s"). " " . $logthis.PHP_EOL, FILE_APPEND | LOCK_EX);
+    if (file_exists($file)) {
+      $content = @file_get_contents($file);
+    }
+    //要写入的数版据
+    $log_str = date("Y-m-d H:i:s"). " " . $logthis;
+    if ($content) {
+        //将每行的权数据放到数组中
+        $arr = explode(PHP_EOL, $content);
+        $offset = count($arr)-99;
+        $offset = $offset >0 ? $offset : 0;
+        $arr = array_slice($arr, $offset);
+        $arr[] = $log_str;
+        $content = implode(PHP_EOL, $arr);
+    }else{
+        $content = $log_str.PHP_EOL;
+    }
+    //写入文件
+    $rs = file_put_contents($file, $content);
+    /*if ($rs) {
+        echo "log success !";
+    }else{
+        echo "log error !";
+    }*/
   }
 }
 
