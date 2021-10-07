@@ -40,6 +40,78 @@
 		success: (result) =>
 			obj = JSON.parse(result)
 ```
+#### PUT 请求参数:
+```JAVASCRIPT
+{
+	"cmd":"Qiye/2", // 向数据库中的Qiye表更新数据, 2 - 要更新的记录 id
+	"item":{
+		"qiye": {"name":"张三","password":"123456"},
+		"action": "qiye_update", 
+		"token":"oj20i5188mvg945mq2h0u2bgv6"  // 防跨站攻击参数
+	}
+}
+```
+##### SWIFT 例子：
+```SWIFT
+            struct PostLevel: Codable, Parsable  {
+                var mame: String?
+                var password: String?
+            }
+            struct PostLevelReturn: Codable, Parsable {
+                var id: Int
+                var level: [
+                    PostLevel
+                ]
+            }
+            var levelreturn = PostLevelReturn(id: -1, level: [])
+            let params: [String: Any] = [
+                "level":[
+                    "name": value.name,
+                    "password": value.password,
+                ],
+                "action": "level_update",
+                "token": token
+            ]
+            Net.put(data: levelreturn, url: "Level/\(user!.id)", body: params, completionHandler: {result in
+                switch result {
+                   case .success(let data):
+                    levelreturn = data
+                   case .failure(let error):
+                     print("get level failure: \(error)")
+                   }
+            })
+```
+##### Angular 例子：
+```JAVASCRIPT
+<script>
+    var app = angular.module('newApp',[]);
+    app.controller('headerController',function($scope,$http){
+	var token = "oj20i5188mvg945mq2h0u2bgv6";
+        $http.put('?cmd=Qiye/2',{params:{
+		"qiye": {"name":"张三","password":"123456"},
+		"action": "qiye_update", 
+		"token":"oj20i5188mvg945mq2h0u2bgv6"
+	}
+	}).then(function successCallback (rs){
+            $scope.qiye = rs.data[0];  // {id:2,qiye:{"name":"张三","password":"123456"}}
+        });
+    });
+ </script>
+```
+##### jQuery(coffeescript) 例子
+```COFFEESCRIPT
+	jQuery.ajax
+		type: 'put'
+		url: '?cmd=Qiye/2'
+		data: {
+		"qiye": {"name":"张三","password":"123456"},
+		"action": "qiye_update", 
+		"token":"oj20i5188mvg945mq2h0u2bgv6"
+	}
+		async: false   #ajax执行完毕后才执行后续指令
+		success: (result) =>
+			obj = JSON.parse(result)
+```
 参数加密：<br/>
 支持 RSA 加密。<br/>
 GET 方式参数加密 ?cmd=xxx&td=...<br/>
