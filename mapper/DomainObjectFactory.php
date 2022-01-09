@@ -17,8 +17,10 @@ class DomainObjectFactory{
 	}
 
 	function createObject(array $array){
+		if(isset($array['id'])) {
 		$old = $this->getFromMap($array['id']);
 		if($old) { return $old;}
+		}
 		include_once("domain/{$this->target}.php");
 		$domain = "\\".$this->targetClass();
 		$obj = new $domain($array);

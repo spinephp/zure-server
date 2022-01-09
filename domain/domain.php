@@ -106,6 +106,13 @@ abstract class DomainObject{
       return $time;
     }
     
+    // 检验时间
+    function checkTimestampMs($time){
+      if (!preg_match('/^\d{13}$/',$time))
+        throw new \Exception("Invalid time stamp $time");
+      return $time;
+    }
+    
     // 校验图片
     function isPicture($picture){
       return preg_match('/\w+\.(gif|jpe?g|png|GIF|JPE?G|PNG)$/',$picture);

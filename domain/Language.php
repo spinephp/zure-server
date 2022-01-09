@@ -24,7 +24,7 @@ class Language extends DomainObject{
     return $this->objects["name_en"];
   }
   function getNames(){
-    return [$this->objects["name_en"],$this->objects["name"]];
+    return array($this->objects["name_en"],$this->objects["name"]);
   }
 
 }

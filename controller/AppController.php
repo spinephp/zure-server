@@ -88,8 +88,8 @@ class AppController{
 		if(isset($this->invoked[$cmd_class])){
 			throw new \woo\base\AppException("circular forwarding");
 		}
-
         $this->invoked[$cmd_class] = 1;
+
         // 返回Command对象
         return $cmd_obj;
     }
