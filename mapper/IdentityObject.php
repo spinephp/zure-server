@@ -2,11 +2,12 @@
 namespace woo\mapper;
 require_once("mapper/Field.php");
 
+//标识对象,主要功能就是拼接where条件语句
 class IdentityObject{
-	protected $currentfield=null;
-	protected $fields = array();
+	protected $currentfield=null;	//当前操作的字段对象
+	protected $fields = array();	//字段对象集合
 	private $and=null;
-	private $enforce = array();
+	private $enforce = array();	//限定的合法字段
 
 	// 标识对象实例化时可以不带参数，也可以以字段名为参数
 	function __construct($field=null,array $enforce=null){
@@ -19,7 +20,7 @@ class IdentityObject{
 	}
 
   /**
-    * 返回需要的字段名称
+    * 返回需要的字段名称(获取限定的合法字段)
     * 为防止字段名中存在 MySql 中的保留字，对字段名进行了等效处理
     * @params void
     * @return array - 字段名数组
@@ -48,7 +49,7 @@ class IdentityObject{
 			$this->currentfield = new Field($fieldname);
 			$this->fields[$fieldname] = $this->currentfield;
 		}
-		return $this;
+		return $this;	//采用连贯语法
 	}
 
 	// 标识对象是否已设置了字段
@@ -96,6 +97,26 @@ class IdentityObject{
 		return $this->operator(">=",$value);
 	}
 
+	// 版本号小于
+	function vlt($value){
+		return $this->operator("VLT",$value);
+	}
+
+	// 版本号大于
+	function vgt($value){
+		return $this->operator("VGT",$value);
+	}
+
+	// 版本号小于等于
+	function vle($value){
+		return $this->operator("VLE",$value);
+	}
+
+	// 版本号大于等于
+	function vge($value){
+		return $this->operator("VGE",$value);
+	}
+
 	// 等于数组中的值
 	function in($value){
     return $this->operator("IN",$value);
@@ -106,6 +127,7 @@ class IdentityObject{
     return $this->operator("BT",$value);
 	}
 
+	//向字段对象添加where条件
 	// 操作符方法是否得到当前字段并添加了操作符和测试值
 	private function operator($symbol,$value){
 		if($this->isVoid()){
@@ -116,6 +138,7 @@ class IdentityObject{
 	}
 
 	// 以关联数组形式返回目前创建的所有对比
+	//获取此类中所有字段对象集合的where条件数组
 	function getComps(){
 		$ret = array();
 		foreach($this->fields as $key=>$field){

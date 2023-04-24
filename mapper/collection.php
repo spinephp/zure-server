@@ -4,13 +4,13 @@ require_once("domain/domain.php");
 
 class Collection implements \Iterator , \woo\domain\Collection{
     protected $dofact;
-    protected $total = 0;
-    protected $raw = array();
+    protected $total = 0;   //集合元素总数量
+    protected $raw = array();   //原始数据
     protected $type = null;
 
     private $result;
-    private $pointer = 0;
-    private $objects = array();
+    private $pointer = 0;   //指针
+    private $objects = array(); //对象集合
 
     function __construct(array $raw=null,DomainObjectFactory $dofact=null,$type=null){
 		if(is_null($type))
@@ -23,7 +23,7 @@ class Collection implements \Iterator , \woo\domain\Collection{
         $this->dofact = $dofact;
     }
 
-    function add(\woo\domain\DomainObject $object){
+    function add(\woo\domain\DomainObject $object){ //这里是直接添加对象
         $class = $this->targetClass();
         if(!($object instanceof $class)){
             throw new Exception("this is a {$class} collection");
@@ -41,7 +41,7 @@ class Collection implements \Iterator , \woo\domain\Collection{
     protected function notifyAccess(){
     }
 
-    private function getRow($num){
+    private function getRow($num){  //获取集合中的单条数据，就是这里通过数据映射器将数据创建成对象
         $this->notifyAccess();
         if($num>=$this->total || $num< 0){
             return null;
@@ -89,19 +89,27 @@ class Collection implements \Iterator , \woo\domain\Collection{
 		return $this->pointer;
 	}
 	
-    public function rewind(){
+    public function rewind(){   //重置指针
         $this->pointer = 0;
     }
 
-    public function current(){
+    public function current(){  //获取当前指针对象
         return $this->getRow($this->pointer);
     }
 
-    public function key(){
+    public function first(){  //获取当前指针对象
+        return $this->getRow(0);
+    }
+
+    public function latest(){  //获取当前指针对象
+        return $this->getRow($this->total - 1);
+    }
+
+    public function key(){  //获取当前指针
         return $this->pointer;
     }
 
-    public function next(){
+    public function next(){ //获取当前指针对象,并将指针下移
         $row = $this->getRow($this->pointer);
         if($row){
             $this->pointer++;
@@ -109,7 +117,7 @@ class Collection implements \Iterator , \woo\domain\Collection{
         return $row;
     }
 
-    public function valid(){
+    public function valid(){    //验证
         return (!is_null($this->current()));
     }
 }

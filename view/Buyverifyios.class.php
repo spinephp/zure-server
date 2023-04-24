@@ -17,15 +17,15 @@ class BuyVaidiOSController extends PageController {
     $applepay = array(
         'levelbuy' => array(
            'bundle_id'     => 'com.yrr8.FieldLevel', //应用唯一标识
-           'products' => ['com.yrr8.FieldLevel1001'], //内购商品
+           'products' => array('com.yrr8.FieldLevel1001'), //内购商品
             'apple_secret'  => '91ba676daa8146cebe28f9a2a734c8c0' //应用密钥,在itunes中获取
         ),
         'cloudlevelbuy' => array(
            'bundle_id'     => 'com.yrr8.CloudLevel', //应用唯一标识
-           'products' => ['com.yrr8.CloudLevel1001','com.yrr8.CloudLevel1002','com.yrr8.CloudLevel1003'], //内购商品
+           'products' => array('com.yrr8.CloudLevel1001', 'com.yrr8.CloudLevel1002', 'com.yrr8.CloudLevel1003'), //内购商品
            'apple_secret'  => '1868c2da3302475db479c18c5452af51' //应用密钥,在itunes中获取
         )
-    ]);
+    );
     
     function process(){
 		try{

@@ -1,26 +1,27 @@
 <?php
 namespace woo\mapper;
 
+//å­—æ®µå¯¹è±¡
 class Field{
-	protected $name=null;
-	protected $operator=null;
-	protected $comps=array();
-	protected $imcomplete=false;
+	protected $name=null;	//å­—æ®µåç§°
+	protected $operator=null;	//æ“ä½œç¬¦
+	protected $comps=array();	//å­˜æ”¾æ¡ä»¶çš„æ•°ç»„
+	protected $imcomplete=false;	//æ£€æŸ¥æ¡ä»¶æ•°ç»„æ˜¯å¦æœ‰å€¼
 
-	// ÉèÖÃ×Ö¶ÎÃû Èçage
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½ï¿½ï¿½ ï¿½ï¿½age
 	function __construct($name){
 		$this->name = $name;
 	}
 
-	// Ìí¼Ó²Ù×÷·ûºÍÖµ(ÀýÈç > 40)µ½$compsÊôÐÔÖÐ
+	//æ·»åŠ where æ¡ä»¶
 	function addTest($operator,$value){
 		$this->comps[] = array('name'=>$this->name,'operator'=>$operator,'value'=>$value);
 	}
 
-	// compsÊÇÒ»¸öÊý×é£¬Òò´ËÎÒÃÇÓÐ¶àÖÖ·½·¨À´¼ì²é×Ö¶Î
+	//èŽ·å–å­˜æ”¾æ¡ä»¶çš„æ•°ç»„
 	function getComps(){ return $this->comps; }
 
-	// Èç¹û$compsÎª¿Õ£¬ÔòÎÒÃÇÓÐ±È½ÏÊý¾Ý²¢ÇÒ±¾×Ö¶Î²»ÄÜÓÃÓÚÊý¾Ý¿â²éÑ¯
+	// ï¿½ï¿½ï¿½$compsÎªï¿½Õ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±È½ï¿½ï¿½ï¿½ï¿½Ý²ï¿½ï¿½Ò±ï¿½ï¿½Ö¶Î²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½Ñ¯
 	function isIncomplete(){ return empty($this->comps);}
 }
 ?>

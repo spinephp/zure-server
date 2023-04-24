@@ -108,11 +108,29 @@ abstract class DomainObject{
     
     // 检验时间
     function checkTimestampMs($time){
-      if (!preg_match('/^\d{13}$/',$time))
-        throw new \Exception("Invalid time stamp $time");
-      return $time;
-    }
+		if (!preg_match('/^\d{13}$/',$time))
+		  throw new \Exception("Invalid time stamp $time");
+		return $time;
+	  }
     
+    // 校验版本
+   static function checkVersion($version){
+		if (!preg_match('/^[\d.]{1,16}$/',$version))
+		  throw new \Exception("Invalid versoin $version");
+		return $version;
+	  }
+
+	  // 版本转换成实数，方便版本比较
+	 static function versionToReal($version){
+		$verArr = explode('.',$version);
+		$vers = $verArr[0].'.';
+		for($i=1;$i<count($verArr)-1;$i++) 
+		{
+			$vers = $vers.$verArr[$i];
+		}
+		return (float)$vers;
+	}
+		
     // 校验图片
     function isPicture($picture){
       return preg_match('/\w+\.(gif|jpe?g|png|GIF|JPE?G|PNG)$/',$picture);

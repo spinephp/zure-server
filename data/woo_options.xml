@@ -425,6 +425,10 @@
     <view>PurchasediOS</view>
   </command>
 
+  <command name="UploadLog">
+    <view>UploadLog</view>
+  </command>
+
   <!-- CloudLevel -->
   <command name="CloudLevel">
       <view>CloudLevel</view>
@@ -446,6 +450,27 @@
   </command>
   <command name="GetValidProduct">
       <view>GetValidProduct</view>
+  </command>
+
+<!-- Seene Measure -->
+ <command name="Measure">
+    <view>Measure</view>
+  </command>
+
+  <command name="MeasureDevice">
+    <view>MeasureDevice</view>
+  </command>
+
+  <command name="MeasureCount">
+    <view>MeasureCount</view>
+  </command>
+
+  <command name="MeasureVersion">
+    <view>MeasureVersion</view>
+  </command>
+
+  <command name="MeasureLatestVersion">
+    <view>MeasureLatestVersion</view>
   </command>
 
 

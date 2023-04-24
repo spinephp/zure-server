@@ -15,7 +15,7 @@ $vcodes="";
 for($i=0;$i<4;$i++)
 {
  //$text= $pattern{rand(0,61)}; //生成随机数
- $text= $pattern{rand(0,9)}; //只生成字符池前面十个字符，即数字
+ $text= $pattern[rand(0,9)]; //只生成字符池前面十个字符，即数字
  $textcolor = ImageColorAllocate($im, rand(100,255),rand(0,100),rand(100,255)); //字体随机颜色
  imagestring($im, 5, 2+$i*12, $i*rand(0,1), $text, $textcolor); //生成图片
  $vcodes.= $text;

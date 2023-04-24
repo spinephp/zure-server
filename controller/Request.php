@@ -82,7 +82,14 @@ class Request{
     if(isset( $_SERVER['REQUEST_METHOD'])){
       $data1 = null;
       $data2 = null;
-      $data = json_decode(file_get_contents('php://input'),true); // 支持 AJAX 的 PUT DELETE 请求
+      $p = file_get_contents('php://input');
+      if(!is_null($p)){
+        $pos = strpos($p,"}}");
+        if($pos>0)
+        $p = substr($p,0,$pos+2);
+      }
+      $data = json_decode($p,true);
+      // $data = json_decode(file_get_contents('php://input'),true); // 支持 AJAX 的 PUT DELETE 请求
       if(!is_null($data)){
         $data = $this->decodeRSA($data);
         if(!isset($data["item"])){
@@ -151,7 +158,7 @@ class Request{
           // if($sessionid!=session_id()){
           //   session_id($sessionid);
           // }
-          // $this->log($method.json_encode($data)); // 把本次请求与入日志文件
+          $this->log($method.json_encode($data)); // 把本次请求与入日志文件
           return;
       }
       foreach($_SERVER['argv'] as $arg){

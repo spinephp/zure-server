@@ -58,6 +58,11 @@ abstract class Command{
 	'LevelMessage'=>array(null,null,null,null),
 	'BuyVerifyiOS'=>array(null,null,null,null),
 	'Level'=>array(null,null,null,null),
+	'Measure'=>array(null,null,null,null),
+	'MeasureMessage'=>array(null,null,null,null),
+	'MeasureVersion'=>array(null,null,null,null),
+	'MeasureLatestVersion'=>array(null,null,null,null),
+	'UploadLog'=>array(null,null,null,null),
 	'GetValidProduct'=>array(null,null,null,null)
     );
 
