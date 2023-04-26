@@ -258,11 +258,19 @@ class RESTCommand extends Command{
 			$request->addFeedback(COMMAND_OK);
 			return 'CMD_OK';
 		}else{
-			$a = explode(' ',$right[0]);
-			return $this->$a[0]($request,function($request){ 
-				$request->addFeedback(COMMAND_OK);
-				return 'CMD_OK';
-			});
+			if(is_array($right[0])){
+				$a = explode(' ',$right[0]);
+				return $this->$a[0]($request,function($request){ 
+					$request->addFeedback(COMMAND_OK);
+					return 'CMD_OK';
+				});
+			}else{
+				$a = $right[0];
+				return $this->$a($request,function($request){ 
+					$request->addFeedback(COMMAND_OK);
+					return 'CMD_OK';
+				});
+			}
 		}
 	}
 	

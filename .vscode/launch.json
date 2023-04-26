@@ -8,7 +8,31 @@
             "name": "Listen for XDebug",
             "type": "php",
             "request": "launch",
-            "port": 9003
+            "port": 9003,
+        },
+        {
+            "name": "launch server",
+            "type": "php",
+            "request": "launch",
+            "runtimeArgs": [
+                "-dxdebug.mode=debug",
+                "-dxdebug.start_with_request=yes",
+                "-S",
+                "localhost:0"
+            ],
+            "port": 9003,
+            "program": "",
+            "runtimeExecutable": "php",
+            "cwd": "${workspaceRoot}",
+            "serverReadyAction": {
+                "pattern": "listening on port ([0-9]+)",
+                "uriFormat": "http://localhost:%s",
+                "action":  "openExternally"
+            }
+            // "pathMappings": {
+            //     "/var/www/html/woo/": "${workspaceRoot}",
+            //     // "/app": "${workspaceRoot}/app"
+            //   }
         },
         {
             "name": "Launch currently open script",
